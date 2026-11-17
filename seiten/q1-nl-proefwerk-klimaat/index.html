@@ -415,12 +415,12 @@ html.still .step-hint i{animation:none}
   var slot=0,io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
     var now=performance.now();es.sort(function(x,y){return x.boundingClientRect.top-y.boundingClientRect.top});
     es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,d=Math.min(Math.max(0,slot-now),900);
-     el.style.transitionDelay=(d/1000)+'s';slot=now+d+(el.classList.contains('row')?60:120);el.classList.add('in');io.unobserve(el);
+     el.style.transitionDelay=(d/1000)+'s';slot=now+d+(el.classList.contains('rv-row')?60:120);el.classList.add('in');io.unobserve(el);
      setTimeout(function(){el.style.transitionDelay=''},d+1000)})},{threshold:0.15}):null;
   function rv(el,kind){if(!el||el.classList.contains('rvi'))return;el.classList.add('rvi');if(kind)el.classList.add(kind);if(io)io.observe(el);else el.classList.add('in')}
   function inner(box){[].forEach.call(box.children,function(c){
-    if(c.classList.contains('tw')){rv(c);[].forEach.call(c.querySelectorAll('tbody tr'),function(r){rv(r,'row')})}
-    else if(c.tagName==='UL'||c.tagName==='OL'){rv(c);[].forEach.call(c.children,function(li){rv(li,'row')})}
+    if(c.classList.contains('tw')){rv(c);[].forEach.call(c.querySelectorAll('tbody tr'),function(r){rv(r,'rv-row')})}
+    else if(c.tagName==='UL'||c.tagName==='OL'){rv(c);[].forEach.call(c.children,function(li){rv(li,'rv-row')})}
     else if(c.classList.contains('les-head'))head(c);
     else if(c.classList.contains('row')){[].forEach.call(c.children,function(x,i){rv(x)})}
     else rv(c)})}
