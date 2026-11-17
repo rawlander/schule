@@ -1,0 +1,2324 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<meta name="ablauf" content="2026-12-15">
+<meta name="kurs" content="EF Informatik">
+<meta name="robots" content="noindex, nofollow">
+<title>Marsrover: Parameter und Rückgabe</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Caveat:wght@700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: Heft-Seite mit Kästchenraster. Kopfbereich mit Doodle, darunter fünf Stationen (Parameter, Rückgabe, Mission), eine Expert-Station und Labor-Aufgaben mit Testtabelle.
+   Jede Station: Doodle + Merkzettel links/oben, Aufgabenkarten darunter. */
+:root {
+  --bg: #EDF1F7; --grid: #DCE3EF; --card: #FFFFFF; --card2: #F4F6FB; --fg: #16213A; --muted: #55627F;
+  --line: #CAD3E3; --accent: #C2461E; --accent-ink: #FFFFFF; --accent-soft: #FBE4DA;
+  --ok: #1B8A4B; --ok-soft: #DDF3E5; --bad: #C42F3F; --bad-soft: #FADDE1; --focus: #2563EB;
+  --code-bg: #111B35; --code-fg: #E6EDFA; --c-kw: #FF9E7A; --c-str: #8FE3A8; --c-num: #8CC8FF; --c-com: #7C8BAE; --c-fn: #F3D88A;
+  --ink: #1E293B; --ink-soft: #334155; --paper: #FFFFFF; --red-pen: #E63946;
+  --hl-yellow: #FFE600; --hl-blue: #38BDF8; --hl-green: #4ADE80; --hl-pink: #F43F5E; --hl-orange: #FB923C;
+  --hl-op: .72; --hl-blend: multiply;
+  --f-head: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, Consolas, 'Courier New', monospace;
+  --f-note: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1527; --grid: #17223D; --card: #16203A; --card2: #1B2747; --fg: #E7ECF7; --muted: #9DAAC8;
+    --line: #2C3B60; --accent: #FF8A5B; --accent-ink: #1B0E08; --accent-soft: #3A2319;
+    --ok: #4ADE80; --ok-soft: #12362A; --bad: #FF7A86; --bad-soft: #3B1A22; --focus: #7DB1FF;
+    --code-bg: #0A1122; --ink: #E2E8F0; --ink-soft: #B8C4DA; --paper: #1B2747; --red-pen: #FF6B77;
+    --hl-op: .5; --hl-blend: normal; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1527; --grid: #17223D; --card: #16203A; --card2: #1B2747; --fg: #E7ECF7; --muted: #9DAAC8;
+  --line: #2C3B60; --accent: #FF8A5B; --accent-ink: #1B0E08; --accent-soft: #3A2319;
+  --ok: #4ADE80; --ok-soft: #12362A; --bad: #FF7A86; --bad-soft: #3B1A22; --focus: #7DB1FF;
+  --code-bg: #0A1122; --ink: #E2E8F0; --ink-soft: #B8C4DA; --paper: #1B2747; --red-pen: #FF6B77;
+  --hl-op: .5; --hl-blend: normal; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: var(--fg); font: 400 16px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 56px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--card); }
+.wrap { max-width: 980px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--f-head); text-wrap: balance; margin: 0; line-height: 1.12; }
+code, .mono { font-family: var(--f-mono); }
+p { margin: 0 0 .6em; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+
+/* Doodles */
+.doodle { display: block; width: 100%; height: auto; overflow: visible; }
+.ink-bold { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.ink-detail { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ink-fine { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.fill-paper { fill: var(--paper); stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.hl-yellow { fill: var(--hl-yellow); opacity: var(--hl-op); mix-blend-mode: var(--hl-blend); }
+.hl-blue, .hl-cyan { fill: var(--hl-blue); opacity: var(--hl-op); mix-blend-mode: var(--hl-blend); }
+.hl-green { fill: var(--hl-green); opacity: var(--hl-op); mix-blend-mode: var(--hl-blend); }
+.hl-pink { fill: var(--hl-pink); opacity: calc(var(--hl-op) - .15); mix-blend-mode: var(--hl-blend); }
+.hl-orange { fill: var(--hl-orange); opacity: var(--hl-op); mix-blend-mode: var(--hl-blend); }
+.red-line { fill: none; stroke: var(--red-pen); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.red-line.thin { stroke-width: 2.5; }
+.red-fill { fill: var(--red-pen); }
+.mark-x { fill: none; stroke: #22A83A; stroke-width: 5; stroke-linecap: round; }
+.note { font: 700 16px var(--f-note); fill: var(--red-pen); }
+.ink-text { fill: var(--ink); }
+.mono { font: 600 9px var(--f-mono); fill: var(--ink); }
+.star-shape { fill: #FFE600; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+
+/* Kopf */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.nav-in { max-width: 980px; margin: 0 auto; display: flex; gap: 6px; overflow-x: auto; padding: 8px 0; scrollbar-width: thin; }
+.chip {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card2); color: var(--fg); text-decoration: none; font: 600 13px var(--f-body); white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent); }
+.chip .cnt { font: 500 12px var(--f-mono); color: var(--muted); }
+.chip.all { background: var(--ok-soft); border-color: var(--ok); }
+.chip.all .cnt { color: var(--ok); }
+.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 24px; align-items: center; padding: 36px 0 24px; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; background: linear-gradient(transparent 58%, color-mix(in srgb, var(--hl-yellow) 70%, transparent) 58% 92%, transparent 92%); padding: 0 .1em; }
+.hero .lead { margin: 14px 0 18px; color: var(--muted); max-width: 46ch; font-size: 1.05rem; }
+.kicker { font: 600 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.progress { display: grid; gap: 6px; max-width: 420px; }
+.bar { height: 10px; border-radius: 99px; background: var(--card2); border: 1px solid var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .5s ease; }
+.progress .lbl { font: 500 13px var(--f-mono); color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.linkbtn { background: none; border: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; padding: 0; }
+
+/* Stationen */
+.station { padding: 34px 0 6px; scroll-margin-top: 64px; }
+.st-head { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 22px; align-items: center; margin-bottom: 18px; }
+.st-head h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -.01em; }
+.merke {
+  margin-top: 12px; padding: 12px 16px; border-radius: 4px 14px 14px 14px; background: var(--card);
+  border: 1px solid var(--line); box-shadow: 4px 4px 0 color-mix(in srgb, var(--hl-yellow) 55%, transparent); max-width: 62ch;
+}
+.merke b.tag { font: 700 13px var(--f-note); font-size: 19px; color: var(--red-pen); margin-right: 6px; }
+.merke code, .act code { background: var(--card2); border: 1px solid var(--line); padding: 0 5px; border-radius: 5px; font-size: .88em; }
+.st-sum { margin-left: auto; font: 500 12px var(--f-mono); color: var(--muted); }
+
+.act { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px; margin: 0 0 18px; position: relative; }
+.act.done { border-color: var(--ok); }
+.act-head { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 12px; }
+.act-head h3 { font-size: 1.15rem; font-weight: 700; flex: 1 1 220px; min-width: 0; }
+.act-head .type { flex: none; font: 600 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); }
+.act-head .okbadge { flex: none; display: none; font: 600 12px var(--f-mono); padding: 4px 9px; border-radius: 6px; background: var(--ok-soft); color: var(--ok); }
+.act.done .okbadge { display: inline-block; }
+.intro { color: var(--muted); margin: -4px 0 12px; font-size: .96rem; }
+.act-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+.fb { flex: 1 1 200px; min-height: 1.5em; font-weight: 500; min-width: 0; }
+.fb.ok { color: var(--ok); } .fb.bad { color: var(--bad); } .fb.info { color: var(--muted); }
+.btn {
+  font: 600 14px var(--f-body); border-radius: 10px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--accent-ink); min-height: 40px;
+}
+.btn:hover { filter: brightness(1.06); } .btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--accent); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* Code */
+pre.code, .codebox {
+  margin: 0 0 12px; background: var(--code-bg); color: var(--code-fg); border-radius: 12px; padding: 14px 16px;
+  font: 400 13.5px/1.7 var(--f-mono); overflow-x: auto; tab-size: 4; white-space: pre;
+}
+.c-kw { color: var(--c-kw); font-weight: 600; } .c-str { color: var(--c-str); } .c-num { color: var(--c-num); }
+.c-com { color: var(--c-com); font-style: italic; } .c-fn { color: var(--c-fn); }
+
+/* Zuordnung */
+.match { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 28px; }
+.match .col { display: grid; gap: 10px; align-content: start; }
+.mi {
+  display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 12px; border-radius: 12px; background: var(--card2);
+  border: 2px solid var(--line); cursor: pointer; text-align: left; font: 500 15px var(--f-body); color: var(--fg); width: 100%;
+}
+.mi:hover { border-color: var(--accent); }
+.mi.sel { border-color: var(--accent); background: var(--accent-soft); }
+.mi.solved { cursor: default; border-color: var(--hc); background: color-mix(in srgb, var(--hc) 16%, var(--card)); }
+.mi svg { flex: none; width: 46px; height: 46px; border-radius: 8px; }
+.mi code { font-size: .92em; }
+.shake { animation: shake .35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+/* Gruppenzuordnung */
+.pool, .bucket { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+.pool { min-height: 56px; padding: 10px; border: 2px dashed var(--line); border-radius: 12px; margin-bottom: 12px; }
+.buckets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.bwrap { border: 2px solid var(--line); border-radius: 14px; background: var(--card2); padding: 10px; cursor: pointer; min-width: 0; }
+.bwrap.hover { border-color: var(--accent); background: var(--accent-soft); }
+.bwrap h4 { margin: 0 0 8px; font: 700 15px var(--f-head); }
+.bwrap h4 small { font: 400 13px var(--f-body); color: var(--muted); display: block; }
+.bucket { min-height: 70px; }
+.card {
+  background: var(--card); border: 2px solid var(--line); border-radius: 10px; padding: 6px 10px; cursor: grab; font: 500 13.5px var(--f-mono);
+  color: var(--fg); text-align: left; max-width: 100%; overflow-wrap: anywhere;
+}
+.card:hover { border-color: var(--accent); }
+.card.sel { border-color: var(--accent); background: var(--accent-soft); }
+.card.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.card.right { border-color: var(--ok); background: var(--ok-soft); }
+
+/* Lückentext */
+.gaptext p { line-height: 2.1; }
+.gaptext .codebox { line-height: 2.2; }
+input.gap {
+  font: 500 14px var(--f-mono); color: var(--fg); background: var(--card); border: 0; border-bottom: 2px solid var(--accent);
+  border-radius: 6px 6px 0 0; padding: 2px 6px; margin: 0 2px; text-align: center; min-width: 3ch; max-width: 100%;
+}
+.codebox input.gap { background: #ffffff22; color: #FFFFFF; border-bottom-color: var(--c-kw); }
+input.gap.ok { border-bottom-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+input.gap.bad { border-bottom-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+input.gap.shown { border-bottom-style: dashed; }
+.codebox input.gap.ok { background: var(--ok-soft); color: var(--ok); }
+.codebox input.gap.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* Reihenfolge */
+.olist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.oitem { display: flex; align-items: center; gap: 8px; background: var(--code-bg); color: var(--code-fg); border: 2px solid transparent; border-radius: 10px; padding: 4px 8px 4px 14px; font: 400 14px var(--f-mono); }
+.oitem .txt { flex: 1; white-space: pre; overflow-x: auto; min-width: 0; padding: 4px 0; }
+.oitem.right { border-color: var(--ok); } .oitem.wrong { border-color: var(--bad); }
+.oitem .mv { display: flex; flex-direction: column; gap: 2px; }
+.mvb { background: #ffffff1f; color: var(--code-fg); border: 0; border-radius: 5px; width: 30px; height: 20px; cursor: pointer; font-size: 11px; line-height: 1; }
+.mvb:hover { background: var(--accent); color: var(--accent-ink); }
+
+/* Quiz */
+.qprog { display: flex; gap: 5px; margin-bottom: 12px; }
+.qprog i { flex: 1; height: 6px; border-radius: 4px; background: var(--line); }
+.qprog i.cur { background: var(--accent); } .qprog i.ok { background: var(--ok); } .qprog i.bad { background: var(--bad); }
+.q { font: 600 1.05rem var(--f-body); margin-bottom: 10px; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; border: 2px solid var(--line); background: var(--card2); border-radius: 12px; padding: 10px 14px; cursor: pointer; font: 500 15px var(--f-body); color: var(--fg); }
+.opt:hover:not([disabled]) { border-color: var(--accent); }
+.opt.ok { border-color: var(--ok); background: var(--ok-soft); } .opt.bad { border-color: var(--bad); background: var(--bad-soft); }
+.opt[disabled] { cursor: default; }
+.why { margin-top: 10px; padding: 10px 14px; border-radius: 10px; background: var(--card2); border-left: 4px solid var(--accent); }
+
+/* Wahrheitstabelle */
+.tt { border-collapse: separate; border-spacing: 0; width: 100%; max-width: 640px; font-size: 14px; }
+.tt th, .tt td { border-bottom: 1px solid var(--line); padding: 8px 8px; text-align: center; }
+.tt th { font: 600 12px var(--f-mono); color: var(--muted); vertical-align: bottom; }
+.tt td.given { font: 600 13px var(--f-mono); }
+.tv { min-width: 74px; border: 2px solid var(--line); border-radius: 8px; background: var(--card2); color: var(--muted); font: 600 13px var(--f-mono); cursor: pointer; padding: 6px 8px; }
+.tv.t { color: var(--ok); border-color: var(--ok); } .tv.f { color: var(--bad); border-color: var(--bad); }
+.tv.right { background: var(--ok-soft); } .tv.wrong { background: var(--bad-soft); }
+.scroll-x { overflow-x: auto; }
+
+/* Fehlersuche */
+.lines { margin: 0 0 12px; background: var(--code-bg); border-radius: 12px; padding: 8px; display: grid; gap: 2px; font: 400 13.5px/1.6 var(--f-mono); color: var(--code-fg); overflow-x: auto; }
+.ln { display: flex; gap: 12px; padding: 1px 8px; border-radius: 6px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; width: 100%; white-space: pre; }
+.ln:hover { background: #ffffff1a; }
+.ln .no { color: var(--c-com); width: 1.6ch; text-align: right; flex: none; user-select: none; }
+.ln.ok { background: color-mix(in srgb, var(--ok) 35%, transparent); } .ln.bad { background: color-mix(in srgb, var(--bad) 40%, transparent); }
+.ln.eof { font-style: italic; color: var(--c-com); }
+.errmsg { font: 500 13px var(--f-mono); background: var(--bad-soft); color: var(--bad); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+
+/* Welt */
+.world { display: block; width: 100%; height: auto; border-radius: 10px; border: 2px solid var(--line); background: #D98B5F; touch-action: manipulation; }
+.world .rover { transition: transform .28s ease; }
+.world.clickable .cell { fill: transparent; cursor: pointer; }
+.world.clickable .cell:hover { fill: #ffffff40; }
+.trace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; align-items: start; }
+.tcase { margin-bottom: 14px; }
+.tcase .tl { font: 600 12px var(--f-mono); color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+/* Labor */
+.lab { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.lab .task { margin: 0 0 10px; }
+.lab .concept { font: 600 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.editor { display: flex; background: var(--code-bg); border-radius: 12px; overflow: hidden; height: 300px; }
+.gutter { flex: none; width: 3.2em; padding: 12px 8px 12px 0; text-align: right; color: var(--c-com); font: 400 13.5px/1.6 var(--f-mono); overflow: hidden; user-select: none; background: #ffffff0d; }
+.gutter div { padding-right: 4px; border-right: 3px solid transparent; }
+.gutter div.err { color: #fff; background: var(--bad); border-right-color: #fff; }
+.gutter div.run { color: #fff; background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.editor textarea {
+  flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; color: var(--code-fg); padding: 12px 12px;
+  font: 400 13.5px/1.6 var(--f-mono); white-space: pre; overflow: auto; tab-size: 4;
+}
+.editor:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+.ctrl select { font: 500 13px var(--f-body); padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card2); color: var(--fg); }
+.status { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--card2); border-left: 4px solid var(--line); min-height: 3.2em; font-weight: 500; }
+.status.ok { border-left-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+.status.bad { border-left-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+.wtabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.wtab { border: 2px solid var(--line); border-radius: 8px; background: var(--card2); color: var(--fg); font: 600 12px var(--f-mono); padding: 5px 10px; cursor: pointer; }
+.wtab.sel { border-color: var(--accent); } .wtab.ok::after { content: " ✓"; color: var(--ok); } .wtab.bad::after { content: " ✗"; color: var(--bad); }
+.hintbox { margin-top: 10px; display: grid; gap: 6px; }
+.hintbox div { padding: 8px 12px; border-radius: 8px; background: var(--card2); border-left: 4px solid var(--hl-yellow); font-size: .94rem; }
+details.sol { margin-top: 10px; } details.sol summary { cursor: pointer; font-weight: 600; }
+.pick { margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+.save { margin-top: 30px; padding: 22px; border: 2px solid var(--line); border-radius: 18px; background: var(--card); scroll-margin-top: 64px; }
+.save h2 { font-size: 1.6rem; font-weight: 800; }
+.save .lead { color: var(--muted); max-width: 62ch; margin: 8px 0 16px; }
+.fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.field label { display: block; font: 600 12px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.field input { width: 100%; font: 500 15px var(--f-body); padding: 9px 12px; border-radius: 10px; border: 2px solid var(--line); background: var(--card2); color: var(--fg); min-height: 42px; }
+.btn.big { min-height: 46px; padding: 11px 22px; font-size: 15px; }
+.finish { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 20px; align-items: center; padding: 22px; border: 2px dashed var(--line); border-radius: 18px; margin-top: 30px; background: var(--card); }
+.finish.on { border-style: solid; border-color: var(--ok); }
+footer { margin-top: 36px; color: var(--muted); font-size: 13px; max-width: 70ch; }
+
+
+.ctwrap { margin-top: 10px; overflow-x: auto; }
+.ct { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.ct caption { text-align: left; font: 600 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 2px 0 6px; }
+.ct th { text-align: left; font: 600 11px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 4px 8px; border-bottom: 2px solid var(--line); }
+.ct td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: break-word; }
+.ct tr.row { cursor: pointer; }
+.ct tr.row:hover td { background: var(--card2); }
+.ct tr.ok td:last-child { color: var(--ok); font-weight: 700; } .ct tr.bad td:last-child { color: var(--bad); font-weight: 700; }
+.ct td.got { font-family: var(--f-mono); }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding-top: 20px; }
+  .st-head { grid-template-columns: 110px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .match { grid-template-columns: 1fr; }
+  .trace, .lab { grid-template-columns: 1fr; }
+  .finish { grid-template-columns: 90px minmax(0, 1fr); }
+  .fields { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tw { transform-box: fill-box; transform-origin: center; animation: tw 3s ease-in-out infinite; }
+  .tw1 { animation-delay: .5s; } .tw2 { animation-delay: 1.1s; } .tw3 { animation-delay: 1.7s; }
+  @keyframes tw { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(.55) rotate(25deg); opacity: .6; } }
+  .sp { transform-box: fill-box; transform-origin: center; animation: sp 2.4s ease-in-out infinite; }
+  .sp1 { animation-delay: .8s; } .sp2 { animation-delay: 1.5s; }
+  @keyframes sp { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(90deg) scale(1.3); } }
+  .bob { transform-box: fill-box; transform-origin: center; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.8px); } }
+  .bob.slow { animation: bobs 3.4s ease-in-out infinite; }
+  @keyframes bobs { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  .wheel { transform-box: fill-box; transform-origin: center; animation: spin 1.5s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { transform-box: view-box; animation: spin 16s linear infinite; }
+  .spin.rev { animation-direction: reverse; animation-duration: 11s; }
+  .spin.slow { animation-duration: 24s; }
+  .spin.gear { animation-duration: 3.4s; }
+  .spin.gear.rev { animation-duration: 2.6s; }
+  .breathe { transform-box: view-box; animation: breathe 4s ease-in-out infinite; }
+  @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.09); } }
+  .wob { transform-box: fill-box; transform-origin: center; animation: wob 3.2s ease-in-out infinite; }
+  @keyframes wob { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+  .march { animation: march 1.4s linear infinite; }
+  @keyframes march { to { stroke-dashoffset: -22; } }
+  .wig { transform-box: view-box; animation: wig 2.2s ease-in-out infinite; }
+  @keyframes wig { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
+  .draw { animation: draw 5s ease-in-out infinite; }
+  .draw.d2 { animation-delay: .6s; }
+  @keyframes draw { 0% { stroke-dasharray: 100 110; stroke-dashoffset: 104; } 30%, 80% { stroke-dasharray: 100 110; stroke-dashoffset: 0; } 100% { stroke-dasharray: 100 110; stroke-dashoffset: 104; } }
+  .blinkA { animation: blinkA 3s ease-in-out infinite; }
+  .blinkB { animation: blinkB 3s ease-in-out infinite; }
+  @keyframes blinkA { 0%, 40% { opacity: var(--hl-op, .7); } 55%, 90% { opacity: .12; } 100% { opacity: var(--hl-op, .7); } }
+  @keyframes blinkB { 0%, 40% { opacity: .12; } 55%, 90% { opacity: .6; } 100% { opacity: .12; } }
+  .glow { transform-box: view-box; animation: glow 4s ease-in-out infinite; }
+  @keyframes glow { 0%, 35% { transform: scale(.78); opacity: .12; } 48%, 82% { transform: scale(1.12); opacity: var(--hl-op, .7); } 100% { transform: scale(.78); opacity: .12; } }
+  .rays { animation: rays 4s ease-in-out infinite; }
+  @keyframes rays { 0%, 35% { opacity: 0; } 48%, 82% { opacity: 1; } 100% { opacity: 0; } }
+  .lever { transform-box: view-box; animation: lever 4s ease-in-out infinite; }
+  @keyframes lever { 0%, 25% { transform: rotate(0deg); } 40%, 82% { transform: rotate(27deg); } 96%, 100% { transform: rotate(0deg); } }
+  .fly { transform-box: fill-box; transform-origin: center; animation: fly 5s ease-in-out infinite; }
+  @keyframes fly {
+    0%, 8% { transform: translate(0, 0) scale(1); opacity: 1; }
+    52% { transform: translate(58px, -2px) scale(.72); opacity: 1; }
+    64% { transform: translate(68px, 0) scale(.3); opacity: 0; }
+    65%, 78% { transform: translate(0, 0) scale(1); opacity: 0; }
+    92%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
+  }
+  .pop { transform-box: fill-box; transform-origin: center; animation: pop 5s ease-out infinite; }
+  .pop1 { animation-delay: 0s; } .pop2 { animation-delay: .35s; } .pop3 { animation-delay: .7s; }
+  @keyframes pop { 0%, 55% { transform: scale(.2); opacity: 0; } 64%, 90% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+  .flick { animation: flick 2.2s steps(1, end) infinite; }
+  @keyframes flick { 0%, 62%, 70%, 100% { opacity: 1; } 64%, 68% { opacity: .15; } }
+  .dg { animation: dg 4s steps(1, end) infinite; }
+  .dg1 { animation-delay: 0s; } .dg2 { animation-delay: 1s; } .dg3 { animation-delay: 2s; } .dg4 { animation-delay: 3s; }
+  @keyframes dg { 0% { fill: var(--red-pen, #E63946); } 25%, 100% { fill: var(--ink, #1E293B); } }
+  .doodle.still *, .doodle.still { animation-play-state: paused !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<g id="deco-star"><path class="star-shape" d="M0,-6 L1.8,-1.8 L6.2,-1.6 L2.8,1.2 L4,5.8 L0,3.2 L-4,5.8 L-2.8,1.2 L-6.2,-1.6 L-1.8,-1.8 Z"/></g>
+<g id="deco-spark"><path d="M-5,-5 L5,5 M5,-5 L-5,5" class="red-line thin"/></g>
+<g id="rover-side">
+  <path class="hl-blue" d="M20,22 Q18,17 24,17 L72,18 Q80,18 79,25 L78,38 Q77,43 72,43 L24,42 Q19,42 19,37 Z"/>
+  <path class="hl-yellow" d="M36,6 L66,6 L72,18 L30,18 Z"/>
+  <path class="ink-bold" d="M16,22 Q16,16 22,16 L70,16 Q76,16 76,22 L76,35 Q76,40 71,40 L21,40 Q16,40 16,35 Z"/>
+  <path class="ink-detail" d="M24,16 L32,4 L64,4 L70,16"/>
+  <path class="ink-fine" d="M43,4 L41,16 M54,4 L54,16"/>
+  <path class="ink-detail" d="M76,27 L84,25 L84,7"/>
+  <rect class="ink-detail" x="78" y="0" width="14" height="9" rx="2"/>
+  <circle class="ink-detail" cx="92" cy="4.5" r="2"/>
+  <path class="ink-fine" d="M20,16 L14,5"/><circle class="ink-fine" cx="13" cy="4" r="1.6"/>
+  <g class="wheel">
+<circle class="fill-paper" cx="25" cy="47" r="9"/><circle class="ink-detail" cx="25" cy="47" r="2.5"/><path class="ink-fine" d="M25,40 L25,54 M18,47 L32,47"/>
+  </g>
+  <g class="wheel">
+<circle class="fill-paper" cx="47" cy="49" r="8"/><circle class="ink-detail" cx="47" cy="49" r="2.3"/><path class="ink-fine" d="M47,43 L47,55 M41,49 L53,49"/>
+  </g>
+  <g class="wheel">
+<circle class="fill-paper" cx="68" cy="47" r="9"/><circle class="ink-detail" cx="68" cy="47" r="2.5"/><path class="ink-fine" d="M68,40 L68,54 M61,47 L75,47"/>
+  </g>
+</g></defs></svg>
+<div class="wrap" id="wrapper"><div id="app"></div></div>
+<script>window.DOODLES={"hero": "<svg class=\"doodle\" viewBox=\"0 0 380 170\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-hero-mission\">\n  <path class=\"hl-orange\" d=\"M0,143 Q40,133 82,141 T162,139 T242,143 T322,137 T380,141 L380,170 L0,170 Z\" transform=\"translate(2,3)\"/>\n  <g class=\"breathe\" style=\"transform-origin:60px 32px\"><circle class=\"hl-yellow\" cx=\"62\" cy=\"34\" r=\"17\" transform=\"translate(3,2)\"/>\n  <circle class=\"ink-bold\" cx=\"60\" cy=\"32\" r=\"16\"/>\n  <path class=\"ink-fine\" d=\"M52,28 q4,-4 8,0 M62,40 q5,-2 8,2 M66,26 q3,2 2,5\"/><\/g>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(122,18) scale(1)\"/><\/g><g class=\"tw tw1\"><use href=\"#deco-star\" transform=\"translate(214,28) scale(0.9)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(310,16) scale(1.1)\"/><\/g><g class=\"tw tw3\"><use href=\"#deco-star\" transform=\"translate(352,62) scale(0.8)\"/><\/g><g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(20,76) scale(0.8)\"/><\/g>\n  <g class=\"sp sp0\"><use href=\"#deco-spark\" transform=\"translate(176,22) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(268,46) scale(0.8)\"/><\/g>\n  <path class=\"ink-bold\" d=\"M0,138 Q40,128 82,136 T162,134 T242,138 T322,132 T380,136\"/>\n  <path class=\"hl-orange\" d=\"M24,138 L50,94 L68,119 L90,86 L118,137 Z\" style=\"fill:#B9814C\" transform=\"translate(3,2)\"/>\n  <path class=\"ink-bold\" d=\"M22,137 L48,92 L66,118 L88,84 L116,136\"/>\n  <path class=\"ink-fine\" d=\"M48,92 L52,112 M88,84 L84,106 M96,100 L100,118 M36,118 L40,132\"/>\n  <g class=\"bob\"><use href=\"#rover-side\" transform=\"translate(150,62) scale(1.35)\"/><\/g>\n  <path class=\"ink-detail\" d=\"M286,100 q10,-10 20,0\" transform=\"translate(-8,-22) scale(.9)\"/>\n  <path class=\"ink-fine\" d=\"M279,66 q9,-9 18,0 M273,58 q14,-14 30,0\" transform=\"translate(-1,0)\"/>\n  <ellipse class=\"hl-pink\" cx=\"290\" cy=\"130\" rx=\"12\" ry=\"8\" transform=\"translate(3,2)\"/><ellipse class=\"ink-bold\" cx=\"288\" cy=\"129\" rx=\"12\" ry=\"8\"/>\n  <ellipse class=\"hl-blue\" cx=\"310\" cy=\"127\" rx=\"10\" ry=\"7\" transform=\"translate(2,3)\"/><ellipse class=\"ink-bold\" cx=\"309\" cy=\"125\" rx=\"10\" ry=\"7\"/>\n  <ellipse class=\"hl-yellow\" cx=\"300\" cy=\"115\" rx=\"9\" ry=\"6.5\" transform=\"translate(2,2)\"/><ellipse class=\"ink-bold\" cx=\"299\" cy=\"114\" rx=\"9\" ry=\"6.5\"/>\n  <path class=\"red-line march\" d=\"M269,128 Q268,100 300,98 Q334,100 332,128 Q330,144 300,145 Q270,144 269,128\" style=\"stroke-dasharray:7 5\"/>\n  <path class=\"mark-x\" d=\"M232,121 L248,137 M248,121 L232,137\"/>\n  <path class=\"ink-detail march\" d=\"M236,108 Q262,80 290,92\" style=\"stroke-dasharray:6 5\"/><path class=\"ink-detail\" d=\"M283,86 L291,92 L282,97\"/>\n  <g class=\"wob\"><text class=\"note\" x=\"282\" y=\"84\" transform=\"rotate(-6 282 84)\">analysiere!<\/text><\/g>\n<\/g><\/svg>", "s1": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-s7-parameter\">\n  <rect class=\"hl-orange\" x=\"72\" y=\"68\" width=\"76\" height=\"56\" rx=\"6\" transform=\"translate(4,3)\"/>\n  <path class=\"ink-bold\" d=\"M82,68 L92,40 L128,40 L138,68\"/>\n  <rect class=\"fill-paper\" x=\"68\" y=\"66\" width=\"76\" height=\"58\" rx=\"6\"/>\n  <text class=\"mono\" x=\"73\" y=\"86\" style=\"font-size:8.5px\">fahreSchritte<\/text>\n  <g class=\"spin gear\" style=\"transform-origin:92px 106px\"><circle class=\"ink-detail\" cx=\"92\" cy=\"106\" r=\"9\"/><circle class=\"ink-detail\" cx=\"92\" cy=\"106\" r=\"3\"/><path class=\"ink-fine\" d=\"M92,97 L92,115 M83,106 L101,106 M85.6,99.6 L98.4,112.4 M98.4,99.6 L85.6,112.4\"/><\/g>\n  <g class=\"spin gear rev\" style=\"transform-origin:116px 102px\"><circle class=\"ink-detail\" cx=\"116\" cy=\"102\" r=\"7\"/><circle class=\"ink-detail\" cx=\"116\" cy=\"102\" r=\"2.5\"/><path class=\"ink-fine\" d=\"M116,95 L116,109 M109,102 L123,102\"/><\/g>\n  <path class=\"ink-bold\" d=\"M144,100 L168,100\"/>\n  <g class=\"fly\"><g transform=\"rotate(-12 34 40)\">\n    <rect class=\"hl-yellow\" x=\"14\" y=\"22\" width=\"40\" height=\"36\" rx=\"5\" transform=\"translate(3,3)\"/>\n    <rect class=\"fill-paper\" x=\"12\" y=\"20\" width=\"40\" height=\"36\" rx=\"5\"/>\n    <text class=\"note ink-text\" x=\"24\" y=\"49\" style=\"font-size:30px\">3<\/text>\n  <\/g><\/g>\n  <path class=\"ink-detail\" d=\"M56,50 Q80,44 94,38\" style=\"stroke-dasharray:6 5\"/><path class=\"ink-detail\" d=\"M86,31 L96,37 L86,44\"/>\n  <path class=\"ink-fine\" d=\"M110,40 L110,28\"/><rect class=\"fill-paper\" x=\"92\" y=\"12\" width=\"52\" height=\"16\" rx=\"3\" transform=\"rotate(4 118 20)\"/>\n  <text class=\"mono\" x=\"97\" y=\"24\" style=\"font-size:9px\" transform=\"rotate(4 118 20)\">pAnzahl<\/text>\n  <ellipse class=\"ink-detail pop pop1\" cx=\"108\" cy=\"142\" rx=\"5\" ry=\"3.5\"/><ellipse class=\"ink-detail pop pop2\" cx=\"130\" cy=\"140\" rx=\"5\" ry=\"3.5\"/><ellipse class=\"ink-detail pop pop3\" cx=\"152\" cy=\"142\" rx=\"5\" ry=\"3.5\"/>\n  <path class=\"mark-x\" d=\"M168,134 L182,148 M182,134 L168,148\"/>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(24,112) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(176,60) scale(0.9)\"/><\/g><g class=\"tw tw1\"><use href=\"#deco-star\" transform=\"translate(186,22) scale(0.8)\"/><\/g>\n<\/g><\/svg>", "s2": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-s2-parameter\">\n\n  <rect class=\"hl-green\" x=\"80\" y=\"62\" width=\"76\" height=\"62\" rx=\"6\" transform=\"translate(4,3)\"/>\n  <path class=\"ink-bold\" d=\"M90,62 L100,38 L136,38 L146,62\"/>\n  <rect class=\"fill-paper\" x=\"76\" y=\"60\" width=\"76\" height=\"62\" rx=\"6\"/>\n  <text class=\"mono\" x=\"80\" y=\"78\" style=\"font-size:8px\">fahreStrecke<\/text>\n  <g class=\"spin gear\" style=\"transform-origin:100px 102px\"><circle class=\"ink-detail\" cx=\"100\" cy=\"102\" r=\"9\"/><circle class=\"ink-detail\" cx=\"100\" cy=\"102\" r=\"3\"/><path class=\"ink-fine\" d=\"M100,93 L100,111 M91,102 L109,102 M93.6,95.6 L106.4,108.4 M106.4,95.6 L93.6,108.4\"/><\/g>\n  <g class=\"spin gear rev\" style=\"transform-origin:126px 98px\"><circle class=\"ink-detail\" cx=\"126\" cy=\"98\" r=\"7\"/><circle class=\"ink-detail\" cx=\"126\" cy=\"98\" r=\"2.5\"/><path class=\"ink-fine\" d=\"M126,91 L126,105 M119,98 L133,98\"/><\/g>\n  <path class=\"ink-bold\" d=\"M152,96 L176,96\"/><path class=\"ink-detail\" d=\"M170,90 L177,96 L170,102\"/>\n  <g class=\"fly\"><g transform=\"rotate(-10 30 34)\">\n    <rect class=\"hl-yellow\" x=\"10\" y=\"16\" width=\"38\" height=\"34\" rx=\"5\" transform=\"translate(3,3)\"/>\n    <rect class=\"fill-paper\" x=\"8\" y=\"14\" width=\"38\" height=\"34\" rx=\"5\"/>\n    <text class=\"note ink-text\" x=\"20\" y=\"42\" style=\"font-size:28px\">3<\/text>\n  <\/g><\/g>\n  <g class=\"fly\" style=\"animation-delay:-1.2s\"><g transform=\"rotate(6 36 82)\">\n    <rect class=\"hl-pink\" x=\"4\" y=\"68\" width=\"56\" height=\"26\" rx=\"5\" transform=\"translate(3,3)\"/>\n    <rect class=\"fill-paper\" x=\"2\" y=\"66\" width=\"56\" height=\"26\" rx=\"5\"/>\n    <text class=\"mono\" x=\"7\" y=\"83\" style=\"font-size:11px\">\"links\"<\/text>\n  <\/g><\/g>\n  <path class=\"ink-detail\" d=\"M50,34 Q76,34 92,46\" style=\"stroke-dasharray:6 5\"/><path class=\"ink-detail\" d=\"M84,40 L93,47 L83,52\"/>\n  <path class=\"ink-detail\" d=\"M70,80 Q74,84 76,86\" style=\"stroke-dasharray:5 4\"/>\n  <rect class=\"fill-paper\" x=\"98\" y=\"14\" width=\"50\" height=\"15\" rx=\"3\" transform=\"rotate(3 123 21)\"/>\n  <text class=\"mono\" x=\"102\" y=\"25\" style=\"font-size:8.5px\" transform=\"rotate(3 123 21)\">pAnzahl<\/text>\n  <rect class=\"fill-paper\" x=\"96\" y=\"132\" width=\"68\" height=\"15\" rx=\"3\" transform=\"rotate(-2 130 140)\"/>\n  <text class=\"mono\" x=\"100\" y=\"143\" style=\"font-size:8.5px\" transform=\"rotate(-2 130 140)\">pRichtung<\/text>\n  <path class=\"ink-fine\" d=\"M118,38 L118,29 M130,122 L130,132\"/>\n  <path class=\"mark-x\" d=\"M168,132 L182,146 M182,132 L168,146\"/>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(24,126) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(180,60) scale(0.9)\"/><\/g><g class=\"tw tw1\"><use href=\"#deco-star\" transform=\"translate(186,20) scale(0.8)\"/><\/g>\n\n<\/g><\/svg>", "s3": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-s3-boolean\">\n\n  <path class=\"hl-green\" d=\"M0,128 Q30,120 60,127 T120,126 T200,128 L200,160 L0,160 Z\" transform=\"translate(2,3)\"/>\n  <path class=\"ink-bold\" d=\"M0,126 Q30,118 60,125 T120,124 T200,126\"/>\n  <g class=\"bob\"><use href=\"#rover-side\" transform=\"translate(6,76) scale(.9)\"/><\/g>\n  <g class=\"wob\"><path class=\"hl-yellow\" d=\"M18,58 Q18,44 34,44 L64,44 Q80,44 80,58 Q80,70 66,70 L48,70 L38,80 L40,70 Q18,70 18,58 Z\" transform=\"translate(3,3)\"/>\n  <path class=\"ink-detail\" d=\"M16,56 Q16,42 32,42 L62,42 Q78,42 78,56 Q78,68 64,68 L46,68 L36,78 L38,68 Q16,68 16,56 Z\" style=\"fill:#fff\"/>\n  <text class=\"mono\" x=\"22\" y=\"60\" style=\"font-size:9px\">frei?<\/text><\/g>\n  <rect class=\"hl-blue\" x=\"124\" y=\"26\" width=\"38\" height=\"84\" rx=\"8\" transform=\"translate(4,3)\"/>\n  <rect class=\"fill-paper\" x=\"120\" y=\"24\" width=\"38\" height=\"84\" rx=\"8\"/>\n  <path class=\"ink-bold\" d=\"M139,108 L139,126\"/><path class=\"ink-detail\" d=\"M126,126 L152,126\"/>\n  <circle class=\"ink-detail\" cx=\"139\" cy=\"42\" r=\"9\"/><circle class=\"ink-detail\" cx=\"139\" cy=\"66\" r=\"9\"/>\n  <circle class=\"hl-green glow\" cx=\"139\" cy=\"90\" r=\"9\" transform=\"translate(1,1)\"/><circle class=\"ink-detail\" cx=\"139\" cy=\"90\" r=\"9\"/>\n  <path class=\"ink-fine\" d=\"M134,38 L144,46 M144,38 L134,46 M134,62 L144,70 M144,62 L134,70\"/>\n  <path class=\"ink-detail march\" d=\"M84,58 Q104,50 116,60\" style=\"stroke-dasharray:6 5\"/><path class=\"ink-detail\" d=\"M109,53 L117,60 L108,66\"/>\n  <g class=\"pop pop1\"><rect class=\"hl-green\" x=\"150\" y=\"118\" width=\"44\" height=\"22\" rx=\"4\" transform=\"translate(2,2)\"/><rect class=\"fill-paper\" x=\"148\" y=\"116\" width=\"44\" height=\"22\" rx=\"4\"/>\n  <text class=\"mono\" x=\"153\" y=\"132\" style=\"font-size:11px\">true<\/text><\/g>\n  <path class=\"red-line\" d=\"M92,22 Q106,14 120,18\" /><path class=\"red-line thin\" d=\"M104,26 L110,32 M110,26 L104,32\"/>\n  <text class=\"note\" x=\"86\" y=\"16\" style=\"font-size:12px\">return!<\/text>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(176,30) scale(0.9)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(24,22) scale(0.8)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(8,120) scale(0.8)\"/><\/g>\n\n<\/g><\/svg>", "s4": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-s4-int\">\n\n  <rect class=\"hl-orange\" x=\"14\" y=\"50\" width=\"86\" height=\"62\" rx=\"6\" transform=\"translate(4,3)\"/>\n  <rect class=\"fill-paper\" x=\"10\" y=\"48\" width=\"86\" height=\"62\" rx=\"6\"/>\n  <text class=\"mono\" x=\"14\" y=\"64\" style=\"font-size:7.5px\">schritteBisHuegel<\/text>\n  <rect class=\"ink-detail\" x=\"22\" y=\"74\" width=\"62\" height=\"26\" rx=\"4\" style=\"fill:#fff\"/>\n  <path class=\"ink-fine\" d=\"M43,74 L43,100 M64,74 L64,100\"/>\n  <text class=\"note ink-text\" x=\"27\" y=\"95\" style=\"font-size:20px\">0<\/text>\n  <text class=\"note ink-text\" x=\"47\" y=\"95\" style=\"font-size:20px\">1<\/text>\n  <g class=\"pop pop1\"><text class=\"note\" x=\"68\" y=\"95\" style=\"font-size:20px;fill:#C2461E\">3<\/text><\/g>\n  <g class=\"spin gear\" style=\"transform-origin:112px 84px\"><circle class=\"ink-detail\" cx=\"112\" cy=\"84\" r=\"8\"/><circle class=\"ink-detail\" cx=\"112\" cy=\"84\" r=\"2.5\"/><path class=\"ink-fine\" d=\"M112,76 L112,92 M104,84 L120,84\"/><\/g>\n  <path class=\"ink-bold\" d=\"M96,96 L128,96\"/>\n  <g class=\"fly\"><g transform=\"rotate(8 150 96)\">\n    <rect class=\"hl-yellow\" x=\"130\" y=\"74\" width=\"46\" height=\"42\" rx=\"5\" transform=\"translate(3,3)\"/>\n    <rect class=\"fill-paper\" x=\"128\" y=\"72\" width=\"46\" height=\"42\" rx=\"5\"/>\n    <text class=\"note ink-text\" x=\"141\" y=\"104\" style=\"font-size:32px\">3<\/text>\n  <\/g><\/g>\n  <path class=\"ink-detail march\" d=\"M54,48 Q60,24 100,22 Q140,22 150,66\" style=\"stroke-dasharray:6 5\"/><path class=\"ink-detail\" d=\"M144,60 L150,68 L156,60\"/>\n  <text class=\"note\" x=\"86\" y=\"16\" style=\"font-size:13px\">return anzahl;<\/text>\n  <path class=\"ink-bold\" d=\"M4,128 Q40,120 80,127 T160,126 T200,128\"/>\n  <g class=\"bob\"><use href=\"#rover-side\" transform=\"translate(112,128) scale(.46)\"/><\/g>\n  <path class=\"mark-x\" d=\"M18,128 L30,140 M30,128 L18,140\"/>\n  <ellipse class=\"ink-detail pop pop2\" cx=\"60\" cy=\"140\" rx=\"5\" ry=\"3.5\"/><ellipse class=\"ink-detail pop pop3\" cx=\"78\" cy=\"140\" rx=\"5\" ry=\"3.5\"/>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(24,30) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(184,30) scale(0.9)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(186,134) scale(0.8)\"/><\/g>\n\n<\/g><\/svg>", "s5": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-s5-zerlegen\">\n\n  <rect class=\"hl-blue\" x=\"52\" y=\"14\" width=\"96\" height=\"28\" rx=\"5\" transform=\"translate(4,3)\"/>\n  <rect class=\"fill-paper\" x=\"48\" y=\"12\" width=\"96\" height=\"28\" rx=\"5\"/>\n  <text class=\"note ink-text\" x=\"62\" y=\"32\" style=\"font-size:15px\">Mission<\/text>\n  <path class=\"ink-detail march\" d=\"M72,40 L72,60 M96,40 L96,60 M120,40 L120,60\" style=\"stroke-dasharray:5 4\"/>\n  <g class=\"bob\"><rect class=\"hl-yellow\" x=\"12\" y=\"62\" width=\"52\" height=\"34\" rx=\"5\" transform=\"translate(3,3)\"/>\n  <rect class=\"fill-paper\" x=\"10\" y=\"60\" width=\"52\" height=\"34\" rx=\"5\"/>\n  <text class=\"mono\" x=\"14\" y=\"74\" style=\"font-size:7.5px\">erkunde<\/text><text class=\"mono\" x=\"14\" y=\"86\" style=\"font-size:7.5px\">Reihe(n)<\/text><\/g>\n  <g class=\"bob slow\"><rect class=\"hl-green\" x=\"72\" y=\"62\" width=\"52\" height=\"34\" rx=\"5\" transform=\"translate(3,3)\"/>\n  <rect class=\"fill-paper\" x=\"70\" y=\"60\" width=\"52\" height=\"34\" rx=\"5\"/>\n  <text class=\"mono\" x=\"74\" y=\"74\" style=\"font-size:7.5px\">wende<\/text><text class=\"mono\" x=\"74\" y=\"86\" style=\"font-size:7.5px\">NachUnten<\/text><\/g>\n  <g class=\"bob\"><rect class=\"hl-pink\" x=\"132\" y=\"62\" width=\"52\" height=\"34\" rx=\"5\" transform=\"translate(3,3)\"/>\n  <rect class=\"fill-paper\" x=\"130\" y=\"60\" width=\"52\" height=\"34\" rx=\"5\"/>\n  <text class=\"mono\" x=\"134\" y=\"74\" style=\"font-size:7.5px\">mission<\/text><text class=\"mono\" x=\"134\" y=\"86\" style=\"font-size:7.5px\">Erfuellt()<\/text><\/g>\n  <path class=\"ink-detail\" d=\"M36,98 Q36,118 60,120 M96,98 L96,118 M156,98 Q156,118 132,120\" />\n  <rect class=\"hl-orange\" x=\"62\" y=\"116\" width=\"72\" height=\"26\" rx=\"5\" transform=\"translate(3,3)\"/>\n  <rect class=\"fill-paper\" x=\"60\" y=\"114\" width=\"72\" height=\"26\" rx=\"5\"/>\n  <text class=\"note ink-text\" x=\"70\" y=\"133\" style=\"font-size:14px\">true / false<\/text>\n  <path class=\"red-line\" d=\"M48,148 Q96,154 144,148\"/>\n  <path class=\"mark-x\" d=\"M168,122 L182,136 M182,122 L168,136\"/>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(18,28) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(178,24) scale(0.9)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(176,148) scale(0.8)\"/><\/g>\n\n<\/g><\/svg>", "ex": "<svg class=\"doodle\" viewBox=\"0 0 200 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-expert\">\n\n  <path class=\"hl-blue\" d=\"M10,140 L80,44 L112,92 L134,60 L194,140 Z\" transform=\"translate(4,4)\"/>\n  <path class=\"ink-bold\" d=\"M8,138 L78,42 L110,90 L132,58 L192,138 Z\"/>\n  <path class=\"ink-fine\" d=\"M78,42 L84,62 M132,58 L128,80 M96,64 L100,80 M58,72 L64,90\"/>\n  <path class=\"ink-bold\" d=\"M78,42 L78,16\"/>\n  <g class=\"wob\" style=\"transform-origin:78px 20px\"><path class=\"hl-yellow\" d=\"M79,16 L108,24 L79,32 Z\" transform=\"translate(2,2)\"/><path class=\"ink-bold\" d=\"M78,16 L106,24 L78,32\"/><\/g>\n  <path class=\"ink-detail march\" d=\"M20,138 Q40,120 36,106 T64,80 T74,52\" style=\"stroke-dasharray:6 5\"/>\n  <g class=\"bob\"><use href=\"#rover-side\" transform=\"translate(112,100) scale(.5)\"/><\/g>\n  <text class=\"note\" x=\"104\" y=\"34\" style=\"font-size:16px\">Expert<\/text>\n  <path class=\"red-line\" d=\"M102,38 Q124,44 148,38\"/>\n  <path class=\"mark-x\" d=\"M8,146 L22,160 M22,146 L8,160\"/>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(176,30) scale(1.3)\"/><\/g><g class=\"tw tw1\"><use href=\"#deco-star\" transform=\"translate(158,12) scale(0.9)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(188,70) scale(0.9)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(30,40) scale(0.9)\"/><\/g>\n\n<\/g><\/svg>", "trophy": "<svg class=\"doodle\" viewBox=\"0 0 160 160\" role=\"img\" aria-hidden=\"true\" focusable=\"false\">\n<g id=\"doodle-trophy\">\n  <g class=\"wig\" style=\"transform-origin:80px 132px\"><path class=\"hl-yellow\" d=\"M44,32 L116,32 Q118,86 80,98 Q42,86 44,32 Z\" transform=\"translate(4,4)\"/>\n  <path class=\"ink-bold\" d=\"M42,30 L118,30 Q120,84 80,96 Q40,84 42,30 Z\"/>\n  <path class=\"ink-bold\" d=\"M42,40 Q14,40 18,62 Q22,78 48,76 M118,40 Q146,40 142,62 Q138,78 112,76\"/>\n  <path class=\"ink-bold\" d=\"M80,96 L80,116 M58,132 L102,132 L98,116 L62,116 Z\"/><\/g>\n  <g class=\"tw tw0\"><use href=\"#deco-star\" transform=\"translate(80,58) scale(2.6)\"/><\/g>\n  <g class=\"tw tw1\"><use href=\"#deco-star\" transform=\"translate(24,24) scale(1)\"/><\/g><g class=\"tw tw2\"><use href=\"#deco-star\" transform=\"translate(138,22) scale(1.1)\"/><\/g><g class=\"sp sp0\"><use href=\"#deco-spark\" transform=\"translate(20,100) scale(1)\"/><\/g><g class=\"sp sp1\"><use href=\"#deco-spark\" transform=\"translate(142,108) scale(1)\"/><\/g>\n  <text class=\"note\" x=\"40\" y=\"156\" style=\"font-size:20px\">Geschafft!<\/text>\n<\/g><\/svg>"};</script>
+<script>
+/* Mini-Java-Interpreter für den Marsrover (Methoden, Parameter, Rückgabewerte, if, while, for) */
+(function (root) {
+  'use strict';
+
+  class JErr extends Error {
+    constructor(line, msg) { super(msg); this.line = line; }
+  }
+  const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+  const AUFTRAEGE = { fahre: 0, drehe: 1, setzeMarke: 0, entferneMarke: 0, analysiereGestein: 0 };
+  const ANFRAGEN = { gesteinVorhanden: 0, markeVorhanden: 0, huegelVorhanden: 1 };
+  const isBuiltin = n => n in AUFTRAEGE || n in ANFRAGEN;
+
+  /* ---------- Tokenizer ---------- */
+  function tokenize(src) {
+    const toks = []; let i = 0, line = 1; const n = src.length;
+    while (i < n) {
+      const c = src[i];
+      if (c === '\n') { line++; i++; continue; }
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === '/' && src[i + 1] === '/') { while (i < n && src[i] !== '\n') i++; continue; }
+      if (c === '/' && src[i + 1] === '*') {
+        i += 2;
+        while (i < n && !(src[i] === '*' && src[i + 1] === '/')) { if (src[i] === '\n') line++; i++; }
+        i += 2; continue;
+      }
+      if (/[A-Za-z_ÄÖÜäöüß]/.test(c)) {
+        let j = i; while (j < n && /[A-Za-z0-9_ÄÖÜäöüß]/.test(src[j])) j++;
+        toks.push({ t: 'id', v: src.slice(i, j), line }); i = j; continue;
+      }
+      if (/[0-9]/.test(c)) {
+        let j = i; while (j < n && /[0-9]/.test(src[j])) j++;
+        toks.push({ t: 'num', v: +src.slice(i, j), line }); i = j; continue;
+      }
+      if (c === '"') {
+        let j = i + 1; while (j < n && src[j] !== '"' && src[j] !== '\n') j++;
+        if (src[j] !== '"') throw new JErr(line, 'Das Anführungszeichen " zum Schließen des Textes fehlt (unclosed string literal)');
+        toks.push({ t: 'str', v: src.slice(i + 1, j), line }); i = j + 1; continue;
+      }
+      const two = src.substr(i, 2);
+      if (['&&', '||', '==', '!=', '<=', '>=', '++', '--', '+=', '-='].includes(two)) { toks.push({ t: 'op', v: two, line }); i += 2; continue; }
+      if ('(){};,!<>=+-*/%'.includes(c)) { toks.push({ t: 'op', v: c, line }); i++; continue; }
+      throw new JErr(line, "Unbekanntes Zeichen '" + c + "'");
+    }
+    toks.push({ t: 'eof', v: '', line });
+    return toks;
+  }
+
+  /* ---------- Parser ---------- */
+  function makeParser(src) {
+    const toks = tokenize(src); let p = 0;
+    const cur = () => toks[p];
+    const prevLine = () => (p > 0 ? toks[p - 1].line : toks[0].line);
+    const isOp = v => cur().t === 'op' && cur().v === v;
+    const isId = v => cur().t === 'id' && cur().v === v;
+    const fail = (line, msg) => { throw new JErr(line, msg); };
+    const EOFMSG = 'Dateiende erreicht: Es fehlt eine schließende Klammer (reached end of file while parsing)';
+
+    function expect(v) {
+      if (isOp(v)) return toks[p++];
+      if (cur().t === 'eof') fail(cur().line, EOFMSG);
+      const msgs = {
+        ';': ["';' erwartet: Am Ende der Anweisung fehlt ein Semikolon", prevLine()],
+        ')': ["')' erwartet: Eine Klammer wurde nicht geschlossen", cur().line],
+        '(': ["'(' erwartet: Hinter dem Namen fehlen die runden Klammern", cur().line],
+        '{': ["'{' erwartet: Hier beginnt ein Block mit einer geschweiften Klammer", cur().line],
+        '}': ["'}' erwartet", cur().line],
+        '=': ["'=' erwartet", cur().line]
+      };
+      const m = msgs[v] || ["'" + v + "' erwartet", cur().line];
+      fail(m[1], m[0]);
+    }
+    function expectId(what) {
+      const t = cur();
+      if (t.t !== 'id') fail(t.line, what + ' erwartet');
+      p++; return t;
+    }
+
+    function block() {
+      const open = expect('{'); const body = [];
+      while (!isOp('}')) {
+        if (cur().t === 'eof') fail(cur().line, 'Dateiende erreicht: Die Klammer { aus Zeile ' + open.line + ' wird nie geschlossen, es fehlt ein } (reached end of file while parsing)');
+        body.push(stmt());
+      }
+      const close = expect('}');
+      return { k: 'block', body, line: open.line, endLine: close.line };
+    }
+
+    function update() {
+      const nm = expectId('Name der Zählvariablen');
+      const t = cur();
+      if (t.t === 'op' && (t.v === '++' || t.v === '--')) { p++; return { k: 'assign', name: nm.v, op: t.v, e: null, line: t.line }; }
+      if (t.t === 'op' && (t.v === '+=' || t.v === '-=' || t.v === '=')) { p++; return { k: 'assign', name: nm.v, op: t.v, e: expr(), line: t.line }; }
+      fail(t.line, 'Im dritten Teil der for-Schleife fehlt die Veränderung der Zählvariablen (z. B. i++)');
+    }
+
+    function stmt() {
+      const t = cur();
+      if (t.t === 'op' && t.v === '{') return block();
+      if (t.t === 'op' && t.v === ';') { p++; return { k: 'block', body: [], line: t.line }; }
+      if (t.t === 'id') {
+        if (t.v === 'if') {
+          p++; expect('('); const c = expr(); expect(')'); const th = stmt(); let el = null;
+          if (isId('else')) { p++; el = stmt(); }
+          return { k: 'if', c, th, el, line: t.line };
+        }
+        if (t.v === 'else') fail(t.line, "'else' ohne passendes 'if' (illegal start of expression)");
+        if (t.v === 'while') {
+          p++; expect('('); const c = expr(); expect(')'); const body = stmt();
+          return { k: 'while', c, body, line: t.line };
+        }
+        if (t.v === 'for') {
+          p++; expect('(');
+          if (!isId('int')) fail(cur().line, "Die Zählvariable wird mit 'int' deklariert, z. B. for (int i = 0; ...)");
+          p++; const nm = expectId('Name der Zählvariablen'); expect('=');
+          const init = expr(); expect(';'); const c = expr(); expect(';');
+          const upd = update(); expect(')'); const body = stmt();
+          return { k: 'for', name: nm.v, init, c, upd, body, line: t.line };
+        }
+        if (t.v === 'return') {
+          p++; let e = null;
+          if (!isOp(';')) e = expr();
+          expect(';');
+          return { k: 'return', e, line: t.line };
+        }
+        if (t.v === 'int' || t.v === 'String' || t.v === 'boolean') {
+          p++; const nm = expectId('Name der Variablen'); let e = null;
+          if (isOp('=')) { p++; e = expr(); }
+          expect(';');
+          return { k: 'decl', type: t.v, name: nm.v, e, line: t.line };
+        }
+        const nx = toks[p + 1];
+        if (nx.t === 'op' && nx.v === '(') { const e = callExpr(); expect(';'); return { k: 'expr', e, line: t.line }; }
+        if (nx.t === 'op' && ['=', '++', '--', '+=', '-='].includes(nx.v)) {
+          p += 2;
+          const e = (nx.v === '++' || nx.v === '--') ? null : expr();
+          expect(';');
+          return { k: 'assign', name: t.v, op: nx.v, e, line: t.line };
+        }
+        fail(t.line, "Mit '" + t.v + "' kann der Compiler hier nichts anfangen. Meinst du einen Methodenaufruf wie " + t.v + "(); ?");
+      }
+      fail(t.line, t.t === 'eof' ? EOFMSG : "Unerwartetes Zeichen '" + t.v + "' (illegal start of expression)");
+    }
+
+    function callExpr() {
+      const t = cur(); p++; expect('(');
+      const args = [];
+      if (!isOp(')')) { for (;;) { args.push(expr()); if (isOp(',')) { p++; continue; } break; } }
+      expect(')');
+      return { k: 'call', name: t.v, args, line: t.line };
+    }
+
+    function bin(next, ops) {
+      return function () {
+        let l = next();
+        while (cur().t === 'op' && ops.includes(cur().v)) {
+          const o = cur(); p++; const r = next();
+          l = { k: 'bin', op: o.v, l, r, line: o.line };
+        }
+        return l;
+      };
+    }
+    function unary() {
+      if (isOp('!')) { const t = cur(); p++; return { k: 'not', e: unary(), line: t.line }; }
+      if (isOp('-')) { const t = cur(); p++; return { k: 'neg', e: unary(), line: t.line }; }
+      return primary();
+    }
+    function primary() {
+      const t = cur();
+      if (t.t === 'num') { p++; return { k: 'num', v: t.v, line: t.line }; }
+      if (t.t === 'str') { p++; return { k: 'str', v: t.v, line: t.line }; }
+      if (t.t === 'id') {
+        if (t.v === 'true' || t.v === 'false') { p++; return { k: 'bool', v: t.v === 'true', line: t.line }; }
+        if (toks[p + 1].t === 'op' && toks[p + 1].v === '(') return callExpr();
+        p++; return { k: 'var', name: t.v, line: t.line };
+      }
+      if (isOp('(')) { p++; const e = expr(); expect(')'); return e; }
+      if (t.t === 'eof') fail(t.line, EOFMSG);
+      fail(t.line, "Hier wird ein Wert oder eine Bedingung erwartet, nicht '" + t.v + "'");
+    }
+    const mul = bin(unary, ['*', '/', '%']);
+    const add = bin(mul, ['+', '-']);
+    const rel = bin(add, ['<', '>', '<=', '>=']);
+    const eq = bin(rel, ['==', '!=']);
+    const and = bin(eq, ['&&']);
+    const expr = bin(and, ['||']);
+
+    function methodDef() {
+      const first = cur();
+      if (isId('public')) p++;
+      if (!(isId('void') || isId('int') || isId('String') || isId('boolean'))) fail(cur().line, "Methodenkopf erwartet, z. B. public void meineMethode() oder public int zaehle() (hier steht '" + cur().v + "')");
+      const ret = cur().v; p++;
+      const nm = expectId('Name der Methode');
+      expect('(');
+      const params = [];
+      if (!isOp(')')) {
+        for (;;) {
+          const ty = cur();
+          if (!(ty.t === 'id' && (ty.v === 'int' || ty.v === 'String' || ty.v === 'boolean'))) fail(ty.line, 'Vor dem Namen des Parameters fehlt der Datentyp (int, boolean oder String)');
+          p++; const pn = expectId('Name des Parameters');
+          params.push({ type: ty.v, name: pn.v });
+          if (isOp(',')) { p++; continue; }
+          break;
+        }
+      }
+      expect(')');
+      const body = block();
+      return { name: nm.v, params, body, ret, line: first.line };
+    }
+
+    return {
+      program() {
+        const methods = [];
+        while (cur().t !== 'eof') {
+          if (isOp('}')) fail(cur().line, "Dieses } hat keine passende öffnende Klammer { (class, interface, or enum expected)");
+          methods.push(methodDef());
+        }
+        validate(methods);
+        return { methods };
+      },
+      expression() {
+        const e = expr();
+        if (cur().t !== 'eof') fail(cur().line, "Unerwartetes '" + cur().v + "'");
+        return e;
+      }
+    };
+  }
+
+  function walk(n, f) {
+    if (Array.isArray(n)) n.forEach(x => walk(x, f));
+    else if (n && typeof n === 'object') {
+      if (n.k) f(n);
+      for (const key in n) if (key !== 'line') walk(n[key], f);
+    }
+  }
+
+  /* Kann die Anweisung "normal" zu Ende laufen? (false = endet immer mit return). Meldet unerreichbaren Code. */
+  function flow(s) {
+    switch (s.k) {
+      case 'return': return false;
+      case 'block': {
+        let ok = true;
+        for (const x of s.body) {
+          if (!ok) throw new JErr(x.line, 'unreachable statement: Diese Anweisung steht hinter einem return und wird nie ausgeführt');
+          ok = flow(x);
+        }
+        return ok;
+      }
+      case 'if': { const a = flow(s.th); const b = s.el ? flow(s.el) : true; return a || b; }
+      case 'while': flow(s.body); return !(s.c.k === 'bool' && s.c.v === true);
+      case 'for': flow(s.body); return true;
+      default: return true;
+    }
+  }
+
+  function validate(methods) {
+    const names = new Map();
+    for (const m of methods) {
+      if (isBuiltin(m.name)) throw new JErr(m.line, 'Die Methode ' + m.name + '() gibt es schon beim Rover, wähle einen anderen Namen');
+      if (names.has(m.name)) throw new JErr(m.line, 'Die Methode ' + m.name + ' ist doppelt definiert (already defined)');
+      names.set(m.name, m);
+    }
+    for (const m of methods) {
+      walk(m.body, n => {
+        if (n.k !== 'return') return;
+        if (m.ret === 'void' && n.e) throw new JErr(n.line, 'In einer void-Methode darf return keinen Wert haben (incompatible types: unexpected return value). Soll die Methode einen Wert liefern, schreibe den Rückgabetyp (int, boolean, String) statt void.');
+        if (m.ret !== 'void' && !n.e) throw new JErr(n.line, 'Hier fehlt hinter return der Wert, den die Methode ' + m.name + '() zurückgeben soll (missing return value)');
+      });
+      const completes = flow(m.body);
+      if (m.ret !== 'void' && completes) throw new JErr(m.body.endLine, 'missing return statement: Die Methode ' + m.name + '() hat den Rückgabetyp ' + m.ret + ', aber nicht jeder Weg endet mit return');
+    }
+    for (const m of methods) {
+      walk(m.body, n => {
+        if (n.k !== 'call') return;
+        const want = isBuiltin(n.name) ? (n.name in AUFTRAEGE ? AUFTRAEGE[n.name] : ANFRAGEN[n.name])
+          : names.has(n.name) ? names.get(n.name).params.length : -1;
+        if (want < 0) throw new JErr(n.line, "cannot find symbol: Die Methode '" + n.name + "' gibt es nicht. Prüfe Schreibweise und Groß-/Kleinschreibung");
+        if (n.args.length !== want) {
+          throw new JErr(n.line, n.name + '() braucht ' + (want === 0 ? 'keine Argumente' : want === 1 ? 'genau ein Argument' : want + ' Argumente') + ', du übergibst ' + n.args.length + ' (method cannot be applied to given types)');
+        }
+      });
+    }
+  }
+
+  function parse(src) { return makeParser(src).program(); }
+
+  /* ---------- Welt ---------- */
+  const key = (x, y) => x + ',' + y;
+  function makeWorld(s) {
+    return {
+      w: s.w, h: s.h,
+      hills: new Set((s.hills || []).map(([x, y]) => key(x, y))),
+      rocks: (s.rocks || []).map(([x, y]) => ({ x, y, analyzed: false })),
+      marks: new Set((s.marks || []).map(([x, y]) => key(x, y))),
+      rover: { x: s.rover.x, y: s.rover.y, dir: s.rover.dir || 0 }
+    };
+  }
+  function cloneWorld(w) {
+    return {
+      w: w.w, h: w.h, hills: new Set(w.hills),
+      rocks: w.rocks.map(r => ({ ...r })), marks: new Set(w.marks),
+      rover: { ...w.rover }
+    };
+  }
+  function snap(w, label, line) {
+    return {
+      rover: { ...w.rover }, marks: [...w.marks].map(s => s.split(',').map(Number)),
+      analyzed: w.rocks.map(r => r.analyzed), label, line
+    };
+  }
+
+  /* ---------- Interpreter ---------- */
+  class Scope {
+    constructor(parent) { this.vars = new Map(); this.parent = parent; }
+    find(n) { for (let s = this; s; s = s.parent) if (s.vars.has(n)) return s; return null; }
+  }
+  const tname = v => (typeof v === 'number' ? 'int' : typeof v === 'string' ? 'String' : 'boolean');
+
+  function makeCtx(ast, worldSpec, opts) {
+    opts = opts || {};
+    const maxActions = opts.maxActions || 500;
+    const w = cloneWorld(worldSpec);
+    const frames = [snap(w, 'Start', 0)];
+    const mm = new Map(ast.methods.map(m => [m.name, m]));
+    let steps = 0, actions = 0, depth = 0;
+
+    const blocked = (x, y) => x < 0 || y < 0 || x >= w.w || y >= w.h || w.hills.has(key(x, y));
+    const act = (label, line) => {
+      if (++actions > maxActions) throw new JErr(line, 'Abbruch nach ' + maxActions + ' Aktionen: Läuft das Programm endlos?');
+      frames.push(snap(w, label, line));
+    };
+    const dirIdx = side => ({ vorne: w.rover.dir, rechts: (w.rover.dir + 1) % 4, links: (w.rover.dir + 3) % 4 }[side]);
+
+    const builtins = {
+      fahre(a, line) {
+        const [dx, dy] = DIRS[w.rover.dir]; const nx = w.rover.x + dx, ny = w.rover.y + dy;
+        if (blocked(nx, ny)) {
+          const edge = nx < 0 || ny < 0 || nx >= w.w || ny >= w.h;
+          throw new JErr(line, edge ? 'Der Rover kann nicht fahren: Vor ihm ist der Rand der Welt.' : 'Der Rover kann nicht fahren: Vor ihm liegt ein Hügel.');
+        }
+        w.rover.x = nx; w.rover.y = ny; act('fahre()', line);
+      },
+      drehe(a, line) {
+        const s = a[0];
+        if (s !== 'rechts' && s !== 'links') throw new JErr(line, 'drehe() erwartet "rechts" oder "links", nicht "' + s + '"');
+        w.rover.dir = (w.rover.dir + (s === 'rechts' ? 1 : 3)) % 4; act('drehe("' + s + '")', line);
+      },
+      setzeMarke(a, line) { w.marks.add(key(w.rover.x, w.rover.y)); act('setzeMarke()', line); },
+      entferneMarke(a, line) { w.marks.delete(key(w.rover.x, w.rover.y)); act('entferneMarke()', line); },
+      analysiereGestein(a, line) {
+        const r = w.rocks.find(r => r.x === w.rover.x && r.y === w.rover.y);
+        if (!r) throw new JErr(line, 'Hier liegt kein Gestein, analysiereGestein() geht nur auf einem Feld mit Gestein.');
+        r.analyzed = true; act('analysiereGestein()', line);
+      },
+      gesteinVorhanden() { return w.rocks.some(r => r.x === w.rover.x && r.y === w.rover.y); },
+      markeVorhanden() { return w.marks.has(key(w.rover.x, w.rover.y)); },
+      huegelVorhanden(a, line) {
+        const s = a[0];
+        if (s !== 'vorne' && s !== 'links' && s !== 'rechts') throw new JErr(line, 'huegelVorhanden() erwartet "vorne", "links" oder "rechts", nicht "' + s + '"');
+        const [dx, dy] = DIRS[dirIdx(s)]; return blocked(w.rover.x + dx, w.rover.y + dy);
+      }
+    };
+    const PTYPES = { drehe: ['String'], huegelVorhanden: ['String'] };
+
+    function call(e, env, needValue) {
+      const args = e.args.map(a => ev(a, env));
+      if (isBuiltin(e.name)) {
+        const pt = PTYPES[e.name];
+        if (pt) args.forEach((v, i) => {
+          if (tname(v) !== pt[i]) throw new JErr(e.line, e.name + '() erwartet einen Text in Anführungszeichen, du übergibst ' + tname(v) + ' (incompatible types)');
+        });
+        const isQ = e.name in ANFRAGEN;
+        if (needValue && !isQ) throw new JErr(e.line, e.name + '() ist ein Auftrag und liefert keinen Wert, hier wird aber wahr/falsch gebraucht');
+        const r = builtins[e.name](args, e.line);
+        return r;
+      }
+      const m = mm.get(e.name);
+      if (needValue && m.ret === 'void') throw new JErr(e.line, e.name + '() ist void und liefert keinen Wert, hier wird aber ein Wert gebraucht (incompatible types)');
+      m.params.forEach((pa, i) => {
+        if (tname(args[i]) !== pa.type) {
+          throw new JErr(e.line, 'Beim Aufruf ' + e.name + '(…) ist der Parameter ' + pa.name + ' vom Typ ' + pa.type + ', übergeben wurde aber ' + tname(args[i]) + ' (incompatible types)');
+        }
+      });
+      if (++depth > 100) throw new JErr(e.line, 'Zu viele ineinander verschachtelte Aufrufe: Ruft sich eine Methode ohne Abbruchbedingung selbst auf? (StackOverflowError)');
+      const sc = new Scope(null);
+      m.params.forEach((pa, i) => sc.vars.set(pa.name, args[i]));
+      const r = exec(m.body, sc);
+      depth--;
+      if (m.ret === 'void') return undefined;
+      if (!r) throw new JErr(m.body.endLine, 'missing return statement');
+      if (tname(r.v) !== m.ret) throw new JErr(r.line, 'return liefert ein ' + tname(r.v) + ', die Methode ' + m.name + '() soll aber ein ' + m.ret + ' zurückgeben (incompatible types)');
+      return r.v;
+    }
+
+    function ev(e, env) {
+      switch (e.k) {
+        case 'num': case 'str': case 'bool': return e.v;
+        case 'var': {
+          const s = env.find(e.name);
+          if (!s) {
+            const hint = isBuiltin(e.name) || mm.has(e.name) ? ' Meinst du den Aufruf ' + e.name + '() mit Klammern?' : '';
+            throw new JErr(e.line, "cannot find symbol: Die Variable '" + e.name + "' gibt es hier nicht." + hint);
+          }
+          return s.vars.get(e.name);
+        }
+        case 'call': return call(e, env, true);
+        case 'not': {
+          const v = ev(e.e, env);
+          if (typeof v !== 'boolean') throw new JErr(e.line, 'Das Ausrufezeichen ! passt nur zu wahr/falsch, nicht zu ' + tname(v));
+          return !v;
+        }
+        case 'neg': { const v = ev(e.e, env); if (typeof v !== 'number') throw new JErr(e.line, 'Minus passt nur zu Zahlen'); return -v; }
+        case 'bin': {
+          if (e.op === '&&' || e.op === '||') {
+            const l = ev(e.l, env);
+            if (typeof l !== 'boolean') throw new JErr(e.line, e.op + ' verknüpft nur wahr/falsch-Werte, links steht ' + tname(l));
+            if (e.op === '&&' && !l) return false;
+            if (e.op === '||' && l) return true;
+            const r = ev(e.r, env);
+            if (typeof r !== 'boolean') throw new JErr(e.line, e.op + ' verknüpft nur wahr/falsch-Werte, rechts steht ' + tname(r));
+            return r;
+          }
+          const l = ev(e.l, env), r = ev(e.r, env);
+          if (e.op === '+' && (typeof l === 'string' || typeof r === 'string')) return String(l) + String(r);
+          if (e.op === '==' || e.op === '!=') { const same = l === r; return e.op === '==' ? same : !same; }
+          if (typeof l !== 'number' || typeof r !== 'number') throw new JErr(e.line, 'Der Operator ' + e.op + ' passt nur zu Zahlen (bad operand types)');
+          switch (e.op) {
+            case '+': return l + r; case '-': return l - r; case '*': return l * r;
+            case '/': if (r === 0) throw new JErr(e.line, 'Division durch 0'); return Math.trunc(l / r);
+            case '%': if (r === 0) throw new JErr(e.line, 'Division durch 0'); return l % r;
+            case '<': return l < r; case '>': return l > r; case '<=': return l <= r; case '>=': return l >= r;
+          }
+        }
+      }
+      throw new JErr(e.line, 'Ausdruck nicht auswertbar');
+    }
+
+    function cond(c, env) {
+      const v = ev(c, env);
+      if (typeof v !== 'boolean') throw new JErr(c.line, 'Die Bedingung muss wahr oder falsch ergeben (boolean), nicht ' + tname(v) + ' (incompatible types)');
+      return v;
+    }
+
+    function assign(s, env) {
+      const sc = env.find(s.name);
+      if (!sc) throw new JErr(s.line, "cannot find symbol: Die Variable '" + s.name + "' wurde nicht deklariert");
+      const cur = sc.vars.get(s.name);
+      if (s.op === '=') {
+        const v = ev(s.e, env);
+        if (tname(v) !== tname(cur)) throw new JErr(s.line, 'Der Variablen ' + s.name + ' (' + tname(cur) + ') kann kein ' + tname(v) + ' zugewiesen werden (incompatible types)');
+        sc.vars.set(s.name, v); return;
+      }
+      if (typeof cur !== 'number') throw new JErr(s.line, s.op + ' passt nur zu Zahlen');
+      const d = s.e ? ev(s.e, env) : 1;
+      sc.vars.set(s.name, s.op === '+=' || s.op === '++' ? cur + d : cur - d);
+    }
+
+    function exec(s, env) {
+      if (++steps > 60000) throw new JErr(s.line, 'Abbruch: Das Programm läuft zu lange. Gibt es eine Endlosschleife?');
+      switch (s.k) {
+        case 'block': { const sc = new Scope(env); for (const x of s.body) { const r = exec(x, sc); if (r) return r; } return; }
+        case 'expr': call(s.e, env, false); return;
+        case 'return': return { v: s.e ? ev(s.e, env) : undefined, line: s.line };
+        case 'if': if (cond(s.c, env)) return exec(s.th, env); else if (s.el) return exec(s.el, env); return;
+        case 'while': while (cond(s.c, env)) { if (++steps > 60000) throw new JErr(s.line, 'Abbruch: Endlosschleife?'); const r = exec(s.body, env); if (r) return r; } return;
+        case 'for': {
+          const sc = new Scope(env);
+          const v = ev(s.init, env);
+          if (typeof v !== 'number') throw new JErr(s.line, 'Die Zählvariable ' + s.name + ' ist ein int und braucht eine Zahl');
+          if (env.find(s.name)) throw new JErr(s.line, 'Die Variable ' + s.name + ' ist schon definiert (already defined)');
+          sc.vars.set(s.name, v);
+          while (cond(s.c, sc)) {
+            if (++steps > 60000) throw new JErr(s.line, 'Abbruch: Endlosschleife?');
+            const r = exec(s.body, sc); if (r) return r;
+            assign(s.upd, sc);
+          }
+          return;
+        }
+        case 'decl': {
+          if (env.find(s.name)) throw new JErr(s.line, 'Die Variable ' + s.name + ' ist schon definiert (already defined)');
+          let v = s.type === 'int' ? 0 : s.type === 'boolean' ? false : '';
+          if (s.e) { v = ev(s.e, env); if (tname(v) !== s.type) throw new JErr(s.line, 'Ein ' + tname(v) + ' passt nicht in eine Variable vom Typ ' + s.type + ' (incompatible types)'); }
+          env.vars.set(s.name, v); return;
+        }
+        case 'assign': assign(s, env); return;
+      }
+    }
+    return { w, frames, ev, exec, mm, call, Scope, snap: () => snap(w, '', 0) };
+  }
+
+  function run(ast, worldSpec, opts) {
+    const ctx = makeCtx(ast, worldSpec, opts);
+    let error = null;
+    try {
+      if (!ctx.mm.has('act')) throw new JErr(1, 'Es gibt keine Methode public void act() – ohne sie startet der Rover nicht.');
+      if (ctx.mm.get('act').params.length) throw new JErr(ctx.mm.get('act').line, 'act() darf keine Parameter haben');
+      ctx.call({ k: 'call', name: 'act', args: [], line: 1 }, new ctx.Scope(null), false);
+    } catch (e) {
+      if (e instanceof JErr) error = { line: e.line, msg: e.message }; else throw e;
+    }
+    return { frames: ctx.frames, error, world: ctx.w };
+  }
+
+  /* Einzelne Methode mit Argumenten aufrufen (Testfall). Gibt Rueckgabewert, Welt und Frames zurueck. */
+  function runCall(src, worldSpec, name, args, opts) {
+    if (!(worldSpec.hills instanceof Set)) worldSpec = makeWorld(worldSpec);
+    let ast;
+    try { ast = parse(src); } catch (e) {
+      if (e instanceof JErr) return { error: { line: e.line, msg: e.message }, syntax: true, value: undefined, frames: [], world: cloneWorld(worldSpec) };
+      throw e;
+    }
+    const ctx = makeCtx(ast, worldSpec, opts);
+    let error = null, value;
+    try {
+      if (!ctx.mm.has(name)) throw new JErr(1, 'Die Methode ' + name + ' fehlt (cannot find symbol)');
+      const m = ctx.mm.get(name);
+      if (m.params.length !== args.length) throw new JErr(m.line, name + '() hat ' + m.params.length + ' Parameter, erwartet werden ' + args.length);
+      const lit = args.map(a => typeof a === 'number' ? { k: 'num', v: a, line: 1 } : typeof a === 'boolean' ? { k: 'bool', v: a, line: 1 } : { k: 'str', v: a, line: 1 });
+      value = ctx.call({ k: 'call', name, args: lit, line: m.line }, new ctx.Scope(null), false);
+    } catch (e) { if (e instanceof JErr) error = { line: e.line, msg: e.message }; else throw e; }
+    return { value, error, frames: ctx.frames, world: ctx.w, ast };
+  }
+
+  function evalCondition(src, worldSpec) {
+    const ctx = makeCtx({ methods: [] }, worldSpec);
+    const e = makeParser(src).expression();
+    return ctx.ev(e, new ctx.Scope(null));
+  }
+
+  function runSource(src, worldSpec, opts) {
+    let ast;
+    try { ast = parse(src); } catch (e) {
+      if (e instanceof JErr) return { frames: [snap(cloneWorld(worldSpec), 'Start', 0)], error: { line: e.line, msg: e.message }, world: cloneWorld(worldSpec), ast: null, syntax: true };
+      throw e;
+    }
+    const r = run(ast, worldSpec, opts); r.ast = ast; return r;
+  }
+
+  root.RoverInterp = { parse, run, runSource, runCall, evalCondition, makeWorld, walk, JErr, DIRS };
+  if (typeof module !== 'undefined') module.exports = root.RoverInterp;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Labor-Aufgaben: Parameter und Rueckgabe (Marsrover, EF.1). Gemeinsam genutzt von Seite, Tests und Word-Export. */
+(function (root) {
+  const RI = typeof RoverInterp !== 'undefined' ? RoverInterp : require('./interp.js');
+
+  const hasNode = (ast, f) => { let found = false; RI.walk(ast.methods, n => { if (f(n)) found = true; }); return found; };
+  const fmt = v => (v === undefined ? 'nichts (void)' : typeof v === 'string' ? '"' + v + '"' : String(v));
+  const callText = (L, c) => L.method + '(' + c.args.map(a => (typeof a === 'string' ? '"' + a + '"' : String(a))).join(', ') + ')';
+  const row = (name, hills, rocks, marks, extra = {}) => ({
+    name, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1], ...hills], rocks: rocks || [], marks: marks || [], ...extra }
+  });
+  const posMsg = (r, x, y) => 'Der Rover steht bei Spalte ' + r.rover.x + ', Zeile ' + r.rover.y + ' – erwartet wird Spalte ' + x + ', Zeile ' + y + '.';
+  const sameMarks = (got, want) => {
+    const w = new Set(want.map(m => m.join(',')));
+    const miss = [...w].filter(k => !got.has(k)), extra = [...got].filter(k => !w.has(k));
+    return { miss, extra };
+  };
+  const hasMethod = (ast, f) => ast.methods.some(m => m.name !== 'act' && f(m));
+  const callsInside = (ast, name) => {
+    const m = ast.methods.find(x => x.name === name); if (!m) return false;
+    let found = false; RI.walk([m], n => { if (n.k === 'call' && n.name === name) found = true; }); return found;
+  };
+
+  const LAB = [
+    /* ---------------- Station 1: Parameter ---------------- */
+    {
+      id: 'p1', concept: 'Parameter', title: 'Wege mit Knicken', hour: 1, level: 'Basis',
+      task: 'Drei Proben liegen auf einem Weg mit Knicken. Schreibe den Rumpf der Methode fahreSchritte(int pAnzahl) und rufe sie in act() mehrfach mit unterschiedlichen Werten auf. Analysiere alle Steine.',
+      worlds: [{ name: 'Welt', spec: { w: 9, h: 6, rover: { x: 0, y: 0, dir: 0 }, rocks: [[3, 0], [3, 4], [7, 4]], hills: [[5, 1], [6, 3], [1, 3]] } }],
+      starter: 'public void fahreSchritte(int pAnzahl)\n{\n    // hier fehlt der Rumpf\n}\n\npublic void act()\n{\n    \n}\n',
+      require: (ast) => {
+        const pm = ast.methods.filter(m => m.name !== 'act' && m.params.some(p => p.type === 'int'));
+        if (!pm.length) return 'Schreibe eine eigene Methode mit einem int-Parameter, zum Beispiel fahreSchritte(int pAnzahl).';
+        const calls = [];
+        RI.walk(ast.methods, n => { if (n.k === 'call' && pm.some(m => m.name === n.name)) calls.push(JSON.stringify(n.args, (k, v) => (k === 'line' ? undefined : v))); });
+        if (calls.length < 2) return 'Rufe deine Methode mindestens zweimal auf.';
+        if (new Set(calls).size < 2) return 'Rufe deine Methode mit unterschiedlichen Werten auf (zum Beispiel 3 und 4).';
+        return null;
+      },
+      check: (r) => r.world.rocks.every(k => k.analyzed) ? { ok: true, msg: 'Alle drei Proben sind analysiert.' } : { ok: false, msg: 'Noch ' + r.world.rocks.filter(k => !k.analyzed).length + ' Probe(n) nicht analysiert.' },
+      hints: ['Im Rumpf von fahreSchritte läuft eine for-Schleife, die pAnzahl-mal fahre() aufruft.', 'In act(): fahreSchritte(3); analysiereGestein(); drehe("rechts"); … Zähle die Felder bis zum nächsten Gestein.'],
+      solution: 'public void fahreSchritte(int pAnzahl)\n{\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n\npublic void act()\n{\n    fahreSchritte(3);\n    analysiereGestein();\n    drehe("rechts");\n    fahreSchritte(4);\n    analysiereGestein();\n    drehe("links");\n    fahreSchritte(4);\n    analysiereGestein();\n}\n'
+    },
+    {
+      id: 'p2', concept: 'Parameter', title: 'Markenreihe', hour: 1, level: 'Standard',
+      method: 'setzeMarkenReihe',
+      task: 'Schreibe die Methode setzeMarkenReihe(int pAnzahl). Sie setzt auf pAnzahl aufeinanderfolgenden Feldern je eine Marke, beginnend mit dem Feld, auf dem der Rover steht, und fährt dabei geradeaus weiter. Der Aufruf wird mit drei Werten getestet, auch mit 0.',
+      cases: [
+        { name: 'pAnzahl = 3', args: [3], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]] }, marks: [[0, 1], [1, 1], [2, 1]], end: [3, 1] },
+        { name: 'pAnzahl = 5', args: [5], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]] }, marks: [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1]], end: [5, 1] },
+        { name: 'pAnzahl = 0', args: [0], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]] }, marks: [], end: [0, 1] }
+      ],
+      after: (w, c) => {
+        const { miss, extra } = sameMarks(w.marks, c.marks);
+        if (miss.length) return 'Es fehlen ' + miss.length + ' Marke(n).';
+        if (extra.length) return 'Es liegen ' + extra.length + ' Marke(n) zu viel.';
+        if (w.rover.x !== c.end[0] || w.rover.y !== c.end[1]) return posMsg(w, c.end[0], c.end[1]);
+        return null;
+      },
+      starter: 'public void setzeMarkenReihe(int pAnzahl)\n{\n    \n}\n',
+      hints: ['Eine for-Schleife, die pAnzahl-mal läuft. Was gehört in einen Durchlauf? Erst Marke setzen, dann ein Feld weiter.', 'Für pAnzahl = 0 darf nichts passieren. Das erledigt die Schleife von selbst, wenn die Bedingung i < pAnzahl heißt.'],
+      solution: 'public void setzeMarkenReihe(int pAnzahl)\n{\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        setzeMarke();\n        fahre();\n    }\n}\n'
+    },
+    /* ---------------- Station 2: mehrere Parameter ---------------- */
+    {
+      id: 'p3', concept: 'Zwei Parameter', title: 'Strecke in eine Richtung', hour: 2, level: 'Basis',
+      method: 'fahreStrecke',
+      task: 'Schreibe die Methode fahreStrecke(int pAnzahl, String pRichtung). Der Rover dreht sich zuerst in die Richtung pRichtung ("rechts" oder "links") und fährt dann pAnzahl Felder geradeaus.',
+      cases: [
+        { name: 'fahreStrecke(2, "rechts")', args: [2, 'rechts'], spec: { w: 8, h: 8, rover: { x: 3, y: 3, dir: 0 } }, end: [3, 5] },
+        { name: 'fahreStrecke(3, "links")', args: [3, 'links'], spec: { w: 8, h: 8, rover: { x: 3, y: 3, dir: 0 } }, end: [3, 0] },
+        { name: 'fahreStrecke(1, "rechts")', args: [1, 'rechts'], spec: { w: 8, h: 8, rover: { x: 3, y: 3, dir: 0 } }, end: [3, 4] }
+      ],
+      after: (w, c) => (w.rover.x === c.end[0] && w.rover.y === c.end[1] ? null : posMsg(w, c.end[0], c.end[1])),
+      starter: 'public void fahreStrecke(int pAnzahl, String pRichtung)\n{\n    \n}\n',
+      hints: ['Zuerst drehe(…), dann fahren. drehe erwartet einen Text, und der steht in pRichtung.', 'drehe(pRichtung); – ohne Anführungszeichen, denn pRichtung ist eine Variable und kein Text.'],
+      solution: 'public void fahreStrecke(int pAnzahl, String pRichtung)\n{\n    drehe(pRichtung);\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n'
+    },
+    {
+      id: 'p4', concept: 'Parameter', title: 'Quadrat mit Seitenlänge', hour: 2, level: 'Standard',
+      method: 'fahreQuadrat',
+      task: 'Schreibe die Methode fahreQuadrat(int pSeite). Der Rover fährt ein Quadrat mit der Kantenlänge pSeite im Uhrzeigersinn, setzt auf jede Ecke eine Marke (auch auf das Startfeld) und steht am Ende wieder auf dem Startfeld, blickt in die Startrichtung. Die Hilfsmethode fahreSchritte ist schon da.',
+      cases: [
+        { name: 'pSeite = 2', args: [2], spec: { w: 8, h: 8, rover: { x: 1, y: 1, dir: 0 } }, marks: [[1, 1], [3, 1], [3, 3], [1, 3]] },
+        { name: 'pSeite = 3', args: [3], spec: { w: 8, h: 8, rover: { x: 1, y: 1, dir: 0 } }, marks: [[1, 1], [4, 1], [4, 4], [1, 4]] },
+        { name: 'pSeite = 4', args: [4], spec: { w: 8, h: 8, rover: { x: 1, y: 1, dir: 0 } }, marks: [[1, 1], [5, 1], [5, 5], [1, 5]] }
+      ],
+      after: (w, c) => {
+        const { miss, extra } = sameMarks(w.marks, c.marks);
+        if (miss.length) return 'Es fehlen Marken auf ' + miss.length + ' Ecke(n).';
+        if (extra.length) return 'Es liegen Marken außerhalb der Ecken.';
+        if (w.rover.x !== 1 || w.rover.y !== 1 || w.rover.dir !== 0) return 'Am Ende soll der Rover wieder auf dem Startfeld stehen und nach rechts blicken.';
+        return null;
+      },
+      starter: 'public void fahreSchritte(int pAnzahl)\n{\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n\npublic void fahreQuadrat(int pSeite)\n{\n    \n}\n',
+      hints: ['Ein Quadrat besteht aus vier gleichen Seiten. Welche Schleife wiederholt vier Seiten?', 'Eine Seite: Marke setzen, fahreSchritte(pSeite), drehe("rechts").'],
+      solution: 'public void fahreSchritte(int pAnzahl)\n{\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n\npublic void fahreQuadrat(int pSeite)\n{\n    for (int i = 0; i < 4; i++)\n    {\n        setzeMarke();\n        fahreSchritte(pSeite);\n        drehe("rechts");\n    }\n}\n'
+    },
+    /* ---------------- Station 3: boolean ---------------- */
+    {
+      id: 'r1', concept: 'Rückgabe boolean', title: 'Ist die Fahrt frei?', hour: 3, level: 'Basis',
+      method: 'freieFahrt',
+      task: 'Schreibe die Anfrage boolean freieFahrt(). Sie liefert true, wenn direkt vor dem Rover kein Hügel liegt, sonst false. Der Rover darf sich dabei nicht bewegen.',
+      cases: [
+        { name: 'Hügel direkt vorne', args: [], spec: { w: 10, h: 3, rover: { x: 2, y: 1, dir: 0 }, hills: [[3, 1], [9, 0]] }, expect: false },
+        { name: 'Feld vorne frei', args: [], spec: { w: 10, h: 3, rover: { x: 2, y: 1, dir: 0 }, hills: [[6, 1], [9, 0]] }, expect: true },
+        { name: 'Rover am Rand der Welt', args: [], spec: { w: 10, h: 3, rover: { x: 9, y: 1, dir: 0 }, hills: [[2, 0]] }, expect: false }
+      ],
+      after: (w, c) => (w.rover.x === c.spec.rover.x && w.rover.y === c.spec.rover.y ? null : 'Eine Anfrage darf den Rover nicht bewegen.'),
+      starter: 'public boolean freieFahrt()\n{\n    \n}\n',
+      hints: ['Im Rumpf steht genau eine Zeile, die mit return beginnt.', 'huegelVorhanden("vorne") ist wahr, wenn ein Hügel da ist. Du brauchst das Gegenteil: return !huegelVorhanden("vorne");'],
+      solution: 'public boolean freieFahrt()\n{\n    return !huegelVorhanden("vorne");\n}\n'
+    },
+    {
+      id: 'r2', concept: 'Rückgabe boolean', title: 'Lohnt sich die Probe?', hour: 3, level: 'Standard',
+      method: 'probeNochOffen',
+      task: 'Schreibe die Anfrage boolean probeNochOffen(). Sie liefert true, wenn auf dem Feld des Rovers Gestein liegt und noch keine Marke gesetzt ist. In allen anderen Fällen liefert sie false.',
+      cases: [
+        { name: 'Gestein, keine Marke', args: [], spec: { w: 5, h: 3, rover: { x: 2, y: 1, dir: 0 }, rocks: [[2, 1]] }, expect: true },
+        { name: 'Gestein mit Marke', args: [], spec: { w: 5, h: 3, rover: { x: 2, y: 1, dir: 0 }, rocks: [[2, 1]], marks: [[2, 1]] }, expect: false },
+        { name: 'leeres Feld', args: [], spec: { w: 5, h: 3, rover: { x: 2, y: 1, dir: 0 }, rocks: [[4, 1]] }, expect: false },
+        { name: 'nur Marke', args: [], spec: { w: 5, h: 3, rover: { x: 2, y: 1, dir: 0 }, marks: [[2, 1]] }, expect: false }
+      ],
+      starter: 'public boolean probeNochOffen()\n{\n    \n}\n',
+      hints: ['Zwei Bedingungen müssen gleichzeitig stimmen. Welcher Operator verbindet sie?', 'return gesteinVorhanden() && !markeVorhanden();'],
+      solution: 'public boolean probeNochOffen()\n{\n    return gesteinVorhanden() && !markeVorhanden();\n}\n'
+    },
+    {
+      id: 'r3', concept: 'Anfrage nutzen', title: 'Eigene Anfrage im while', hour: 3, level: 'Standard',
+      task: 'Der Rover soll direkt vor dem Hügel stehen bleiben. Schreibe dafür deine eigene Anfrage boolean freieFahrt() und verwende sie als Bedingung der Schleife in act(). Das Programm wird in drei Welten getestet.',
+      worlds: [
+        { name: 'Welt A', target: { x: 6, y: 1 }, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[7, 1], [3, 0], [8, 2]] } },
+        { name: 'Welt B', target: { x: 3, y: 1 }, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[4, 1], [7, 0], [6, 2]] } },
+        { name: 'Welt C', target: { x: 8, y: 1 }, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1], [2, 2], [5, 0]] } }
+      ],
+      starter: 'public boolean freieFahrt()\n{\n    \n}\n\npublic void act()\n{\n    \n}\n',
+      require: (ast) => {
+        const bm = ast.methods.filter(m => m.name !== 'act' && m.ret === 'boolean');
+        if (!bm.length) return 'Schreibe eine eigene Methode mit dem Rückgabetyp boolean.';
+        if (!hasNode(ast, n => n.k === 'call' && bm.some(m => m.name === n.name))) return 'Rufe deine boolean-Methode in act() auf, zum Beispiel als Bedingung der while-Schleife.';
+        return null;
+      },
+      check: (r, wd) => (r.world.rover.x === wd.target.x && r.world.rover.y === wd.target.y)
+        ? { ok: true, msg: 'Der Rover steht direkt vor dem Hügel.' }
+        : { ok: false, msg: 'Der Rover steht bei Spalte ' + r.world.rover.x + ', sollte aber bei Spalte ' + wd.target.x + ' stehen.' },
+      hints: ['Die Schleife lautet: while (freieFahrt()) { fahre(); }', 'Die Methode freieFahrt() liefert true, wenn vorne kein Hügel ist: return !huegelVorhanden("vorne");'],
+      solution: 'public boolean freieFahrt()\n{\n    return !huegelVorhanden("vorne");\n}\n\npublic void act()\n{\n    while (freieFahrt())\n    {\n        fahre();\n    }\n}\n'
+    },
+    /* ---------------- Station 4: int + Parameter + Rueckgabe ---------------- */
+    {
+      id: 'r4', concept: 'Rückgabe int', title: 'Schritte bis zum Hügel', hour: 4, level: 'Basis',
+      method: 'schritteBisHuegel',
+      task: 'Schreibe die Methode int schritteBisHuegel(). Der Rover fährt geradeaus bis direkt vor den Hügel und liefert zurück, wie viele Schritte er dafür gefahren ist.',
+      cases: [
+        { name: 'Hügel bei Spalte 7', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[7, 1], [3, 0], [9, 1]] }, expect: 6 },
+        { name: 'Hügel bei Spalte 4', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[4, 1], [7, 0], [9, 1]] }, expect: 3 },
+        { name: 'Hügel sofort vorne', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[1, 1], [9, 1]] }, expect: 0 },
+        { name: 'nur der Rand', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[2, 2]] }, expect: 9 }
+      ],
+      after: (w, c) => (w.rover.x === c.expect && w.rover.y === 1 ? null : 'Der Rover soll direkt vor dem Hügel stehen bleiben (Spalte ' + c.expect + '), er steht in Spalte ' + w.rover.x + '.'),
+      starter: 'public int schritteBisHuegel()\n{\n    \n}\n',
+      hints: ['Du brauchst eine lokale Variable, die mitzählt: int anzahl = 0; Bei jedem fahre() erhöhst du sie um 1.', 'Am Ende steht return anzahl; – nach der Schleife, nicht darin.'],
+      solution: 'public int schritteBisHuegel()\n{\n    int anzahl = 0;\n    while (!huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    return anzahl;\n}\n'
+    },
+    {
+      id: 'r5', concept: 'Parameter + Rückgabe', title: 'Höchstens so weit', hour: 4, level: 'Standard',
+      method: 'fahreHoechstens',
+      task: 'Schreibe die Methode int fahreHoechstens(int pMax). Der Rover fährt geradeaus, aber höchstens pMax Felder und nicht in einen Hügel hinein. Die Methode liefert zurück, wie viele Felder er tatsächlich gefahren ist. Denke an die Fälle „Hügel zu früh“ und „pMax ist 0“.',
+      cases: [
+        { name: 'fahreHoechstens(3), Hügel weit weg', args: [3], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[7, 1], [9, 0]] }, expect: 3 },
+        { name: 'fahreHoechstens(10), Hügel bei 5', args: [10], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[5, 1], [9, 0]] }, expect: 4 },
+        { name: 'fahreHoechstens(4), Hügel bei 5', args: [4], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[5, 1], [9, 0]] }, expect: 4 },
+        { name: 'fahreHoechstens(0)', args: [0], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[5, 1], [9, 0]] }, expect: 0 }
+      ],
+      after: (w, c) => (w.rover.x === c.expect ? null : 'Der Rover steht in Spalte ' + w.rover.x + ', nach ' + c.expect + ' Schritten müsste er in Spalte ' + c.expect + ' stehen.'),
+      starter: 'public int fahreHoechstens(int pMax)\n{\n    \n}\n',
+      hints: ['Die Schleife hat zwei Gründe zu stoppen: Die Anzahl pMax ist erreicht, oder vorne liegt ein Hügel. Verbinde beide in einer Bedingung.', 'while (anzahl < pMax && !huegelVorhanden("vorne")) { fahre(); anzahl++; } – danach return anzahl;'],
+      solution: 'public int fahreHoechstens(int pMax)\n{\n    int anzahl = 0;\n    while (anzahl < pMax && !huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    return anzahl;\n}\n'
+    },
+    /* ---------------- Station 5: Mission ---------------- */
+    {
+      id: 'a1', concept: 'Algorithmus entwickeln', title: 'Mission Probenreihe', hour: 5, level: 'Standard',
+      task: 'Entwickle die Mission in zwei Teilen. Teil 1: Die Methode int erkundeBisHuegel() fährt bis direkt vor den Hügel, analysiert jedes Gestein auf dem Weg (auch auf dem letzten Feld) und liefert die Anzahl der Proben. Teil 2: In act() ruft der Rover die Methode auf und setzt am Ende eine Marke, wenn es mehr als 2 Proben waren.',
+      worlds: [
+        { name: 'Welt A (2 Proben)', rocks: 2, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]], rocks: [[2, 1], [5, 1]] } },
+        { name: 'Welt B (3 Proben)', rocks: 3, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]], rocks: [[1, 1], [3, 1], [4, 1]] } },
+        { name: 'Welt C (4 Proben)', rocks: 4, spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[9, 1]], rocks: [[0, 1], [3, 1], [6, 1], [8, 1]] } }
+      ],
+      starter: 'public int erkundeBisHuegel()\n{\n    // zähle die Proben und gib die Anzahl zurück\n}\n\npublic void act()\n{\n    \n}\n',
+      require: (ast) => {
+        const im = ast.methods.filter(m => m.name !== 'act' && m.ret === 'int');
+        if (!im.length) return 'Schreibe eine eigene Methode mit dem Rückgabetyp int, zum Beispiel erkundeBisHuegel().';
+        let used = false;
+        RI.walk([ast.methods.find(m => m.name === 'act')], n => { if (n.k === 'call' && im.some(m => m.name === n.name)) used = true; });
+        return used ? null : 'Rufe deine int-Methode in act() auf und verwende den gelieferten Wert.';
+      },
+      check: (r, wd) => {
+        const miss = r.world.rocks.filter(k => !k.analyzed);
+        if (miss.length) return { ok: false, msg: 'Nicht analysiert: Gestein in Spalte ' + miss.map(k => k.x).join(', ') + '.' };
+        const markHere = r.world.marks.has(r.world.rover.x + ',' + r.world.rover.y);
+        const want = wd.rocks > 2;
+        if (r.world.marks.size > 1 || (r.world.marks.size === 1 && !markHere)) return { ok: false, msg: 'Die Marke soll nur am Ende, auf dem Feld vor dem Hügel, liegen.' };
+        if (want && !markHere) return { ok: false, msg: 'Es waren ' + wd.rocks + ' Proben, also mehr als 2. Am Ende fehlt die Marke.' };
+        if (!want && markHere) return { ok: false, msg: 'Es waren nur ' + wd.rocks + ' Proben. Die Marke darf nicht gesetzt werden.' };
+        return { ok: true, msg: 'Alle Proben analysiert, Marke richtig entschieden.' };
+      },
+      hints: ['Baue erkundeBisHuegel() wie schritteBisHuegel(), nur zählst du nicht die Schritte, sondern die Proben. Wann erhöht sich der Zähler?', 'Das Gestein auf dem letzten Feld liegt nach der Schleife. Prüfe es dort noch einmal, bevor du die Anzahl zurückgibst. In act(): if (erkundeBisHuegel() > 2) { setzeMarke(); }'],
+      solution: 'public int erkundeBisHuegel()\n{\n    int anzahl = 0;\n    while (!huegelVorhanden("vorne"))\n    {\n        if (gesteinVorhanden())\n        {\n            analysiereGestein();\n            anzahl++;\n        }\n        fahre();\n    }\n    if (gesteinVorhanden())\n    {\n        analysiereGestein();\n        anzahl++;\n    }\n    return anzahl;\n}\n\npublic void act()\n{\n    if (erkundeBisHuegel() > 2)\n    {\n        setzeMarke();\n    }\n}\n'
+    },
+    /* ---------------- Expert-Station ---------------- */
+    {
+      id: 'e1', concept: 'Expert · Logik', title: 'Sackgasse?', hour: 3, level: 'Expert',
+      method: 'istSackgasse',
+      task: 'Schreibe die Anfrage boolean istSackgasse(). Sie liefert true, wenn der Rover von drei Seiten eingeschlossen ist: Hügel vorne, links und rechts. Der Rover darf sich nicht bewegen.',
+      cases: [
+        { name: 'Hügel auf drei Seiten', args: [], spec: { w: 6, h: 5, rover: { x: 2, y: 2, dir: 0 }, hills: [[3, 2], [2, 1], [2, 3]] }, expect: true },
+        { name: 'links frei', args: [], spec: { w: 6, h: 5, rover: { x: 2, y: 2, dir: 0 }, hills: [[3, 2], [2, 3]] }, expect: false },
+        { name: 'rechts frei', args: [], spec: { w: 6, h: 5, rover: { x: 2, y: 2, dir: 0 }, hills: [[3, 2], [2, 1]] }, expect: false },
+        { name: 'vorne frei', args: [], spec: { w: 6, h: 5, rover: { x: 2, y: 2, dir: 0 }, hills: [[2, 1], [2, 3]] }, expect: false },
+        { name: 'Ecke der Welt', args: [], spec: { w: 6, h: 5, rover: { x: 5, y: 0, dir: 0 }, hills: [[5, 1]] }, expect: true }
+      ],
+      after: (w, c) => (w.rover.x === c.spec.rover.x && w.rover.y === c.spec.rover.y && w.rover.dir === c.spec.rover.dir ? null : 'Eine Anfrage darf den Rover nicht bewegen oder drehen.'),
+      starter: 'public boolean istSackgasse()\n{\n    \n}\n',
+      hints: ['Drei Bedingungen, die alle gleichzeitig wahr sein müssen.', 'return huegelVorhanden("vorne") && huegelVorhanden("links") && huegelVorhanden("rechts");'],
+      solution: 'public boolean istSackgasse()\n{\n    return huegelVorhanden("vorne")\n        && huegelVorhanden("links")\n        && huegelVorhanden("rechts");\n}\n'
+    },
+    {
+      id: 'e2', concept: 'Expert · Nachbedingung', title: 'Messen ohne Spuren', hour: 4, level: 'Expert',
+      method: 'abstandBisHuegel',
+      task: 'Schreibe int abstandBisHuegel(). Die Methode liefert die Anzahl freier Felder vor dem Rover, ohne dass sich Position oder Blickrichtung am Ende ändern. Tipp: Messen heißt fahren, danach wieder zurück.',
+      cases: [
+        { name: 'Rover bei 1, Hügel bei 6', args: [], spec: { w: 10, h: 3, rover: { x: 1, y: 1, dir: 0 }, hills: [[6, 1], [9, 0]] }, expect: 4 },
+        { name: 'Hügel sofort vorne', args: [], spec: { w: 10, h: 3, rover: { x: 3, y: 1, dir: 0 }, hills: [[4, 1]] }, expect: 0 },
+        { name: 'bis zum Rand', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[2, 2]] }, expect: 9 }
+      ],
+      after: (w, c) => (w.rover.x === c.spec.rover.x && w.rover.y === c.spec.rover.y && w.rover.dir === c.spec.rover.dir ? null : 'Nach dem Messen steht der Rover in Spalte ' + w.rover.x + ' und blickt in Richtung ' + w.rover.dir + ' – er soll am Start bleiben.'),
+      starter: 'public int abstandBisHuegel()\n{\n    \n}\n',
+      hints: ['Zähle die Schritte wie in schritteBisHuegel(). Danach muss der Rover zurück: zweimal drehen, anzahl-mal fahren, wieder zweimal drehen.', 'Zweimal drehe("rechts") ergibt eine Kehrtwende. Dann for (int i = 0; i < anzahl; i++) { fahre(); }'],
+      solution: 'public int abstandBisHuegel()\n{\n    int anzahl = 0;\n    while (!huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    drehe("rechts");\n    drehe("rechts");\n    for (int i = 0; i < anzahl; i++)\n    {\n        fahre();\n    }\n    drehe("rechts");\n    drehe("rechts");\n    return anzahl;\n}\n'
+    },
+    {
+      id: 'e3', concept: 'Expert · Rekursion', title: 'Rekursiv zählen', hour: 4, level: 'Expert',
+      method: 'zaehleRekursiv',
+      task: 'Schreibe int zaehleRekursiv() ohne Schleife. Die Methode ruft sich selbst auf: Liegt vorne ein Hügel, liefert sie 0. Sonst fährt der Rover einen Schritt und die Methode liefert 1 plus das Ergebnis des Selbstaufrufs.',
+      cases: [
+        { name: 'Hügel bei Spalte 7', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[7, 1], [9, 1]] }, expect: 6 },
+        { name: 'Hügel bei Spalte 4', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[4, 1], [9, 1]] }, expect: 3 },
+        { name: 'Hügel sofort vorne', args: [], spec: { w: 10, h: 3, rover: { x: 0, y: 1, dir: 0 }, hills: [[1, 1], [9, 1]] }, expect: 0 }
+      ],
+      require: (ast) => {
+        if (hasNode(ast, n => n.k === 'while' || n.k === 'for')) return 'Löse die Aufgabe ohne while und ohne for. Die Wiederholung entsteht durch den Selbstaufruf.';
+        return callsInside(ast, 'zaehleRekursiv') ? null : 'Die Methode soll sich selbst aufrufen.';
+      },
+      starter: 'public int zaehleRekursiv()\n{\n    \n}\n',
+      hints: ['Zuerst der Abbruch: if (huegelVorhanden("vorne")) { return 0; }', 'Danach fahre(); und return 1 + zaehleRekursiv();'],
+      solution: 'public int zaehleRekursiv()\n{\n    if (huegelVorhanden("vorne"))\n    {\n        return 0;\n    }\n    fahre();\n    return 1 + zaehleRekursiv();\n}\n'
+    },
+    {
+      id: 'e4', concept: 'Expert · Zerlegen', title: 'Zwei Reihen, eine Mission', hour: 5, level: 'Expert',
+      method: 'missionErfuellt',
+      task: 'Der Rover steht links oben und blickt nach rechts. Er erkundet zwei Reihen mit je 6 Feldern: erst die obere nach rechts, dann wendet er und erkundet die untere nach links. Schreibe boolean missionErfuellt(int pSoll). Sie liefert true, wenn insgesamt mindestens pSoll Proben analysiert wurden. Zerlege das Problem in Teilmethoden, zum Beispiel int erkundeReihe(int pLaenge) und eine Methode zum Wenden.',
+      cases: [
+        { name: 'pSoll = 4 (4 Proben liegen)', args: [4], spec: { w: 10, h: 2, rover: { x: 0, y: 0, dir: 0 }, rocks: [[1, 0], [4, 0], [5, 1], [2, 1]] }, expect: true },
+        { name: 'pSoll = 5', args: [5], spec: { w: 10, h: 2, rover: { x: 0, y: 0, dir: 0 }, rocks: [[1, 0], [4, 0], [5, 1], [2, 1]] }, expect: false },
+        { name: 'pSoll = 2, andere Welt', args: [2], spec: { w: 10, h: 2, rover: { x: 0, y: 0, dir: 0 }, rocks: [[0, 0], [3, 1]] }, expect: true }
+      ],
+      after: (w) => {
+        const miss = w.rocks.filter(k => !k.analyzed);
+        return miss.length ? 'Nicht jede Probe wurde analysiert (noch ' + miss.length + ').' : null;
+      },
+      require: (ast) => (ast.methods.filter(m => m.name !== 'missionErfuellt').length >= 2 ? null : 'Zerlege das Problem: Schreibe mindestens zwei Hilfsmethoden neben missionErfuellt().'),
+      starter: '// Teilmethoden und missionErfuellt hier schreiben\npublic boolean missionErfuellt(int pSoll)\n{\n    \n}\n',
+      hints: ['Teilproblem 1: eine Reihe erkunden und die Proben zählen (Parameter: Länge, Rückgabe: Anzahl). Teilproblem 2: am Reihenende in die nächste Reihe wechseln.', 'Nach 6 Feldern der oberen Reihe steht der Rover rechts neben dem 6. Feld. Dreh dich nach rechts, fahre ein Feld, drehe wieder nach rechts: Du blickst in der unteren Reihe nach links. Dann: return summe >= pSoll;'],
+      solution: 'public int erkundeReihe(int pLaenge)\n{\n    int anzahl = 0;\n    for (int i = 0; i < pLaenge; i++)\n    {\n        if (gesteinVorhanden())\n        {\n            analysiereGestein();\n            anzahl++;\n        }\n        fahre();\n    }\n    return anzahl;\n}\n\npublic void wendeNachUnten()\n{\n    drehe("rechts");\n    fahre();\n    drehe("rechts");\n}\n\npublic boolean missionErfuellt(int pSoll)\n{\n    int summe = erkundeReihe(6);\n    wendeNachUnten();\n    summe = summe + erkundeReihe(6);\n    return summe >= pSoll;\n}\n'
+    }
+  ];
+
+  /* Fuer Aufgaben mit Methoden-Tests entstehen die Welt-Tabs aus den Testfaellen */
+  LAB.forEach(L => { if (L.cases) L.worlds = L.cases.map(c => ({ name: c.name, spec: c.spec })); });
+
+  function checkCase(L, c, r) {
+    const call = callText(L, c), hasExp = c.expect !== undefined;
+    const want = hasExp ? fmt(c.expect) : 'Welt wie beschrieben';
+    if (hasExp) {
+      if (r.value === undefined) return { ok: false, msg: call + ' liefert keinen Wert. Der Rückgabetyp und return fehlen oder die Methode ist void.', got: 'nichts', want, call };
+      if (r.value !== c.expect) return { ok: false, msg: call + ' liefert ' + fmt(r.value) + ', erwartet wird ' + fmt(c.expect) + '.', got: fmt(r.value), want, call };
+    }
+    const extra = L.after ? L.after(r.world, c, r.value) : null;
+    if (extra) return { ok: false, msg: call + ': ' + extra, got: hasExp ? fmt(r.value) + ' – ' + extra : extra, want, call };
+    return { ok: true, msg: call + (hasExp ? ' liefert ' + fmt(r.value) + '.' : ' funktioniert.'), got: hasExp ? fmt(r.value) : 'stimmt', want, call };
+  }
+
+  /* Programm gegen alle Welten/Testfaelle laufen lassen */
+  function runLab(L, src) {
+    const runs = L.cases
+      ? L.cases.map(c => RI.runCall(src, RI.makeWorld(c.spec), L.method, c.args))
+      : L.worlds.map(w => RI.runSource(src, RI.makeWorld(w.spec)));
+    const syntax = runs[0].syntax;
+    const reqMsg = !syntax && L.require && runs[0].ast ? L.require(runs[0].ast) : null;
+    const results = runs.map((r, i) => {
+      if (r.error) return { ok: false, msg: r.error.msg, line: r.error.line, err: true, call: L.cases ? callText(L, L.cases[i]) : undefined };
+      return L.cases ? checkCase(L, L.cases[i], r) : L.check(r, L.worlds[i]);
+    });
+    return { runs, results, syntax, reqMsg, pass: results.every(x => x.ok) && !reqMsg };
+  }
+
+  const out = { LAB, runLab, callText, fmt };
+  root.ROVER_LABS = out;
+  if (typeof module !== 'undefined') module.exports = out;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* Stationen: Parameter und Rueckgabe (EF.1, Greenfoot-Marsrover) */
+(function (root) {
+  const LABS = typeof ROVER_LABS !== 'undefined' ? ROVER_LABS : require('./labs.js');
+  const W = (w, h, rover, o = {}) => Object.assign({ w, h, rover }, o);
+  const labActs = ids => ids.map(id => { const l = LABS.LAB.find(x => x.id === id); return { type: 'lab', id: l.id, title: l.title, lab: l }; });
+
+  const STATIONS = [
+    /* ---------------- Stunde 1 ---------------- */
+    {
+      id: 's1', nav: '1 · Parameter', kicker: 'Stunde 1', title: 'Eine Methode, viele Fälle', doodle: 's1',
+      merke: '<b class="tag">Merke</b>Im Methodenkopf steht der <b>Parameter</b>, zum Beispiel <code>int pAnzahl</code>. Beim Aufruf <code>fahreSchritte(3)</code> wird der Wert 3 <b>übergeben</b>. So lässt sich eine Methode für viele Fälle nutzen.',
+      acts: [
+        {
+          type: 'quiz', id: 's1-quiz0', title: 'Aufwärmen: Zählschleife', intro: 'Drei kurze Fragen zu dem, was du schon kannst.',
+          qs: [
+            { q: 'Wie viele Felder fährt der Rover?', code: 'for (int i = 0; i < 4; i++)\n{\n    fahre();\n}', opts: [{ t: '4', ok: 1 }, { t: '3' }, { t: '5' }, { t: '0' }], why: 'i läuft von 0 bis 3, das sind vier Durchläufe mit je einem fahre().' },
+            { q: 'Wie viele Felder fährt der Rover?', code: 'for (int i = 0; i < 3; i++)\n{\n    fahre();\n    fahre();\n}', opts: [{ t: '6', ok: 1 }, { t: '3' }, { t: '2' }, { t: '5' }], why: 'Drei Durchläufe mit je zwei Schritten ergeben sechs Felder.' },
+            { q: 'Ein Kollege hat fahreZwei(), fahreDrei() und fahreVier() geschrieben. Was stört daran?', opts: [{ t: 'Fast gleicher Code, nur die Zahl ist anders', ok: 1 }, { t: 'Java erlaubt nur eine fahre-Methode' }, { t: 'Der Rover wird langsamer' }, { t: 'Nichts, das ist ideal' }], why: 'Immer wieder derselbe Rumpf, nur die Anzahl wechselt. Genau dafür gibt es Parameter.' }
+          ]
+        },
+        {
+          type: 'gaps', id: 's1-gaps', title: 'Aus drei mach eine', intro: 'Der Wert soll erst beim Aufruf festgelegt werden. Ergänze den Methodenkopf und die Schleife.',
+          blocks: [
+            { code: 'public void fahreSchritte(int [[pAnzahl]])\n{\n    for (int i = 0; i < [[pAnzahl]]; i++)\n    {\n        fahre();\n    }\n}' },
+            { p: 'Aufruf für fünf Schritte: `fahreSchritte(`[[5]]`);`' }
+          ]
+        },
+        {
+          type: 'match', id: 's1-match', title: 'Teile von Kopf und Aufruf', intro: 'Ordne die Bausteine ihren Fachbegriffen zu.',
+          code: 'public void fahreSchritte(int pAnzahl)   // Methodenkopf\n\nfahreSchritte(3);                        // Aufruf in act()',
+          pairs: [
+            { l: { code: 'fahreSchritte' }, r: 'Name der Methode' },
+            { l: { code: 'int' }, r: 'Datentyp des Parameters' },
+            { l: { code: 'pAnzahl' }, r: 'Parameter im Methodenkopf (Platzhalter)' },
+            { l: { code: '3' }, r: 'Wert, der beim Aufruf übergeben wird (Argument)' }
+          ]
+        },
+        {
+          type: 'trace', id: 's1-trace', title: 'Wo landet der Rover?', intro: 'Der Rover startet oben links und blickt nach rechts. Klicke das Endfeld an.',
+          code: 'public void fahreSchritte(int pAnzahl)\n{\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n\npublic void act()\n{\n    fahreSchritte(3);\n    drehe("rechts");\n    fahreSchritte(2);\n}',
+          cases: [{ label: '', world: W(8, 5, { x: 0, y: 0, dir: 0 }, { hills: [[6, 0], [1, 4]], rocks: [[3, 2]] }) }]
+        },
+        {
+          type: 'quiz', id: 's1-quiz', title: 'Parameter im Griff?', intro: 'Vier Fragen zur Parameterübergabe.',
+          qs: [
+            { q: 'Was passiert bei diesem Aufruf?', code: 'fahreSchritte("drei");', opts: [{ t: 'Fehler: Der Parameter ist ein int, übergeben wird aber ein Text', ok: 1 }, { t: 'Der Rover fährt drei Schritte' }, { t: 'Der Rover fährt einen Schritt' }, { t: 'Der Rover fährt gar nicht' }], why: 'Der Datentyp muss passen: int erwartet eine ganze Zahl, "drei" ist ein String (incompatible types).' },
+            { q: 'Welchen Wert hat pAnzahl in der Methode beim Aufruf `fahreSchritte(2 + 1)`?', opts: [{ t: '3', ok: 1 }, { t: '2' }, { t: '1' }, { t: 'Der Aufruf ist ungültig' }], why: 'Der Ausdruck wird zuerst berechnet. Übergeben wird das Ergebnis 3.' },
+            { q: 'Was bewirkt `fahreSchritte(0)`?', opts: [{ t: 'Nichts, die Schleife läuft nie', ok: 1 }, { t: 'Der Rover fährt einen Schritt' }, { t: 'Es gibt einen Fehler' }, { t: 'Der Rover dreht sich' }], why: 'Mit pAnzahl = 0 ist die Bedingung i < 0 sofort falsch. Der Rumpf wird nicht ausgeführt.' },
+            { q: 'Die Methode `drehe(String pRichtung)` gibt es schon. Welcher Aufruf stimmt?', opts: [{ t: 'drehe("links");', ok: 1 }, { t: 'drehe(links);' }, { t: 'drehe(3);' }, { t: 'drehe();' }], why: 'Ein String steht in Anführungszeichen. Ohne Argument fehlt der Wert für pRichtung.' }
+          ]
+        },
+        ...labActs(['p1', 'p2'])
+      ]
+    },
+    /* ---------------- Stunde 2 ---------------- */
+    {
+      id: 's2', nav: '2 · Mehrere Parameter', kicker: 'Stunde 2', title: 'Typ und Reihenfolge', doodle: 's2',
+      merke: '<b class="tag">Merke</b>Mehrere Parameter stehen durch Komma getrennt im Kopf, zum Beispiel <code>fahreStrecke(int pAnzahl, String pRichtung)</code>. Beim Aufruf müssen <b>Anzahl, Reihenfolge und Typ</b> der Argumente zum Kopf passen. Ein Parameter gilt nur <b>innerhalb seiner Methode</b>.',
+      acts: [
+        {
+          type: 'sort', id: 's2-sort', title: 'Passt der Aufruf?', intro: 'Die Methode heißt fahreStrecke(int pAnzahl, String pRichtung). Sortiere die Aufrufe.',
+          buckets: [{ t: 'passt', s: 'Aufruf ist korrekt' }, { t: 'passt nicht', s: 'Fehler beim Aufruf' }],
+          cards: [
+            { t: 'fahreStrecke(3, "links");', c: 0 }, { t: 'fahreStrecke("links", 3);', c: 1 }, { t: 'fahreStrecke(3);', c: 1 },
+            { t: 'fahreStrecke(2 + 1, "rechts");', c: 0 }, { t: 'fahreStrecke(3, links);', c: 1 }, { t: 'fahreStrecke(1, "rechts", 2);', c: 1 }
+          ]
+        },
+        {
+          type: 'bug', id: 's2-bug', title: 'Fehlerdetektiv: Parameter', intro: 'Der Compiler meldet einen Fehler. Tippe die Zeile an, die du ändern musst.',
+          snippets: [
+            { msg: 'incompatible types: String cannot be converted to int', lines: ['public void fahreStrecke(int pAnzahl, String pRichtung)', '{', '    drehe(pRichtung);', '    for (int i = 0; i < pAnzahl; i++) { fahre(); }', '}', '', 'public void act()', '{', '    fahreStrecke("links", 3);', '}'], bad: 8, why: 'Die Argumente stehen in der falschen Reihenfolge. Zuerst kommt die Zahl, dann der Text.' },
+            { msg: 'method fahreStrecke cannot be applied to given types', lines: ['public void fahreStrecke(int pAnzahl, String pRichtung)', '{', '    drehe(pRichtung);', '    for (int i = 0; i < pAnzahl; i++) { fahre(); }', '}', '', 'public void act()', '{', '    fahreStrecke(4);', '}'], bad: 8, why: 'Es fehlt das zweite Argument für pRichtung. Anzahl der Argumente und Parameter müssen gleich sein.' },
+            { msg: 'cannot find symbol: variable pAnzal', lines: ['public void fahreSchritte(int pAnzahl)', '{', '    for (int i = 0; i < pAnzal; i++)', '    {', '        fahre();', '    }', '}'], bad: 2, why: 'Der Parameter heißt pAnzahl. Ein Tippfehler im Namen, und Java kennt die Variable nicht.' },
+            { msg: 'cannot find symbol: variable pAnzahl', lines: ['public void fahreSchritte(int pAnzahl)', '{', '    fahre();', '}', '', 'public void act()', '{', '    fahreSchritte(3);', '    drehe("rechts");', '    for (int i = 0; i < pAnzahl; i++)', '    {', '        fahre();', '    }', '}'], bad: 9, why: 'pAnzahl gilt nur innerhalb von fahreSchritte. In act() ist die Variable unbekannt.' }
+          ]
+        },
+        {
+          type: 'trace', id: 's2-trace', title: 'Wo landet der Rover?', intro: 'Der Rover startet in der Mitte und blickt nach rechts. Klicke das Endfeld an.',
+          code: 'public void fahreStrecke(int pAnzahl, String pRichtung)\n{\n    drehe(pRichtung);\n    for (int i = 0; i < pAnzahl; i++)\n    {\n        fahre();\n    }\n}\n\npublic void act()\n{\n    fahreStrecke(2, "rechts");\n    fahreStrecke(3, "links");\n}',
+          cases: [{ label: '', world: W(7, 6, { x: 3, y: 1, dir: 0 }, { hills: [[0, 0], [6, 5]], rocks: [[3, 3], [6, 3]] }) }]
+        },
+        {
+          type: 'order', id: 's2-order', title: 'Quadrat bauen', intro: 'Bringe die Zeilen in die richtige Reihenfolge. Der Rover fährt ein Quadrat mit beliebiger Seitenlänge.',
+          lines: [
+            { t: 'public void fahreQuadrat(int pSeite)', i: 0 }, { t: '{', i: 0 }, { t: 'for (int i = 0; i < 4; i++)', i: 1 }, { t: '{', i: 1 },
+            { t: 'setzeMarke();', i: 2 }, { t: 'fahreSchritte(pSeite);', i: 2 }, { t: 'drehe("rechts");', i: 2 }, { t: '}', i: 1 }, { t: '}', i: 0 }
+          ]
+        },
+        {
+          type: 'quiz', id: 's2-quiz', title: 'Formal oder aktuell?', intro: 'Parameter im Kopf, Argumente im Aufruf. Vier Fragen.',
+          qs: [
+            { q: 'In `fahreStrecke(5, "links");` ist `5` …', opts: [{ t: 'ein Argument (aktueller Wert)', ok: 1 }, { t: 'ein formaler Parameter' }, { t: 'der Methodenname' }, { t: 'der Rückgabetyp' }], why: 'Beim Aufruf übergibst du Werte, die Argumente. Im Kopf stehen die Parameter als Platzhalter.' },
+            { q: 'Zwei Methoden haben beide einen Parameter `pAnzahl`. Gibt es Streit?', opts: [{ t: 'Nein, jeder Parameter gilt nur in seiner Methode', ok: 1 }, { t: 'Ja, Namen dürfen nur einmal vorkommen' }, { t: 'Ja, der Rover wird dadurch langsamer' }, { t: 'Nur wenn beide int sind' }], why: 'Parameter sind lokal. Die Methoden sehen die Namen der jeweils anderen nicht.' },
+            { q: 'Wie viele Werte gehören in den Aufruf von `fahreRechteck(int pBreite, int pHoehe)`?', opts: [{ t: 'Zwei, in der Reihenfolge Breite, Höhe', ok: 1 }, { t: 'Einer' }, { t: 'Beliebig viele' }, { t: 'Zwei, die Reihenfolge ist egal' }], why: 'Für jeden Parameter genau ein Wert, und zwar in derselben Reihenfolge wie im Kopf.' },
+            { q: 'Warum beginnen die Parameternamen im Unterricht mit p (pAnzahl, pRichtung)?', opts: [{ t: 'Das p zeigt: Das ist ein Parameter, keine lokale Variable', ok: 1 }, { t: 'Java verlangt das' }, { t: 'p steht für public' }, { t: 'Nur damit es kürzer ist' }], why: 'Reine Namenskonvention. Beim Lesen sieht man sofort, ob ein Wert von außen kommt.' }
+          ]
+        },
+        ...labActs(['p3', 'p4'])
+      ]
+    },
+    /* ---------------- Stunde 3 ---------------- */
+    {
+      id: 's3', nav: '3 · Anfragen', kicker: 'Stunde 3', title: 'Antworten mit return: boolean', doodle: 's3',
+      merke: '<b class="tag">Merke</b>Eine <b>Anfrage</b> liefert einen Wert zurück. Im Kopf steht dafür der <b>Rückgabetyp</b> statt <code>void</code>, im Rumpf beendet <code>return</code> die Methode und gibt den Wert zurück. Jeder Weg durch die Methode muss mit <code>return</code> enden.',
+      acts: [
+        {
+          type: 'sort', id: 's3-sort', title: 'Rückgabetyp erkennen', intro: 'Sortiere die Methodenköpfe danach, was die Methode zurückgibt.',
+          buckets: [{ t: 'void', s: 'Auftrag: gibt nichts zurück' }, { t: 'boolean', s: 'Anfrage: wahr oder falsch' }, { t: 'int', s: 'Anfrage: eine Zahl' }],
+          cards: [
+            { t: 'public void fahre()', c: 0 }, { t: 'public boolean gesteinVorhanden()', c: 1 }, { t: 'public int schritteBisHuegel()', c: 2 },
+            { t: 'public void setzeMarke()', c: 0 }, { t: 'public boolean freieFahrt()', c: 1 }, { t: 'public int zaehleProben()', c: 2 },
+            { t: 'public void fahreSchritte(int pAnzahl)', c: 0 }, { t: 'public boolean markeVorhanden()', c: 1 }
+          ]
+        },
+        {
+          type: 'gaps', id: 's3-gaps', title: 'Anfrage schreiben', intro: 'Die Methode soll sagen, ob vor dem Rover noch Platz ist.',
+          blocks: [
+            { code: 'public [[boolean]] freieFahrt()\n{\n    [[return]] !huegelVorhanden("vorne");\n}' },
+            { p: 'Den Aufruf nutzt du wie eine eingebaute Anfrage: `while (`[[freieFahrt()]]`) { fahre(); }`' }
+          ]
+        },
+        {
+          type: 'quiz', id: 's3-quiz', title: 'return verstehen', intro: 'Vier Fragen zu Rückgabetyp und return.',
+          qs: [
+            { q: 'Was gibt diese Methode zurück, wenn vor dem Rover ein Hügel liegt?', code: 'public boolean freieFahrt()\n{\n    return !huegelVorhanden("vorne");\n}', opts: [{ t: 'false', ok: 1 }, { t: 'true' }, { t: 'nichts' }, { t: 'Das hängt vom Rückgabetyp void ab' }], why: 'huegelVorhanden("vorne") ist wahr, das ! dreht es zu falsch um. freieFahrt() liefert also false.' },
+            { q: 'Was passiert mit den Zeilen hinter einem return?', code: 'public int zahl()\n{\n    return 5;\n    fahre();\n}', opts: [{ t: 'Java meldet einen Fehler: unreachable statement', ok: 1 }, { t: 'Der Rover fährt trotzdem' }, { t: 'Der Rover fährt zuerst, dann kommt return' }, { t: 'Es wird 5 zurückgegeben und der Rover dreht' }], why: 'return beendet die Methode sofort. Alles dahinter wird nie erreicht, und der Compiler meldet das als Fehler.' },
+            { q: 'Welche Zeile ruft die Anfrage richtig auf?', opts: [{ t: 'if (freieFahrt()) { fahre(); }', ok: 1 }, { t: 'if (freieFahrt) { fahre(); }' }, { t: 'freieFahrt(); fahre();' }, { t: 'if (boolean freieFahrt()) { fahre(); }' }], why: 'Die Anfrage steht mit Klammern als Bedingung. Im Aufruf steht kein Rückgabetyp.' },
+            { q: 'Warum darf eine Anfrage den Rover nicht bewegen?', opts: [{ t: 'Wer nur fragt, soll nichts verändern', ok: 1 }, { t: 'Java verbietet fahre() in Methoden mit Rückgabewert' }, { t: 'boolean-Methoden dürfen keine Aufträge enthalten' }, { t: 'Sie dürfen es, aber nur nach return' }], why: 'Das ist eine Frage des Entwurfs: Anfragen sollen Zustände abfragen, Aufträge verändern sie. So bleibt das Programm leicht zu verstehen.' }
+          ]
+        },
+        {
+          type: 'bug', id: 's3-bug', title: 'Fehlerdetektiv: Rückgabe', intro: 'Der Compiler meldet einen Fehler. Tippe die Zeile an, die du ändern musst.',
+          snippets: [
+            { msg: 'missing return statement', lines: ['public boolean aufProbe()', '{', '    if (gesteinVorhanden())', '    {', '        return true;', '    }', '}'], bad: 6, why: 'Ist kein Gestein da, endet die Methode ohne return. Jeder Weg braucht ein return, hier etwa return false; vor der letzten Klammer.' },
+            { msg: 'incompatible types: unexpected return value', lines: ['public void fahreEinen()', '{', '    fahre();', '    return true;', '}'], bad: 3, why: 'Eine void-Methode darf nichts zurückgeben. Soll sie einen Wert liefern, muss im Kopf ein Rückgabetyp stehen.' },
+            { msg: 'incompatible types: String cannot be converted to boolean', lines: ['public boolean freieFahrt()', '{', '    if (huegelVorhanden("vorne"))', '    {', '        return "nein";', '    }', '    return true;', '}'], bad: 4, why: 'Der Rückgabetyp ist boolean. Zurückgegeben werden darf nur true oder false, kein Text.' },
+            { msg: 'unreachable statement', lines: ['public int zaehle()', '{', '    int n = 3;', '    return n;', '    fahre();', '}'], bad: 4, why: 'Hinter return wird nichts mehr ausgeführt. Die Zeile fahre(); gehört vor das return oder muss weg.' }
+          ]
+        },
+        ...labActs(['r1', 'r2', 'r3'])
+      ]
+    },
+    /* ---------------- Stunde 4 ---------------- */
+    {
+      id: 's4', nav: '4 · Zahlen zurück', kicker: 'Stunde 4', title: 'Rückgabe: Zahlen, Zählen, Testen', doodle: 's4',
+      merke: '<b class="tag">Merke</b>Mit <code>int</code> als Rückgabetyp liefert eine Methode eine Zahl, etwa die Anzahl gefahrener Schritte. Dazu braucht sie eine <b>lokale Variable als Zähler</b>. Eine Methode kann <b>Parameter und Rückgabe</b> kombinieren. Getestet wird mit Testfällen: Aufruf, erwarteter Wert, erhaltener Wert.',
+      acts: [
+        {
+          type: 'order', id: 's4-order', title: 'Schritte zählen', intro: 'Der Rover fährt bis zum Hügel und meldet die Anzahl der Schritte. Bringe die Zeilen in die richtige Reihenfolge.',
+          lines: [
+            { t: 'public int schritteBisHuegel()', i: 0 }, { t: '{', i: 0 }, { t: 'int anzahl = 0;', i: 1 }, { t: 'while (!huegelVorhanden("vorne"))', i: 1 }, { t: '{', i: 1 },
+            { t: 'fahre();', i: 2 }, { t: 'anzahl++;', i: 2 }, { t: '}', i: 1 }, { t: 'return anzahl;', i: 1 }, { t: '}', i: 0 }
+          ]
+        },
+        {
+          type: 'quiz', id: 's4-quiz', title: 'Was liefert die Methode?', intro: 'Verfolge den Aufruf Schritt für Schritt.',
+          qs: [
+            { q: 'Der Rover steht 3 Felder vor einem Hügel (er kann genau 3 Schritte fahren). Was liefert der Aufruf?', code: 'public int schritteBisHuegel()\n{\n    int anzahl = 0;\n    while (!huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    return anzahl;\n}', opts: [{ t: '3', ok: 1 }, { t: '2' }, { t: '4' }, { t: '0' }], why: 'Dreimal ist vorne frei, dreimal läuft die Schleife. anzahl steht danach auf 3.' },
+            { q: 'Was liefert der Aufruf, wenn direkt vor dem Rover ein Hügel liegt?', code: 'public int schritteBisHuegel()\n{\n    int anzahl = 0;\n    while (!huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    return anzahl;\n}', opts: [{ t: '0', ok: 1 }, { t: '1' }, { t: 'Fehler' }, { t: 'Nichts' }], why: 'Die Bedingung ist sofort falsch. Die Schleife läuft nie, anzahl bleibt 0. Das ist ein typischer Grenzfall.' },
+            { q: 'Was liefert fahreHoechstens(2), wenn bis zum Hügel 7 Felder frei sind?', code: 'public int fahreHoechstens(int pMax)\n{\n    int anzahl = 0;\n    while (anzahl < pMax && !huegelVorhanden("vorne"))\n    {\n        fahre();\n        anzahl++;\n    }\n    return anzahl;\n}', opts: [{ t: '2', ok: 1 }, { t: '7' }, { t: '5' }, { t: '0' }], why: 'Die Schleife stoppt, sobald anzahl den Wert pMax = 2 erreicht, noch bevor der Hügel eine Rolle spielt.' },
+            { q: 'Wo muss `return anzahl;` stehen, damit alle Schritte gezählt werden?', opts: [{ t: 'Hinter der Schleife', ok: 1 }, { t: 'Als erste Zeile der Methode' }, { t: 'Direkt hinter fahre() in der Schleife' }, { t: 'Es ist egal' }], why: 'return beendet die Methode. Steht es in der Schleife, endet sie nach dem ersten Durchlauf. Der Wert wird erst zurückgegeben, wenn gezählt ist.' }
+          ]
+        },
+        {
+          type: 'match', id: 's4-match', title: 'Aufruf und Ergebnis', intro: 'Der Rover steht so, dass bis zum Hügel genau 4 Felder frei sind. Welches Ergebnis passt zu welchem Aufruf von fahreHoechstens(int pMax)?',
+          pairs: [
+            { l: { code: 'fahreHoechstens(2)' }, r: 'liefert 2' },
+            { l: { code: 'fahreHoechstens(9)' }, r: 'liefert 4' },
+            { l: { code: 'fahreHoechstens(0)' }, r: 'liefert 0, der Rover bleibt stehen' },
+            { l: { code: 'fahreHoechstens(1)' }, r: 'liefert 1' }
+          ]
+        },
+        {
+          type: 'quiz', id: 's4-quiz2', title: 'Gut getestet?', intro: 'Gute Testfälle prüfen nicht nur den Normalfall.',
+          qs: [
+            { q: 'Welche Testfälle sind für fahreHoechstens(int pMax) besonders wichtig?', opts: [{ t: 'pMax = 0, pMax = genau bis zum Hügel, pMax größer als der freie Weg', ok: 1 }, { t: 'Nur pMax = 5' }, { t: 'Nur sehr große Werte' }, { t: 'Testen ist nicht nötig, wenn es kompiliert' }], why: 'Grenzfälle verraten die meisten Fehler: Null, genau die Grenze und knapp darüber.' },
+            { q: 'Die Tabelle zeigt „erwartet 4, erhalten 5“. Was ist die beste Reaktion?', opts: [{ t: 'Den Code anschauen: Wird einmal zu oft gezählt oder zu spät gestoppt?', ok: 1 }, { t: 'Den erwarteten Wert auf 5 ändern' }, { t: 'Das Programm neu starten' }, { t: 'Die Welt ändern' }], why: 'Der erwartete Wert kommt aus der Aufgabe. Die Abweichung ist ein Hinweis auf einen Fehler im Programm, meist einen off-by-one-Fehler.' },
+            { q: 'Warum zählt man in `schritteBisHuegel()` mit einer lokalen Variable?', opts: [{ t: 'Der Wert muss zwischen den Schleifendurchläufen erhalten bleiben und am Ende zurückgegeben werden', ok: 1 }, { t: 'Java verlangt eine Variable in jeder Methode' }, { t: 'Damit der Rover schneller fährt' }, { t: 'Man kann auch ohne Variable zählen' }], why: 'Die Variable merkt sich den Zwischenstand. Nach der Schleife steht dort die Antwort.' }
+          ]
+        },
+        ...labActs(['r4', 'r5'])
+      ]
+    },
+    /* ---------------- Stunde 5 ---------------- */
+    {
+      id: 's5', nav: '5 · Mission', kicker: 'Stunde 5', title: 'Algorithmen entwickeln', doodle: 's5',
+      merke: '<b class="tag">Merke</b>Große Aufgaben werden <b>zerlegt</b>: Jedes Teilproblem bekommt eine eigene Methode mit gutem Namen, mit Parametern für das, was variiert, und mit Rückgabe für das, was die Methode herausfindet. Zuerst überlegen, was die Methode leisten soll, dann codieren, dann testen.',
+      acts: [
+        {
+          type: 'sort', id: 's5-sort', title: 'Welche Methode brauche ich?', intro: 'Ordne jede Anforderung dem passenden Methodentyp zu.',
+          buckets: [{ t: 'void mit Parameter', s: 'Auftrag mit einem Wert von außen' }, { t: 'boolean', s: 'Ja-Nein-Anfrage' }, { t: 'int', s: 'Anfrage, die eine Zahl liefert' }],
+          cards: [
+            { t: 'Der Rover soll n Felder weit fahren.', c: 0 }, { t: 'Ist die Probe noch nicht untersucht?', c: 1 }, { t: 'Wie viele Proben liegen auf der Strecke?', c: 2 },
+            { t: 'Setze n Marken hintereinander.', c: 0 }, { t: 'Ist der Rover eingeschlossen?', c: 1 }, { t: 'Wie weit ist es bis zum Hügel?', c: 2 }
+          ]
+        },
+        {
+          type: 'order', id: 's5-order', title: 'Zerlegung der Mission', intro: 'Der Rover erkundet bis zum Hügel und setzt am Ende eine Marke, wenn mehr als 2 Proben da waren. Ordne die Zeilen von act().',
+          lines: [
+            { t: 'public void act()', i: 0 }, { t: '{', i: 0 }, { t: 'int proben = erkundeBisHuegel();', i: 1 }, { t: 'if (proben > 2)', i: 1 }, { t: '{', i: 1 }, { t: 'setzeMarke();', i: 2 }, { t: '}', i: 1 }, { t: '}', i: 0 }
+          ]
+        },
+        {
+          type: 'quiz', id: 's5-quiz', title: 'Gut entworfen?', intro: 'Vier Fragen zum Entwurf von Methoden.',
+          qs: [
+            { q: 'Was ist der erste Schritt, wenn du einen Algorithmus entwickelst?', opts: [{ t: 'Klären, was die Methode leisten soll und welche Eingaben und Ausgaben sie hat', ok: 1 }, { t: 'Sofort Code schreiben und schauen, was passiert' }, { t: 'Den Code von der Nachbarin kopieren' }, { t: 'Die Welt ändern, bis es passt' }], why: 'Erst die Aufgabe verstehen: Welche Parameter? Welche Rückgabe? Dann folgt der Code.' },
+            { q: 'Welcher Methodenname ist am besten?', opts: [{ t: 'erkundeBisHuegel', ok: 1 }, { t: 'methode1' }, { t: 'x' }, { t: 'tuDasUndDasUndDannNochDas' }], why: 'Der Name sagt, was passiert. Verben für Aufträge, Fragen für Anfragen.' },
+            { q: 'Die Methode macht zwei verschiedene Dinge: Sie fährt und zählt Proben und färbt noch Marken ein. Was hilft?', opts: [{ t: 'In kleinere Methoden zerlegen, die jeweils eine Aufgabe haben', ok: 1 }, { t: 'Noch mehr in dieselbe Methode packen' }, { t: 'Kommentare löschen' }, { t: 'Nichts, das ist gut so' }], why: 'Kleine, gut benannte Methoden sind leichter zu verstehen, zu testen und wiederzuverwenden.' },
+            { q: 'Dein Programm besteht alle Tests bis auf einen Grenzfall. Was tust du?', opts: [{ t: 'Den Grenzfall gezielt nachvollziehen und die Stelle im Code korrigieren', ok: 1 }, { t: 'Den Test ignorieren' }, { t: 'Den Code neu schreiben' }, { t: 'Aufgeben' }], why: 'Ein einzelner Fehlschlag ist ein Hinweis auf eine konkrete Stelle. Spurensuche statt Neuanfang.' }
+          ]
+        },
+        ...labActs(['a1'])
+      ]
+    },
+    /* ---------------- Expert ---------------- */
+    {
+      id: 'ex', nav: 'Expert', kicker: 'Für alle, die mehr wollen', title: 'Expert-Station', doodle: 'ex',
+      merke: '<b class="tag">Expert</b>Diese Aufgaben sind knifflig: Logik mit mehreren Bedingungen, Methoden ohne Nebenwirkung, Rekursion und eine Mission, die du selbst in Teilmethoden zerlegst. Hilfen gibt es nach zwei Fehlversuchen.',
+      acts: labActs(['e1', 'e2', 'e3', 'e4'])
+    }
+  ];
+
+  const out = { STATIONS, LAB: LABS.LAB, runLab: LABS.runLab };
+  root.ROVER_CONTENT = out;
+  if (typeof module !== 'undefined') module.exports = out;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Oberfläche: Aufgabentypen im Stil von LearningApps + Rover-Labor */
+(function () {
+  'use strict';
+  const RI = window.RoverInterp;
+  const CONTENT = window.ROVER_CONTENT;
+  const DOODLES = window.DOODLES || {};
+
+  /* ---------- Helfer ---------- */
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const md = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+  function h(tag, attrs, ...kids) {
+    const e = document.createElement(tag);
+    for (const k in (attrs || {})) {
+      const v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'html') e.innerHTML = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const kid of kids.flat()) { if (kid == null || kid === false) continue; e.append(kid.nodeType ? kid : document.createTextNode(kid)); }
+    return e;
+  }
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function hl(code) {
+    const re = /(\/\/[^\n]*)|("[^"\n]*")|\b(public|void|if|else|while|for|int|String|boolean|return|true|false)\b|\b(\d+)\b|([A-Za-z_]\w*)(?=\()/g;
+    let out = '', last = 0, m;
+    while ((m = re.exec(code))) {
+      out += esc(code.slice(last, m.index));
+      const cls = m[1] ? 'c-com' : m[2] ? 'c-str' : m[3] ? 'c-kw' : m[4] ? 'c-num' : 'c-fn';
+      out += '<span class="' + cls + '">' + esc(m[0]) + '</span>';
+      last = re.lastIndex;
+    }
+    return out + esc(code.slice(last));
+  }
+  const codeBlock = src => h('pre', { class: 'code', html: hl(src) });
+
+  /* ---------- Fortschritt ---------- */
+  const KEY = 'marsrover-parameter-v1';
+  let state = { done: {}, code: {}, res: {}, meta: {} };
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.done) state = { done: s.done, code: s.code || {}, res: s.res || {}, meta: s.meta || {} }; } catch (e) { /* ohne Speicher weiter */ }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* egal */ } };
+  const allActs = [];
+  function setRes(id, o) { state.res[id] = o; save(); }
+  function setDone(id) {
+    if (!state.done[id]) { state.done[id] = true; save(); }
+    const el = document.getElementById(id); if (el) el.classList.add('done');
+    updateProgress();
+  }
+
+  /* ---------- Welt ---------- */
+  const C = 48;
+  const ROVER = '<g stroke-linejoin="round">'
+    + [-16, -4.5, 7].map(x => '<rect x="' + x + '" y="-15.5" width="9" height="5.5" rx="2" fill="#2B2F36"/><rect x="' + x + '" y="10" width="9" height="5.5" rx="2" fill="#2B2F36"/>').join('')
+    + '<rect x="-17" y="-10" width="34" height="20" rx="4" fill="#C9CED8" stroke="#4B5563" stroke-width="1.5"/>'
+    + '<rect x="-13" y="-7" width="19" height="14" rx="2" fill="#2F5FA8" stroke="#1E3A6B" stroke-width="1"/>'
+    + '<path d="M-6.5,-7 V7 M-13,0 H6" stroke="#8FB3EA" stroke-width=".8"/>'
+    + '<circle cx="12" cy="0" r="4.6" fill="#F3F4F6" stroke="#4B5563" stroke-width="1.2"/><circle cx="13.6" cy="0" r="1.8" fill="#1F2937"/></g>';
+  const ROCK = an => '<g stroke-width="1" stroke-linejoin="round">'
+    + '<ellipse cx="-8" cy="6" rx="9" ry="6" fill="#C0392B" stroke="#7B241C"/><ellipse cx="7" cy="8" rx="8" ry="5.5" fill="#2F6FB5" stroke="#1B4272"/>'
+    + '<ellipse cx="-2" cy="-5" rx="8.5" ry="6" fill="#8B5A2B" stroke="#4E3016"/><ellipse cx="10" cy="-6" rx="6" ry="4.5" fill="#C0392B" stroke="#7B241C"/>'
+    + '<ellipse cx="-11" cy="-8" rx="5.5" ry="4" fill="#2F6FB5" stroke="#1B4272"/></g>'
+    + (an ? '<circle r="21" fill="none" stroke="#FFE600" stroke-width="3" stroke-dasharray="5 4"/><path d="M-6,0 L-1,5 L8,-6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M-6,0 L-1,5 L8,-6" fill="none" stroke="#1B8A4B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' : '');
+  const HILL = '<path d="M-21,17 L-10,-13 L-2,3 L8,-17 L21,17 Z" fill="#7A5230" stroke="#4A2F17" stroke-width="2" stroke-linejoin="round"/>'
+    + '<path d="M-10,-13 L-2,3 L-8,17 L-21,17 Z" fill="#94693E"/><path d="M8,-17 L21,17 L10,17 L5,0 Z" fill="#94693E"/>';
+  const MARK = '<path d="M-12,-12 L12,12 M12,-12 L-12,12" stroke="#1FAA3A" stroke-width="5.5" stroke-linecap="round"/>';
+  const GROUND = '#D98B5F';
+  function icon(sym) {
+    const g = { rover: ROVER, rock: ROCK(false), hill: HILL, mark: MARK }[sym];
+    return '<svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="8" fill="' + GROUND + '"/><g transform="translate(24,24)">' + g + '</g></svg>';
+  }
+
+  class WorldView {
+    constructor(spec, opts) {
+      opts = opts || {};
+      this.spec = spec; this.ang = null;
+      const W = spec.w * C, H = spec.h * C;
+      let s = '<svg class="world' + (opts.clickable ? ' clickable' : '') + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Spielfeld mit Rover, ' + spec.w + ' mal ' + spec.h + ' Felder">';
+      s += '<rect width="' + W + '" height="' + H + '" fill="' + GROUND + '"/><g stroke="#B26B44" stroke-opacity=".55" stroke-width="1">';
+      for (let x = 1; x < spec.w; x++) s += '<path d="M' + x * C + ',0 V' + H + '"/>';
+      for (let y = 1; y < spec.h; y++) s += '<path d="M0,' + y * C + ' H' + W + '"/>';
+      s += '</g>';
+      for (const [x, y] of spec.hills || []) s += '<g transform="translate(' + (x * C + 24) + ',' + (y * C + 24) + ')">' + HILL + '</g>';
+      s += '<g class="rocks"></g><g class="marks"></g><g class="rover">' + ROVER + '</g><g class="hlg"></g>';
+      if (opts.clickable) {
+        s += '<g>';
+        for (let y = 0; y < spec.h; y++) for (let x = 0; x < spec.w; x++) s += '<rect class="cell" data-x="' + x + '" data-y="' + y + '" x="' + x * C + '" y="' + y * C + '" width="' + C + '" height="' + C + '"/>';
+        s += '</g>';
+      }
+      s += '</svg>';
+      const d = document.createElement('div'); d.innerHTML = s;
+      this.svg = d.firstElementChild;
+      this.gRocks = this.svg.querySelector('.rocks'); this.gMarks = this.svg.querySelector('.marks');
+      this.gRover = this.svg.querySelector('.rover'); this.gHl = this.svg.querySelector('.hlg');
+      if (opts.onCell) this.svg.addEventListener('click', e => { const c = e.target.closest('.cell'); if (c) opts.onCell(+c.dataset.x, +c.dataset.y, this); });
+      this.reset();
+    }
+    reset() {
+      const w = RI.makeWorld(this.spec);
+      this.draw({ rover: { ...w.rover }, marks: [...w.marks].map(k => k.split(',').map(Number)), analyzed: w.rocks.map(() => false) }, true);
+    }
+    draw(st, instant) {
+      const sp = this.spec;
+      this.gRocks.innerHTML = (sp.rocks || []).map((r, i) => '<g transform="translate(' + (r[0] * C + 24) + ',' + (r[1] * C + 24) + ')">' + ROCK(st.analyzed[i]) + '</g>').join('');
+      this.gMarks.innerHTML = st.marks.map(([x, y]) => '<g transform="translate(' + (x * C + 24) + ',' + (y * C + 24) + ')">' + MARK + '</g>').join('');
+      const target = st.rover.dir * 90;
+      if (this.ang == null) this.ang = target; else this.ang += ((target - this.ang) % 360 + 540) % 360 - 180;
+      const g = this.gRover;
+      if (instant) g.style.transition = 'none';
+      g.style.transform = 'translate(' + (st.rover.x * C + 24) + 'px,' + (st.rover.y * C + 24) + 'px) rotate(' + this.ang + 'deg)';
+      if (instant) { void g.getBoundingClientRect(); g.style.transition = ''; }
+    }
+    highlight(list) {
+      this.gHl.innerHTML = list.map(o => '<rect x="' + (o.x * C + 2) + '" y="' + (o.y * C + 2) + '" width="' + (C - 4) + '" height="' + (C - 4) + '" rx="6" fill="' + (o.ok ? '#1B8A4B33' : '#C42F3F33') + '" stroke="' + (o.ok ? '#1B8A4B' : '#C42F3F') + '" stroke-width="4"/>').join('');
+    }
+  }
+  const SPEED = { slow: 650, normal: 380, fast: 130 };
+  function play(view, frames, ms, onFrame, onEnd) {
+    let i = 0, stopped = false, t = null;
+    view.reset();
+    const step = () => {
+      if (stopped) return;
+      i++;
+      if (i >= frames.length) { onEnd && onEnd(); return; }
+      view.draw(frames[i]); onFrame && onFrame(frames[i]);
+      t = setTimeout(step, ms);
+    };
+    t = setTimeout(step, Math.min(ms, 300));
+    return () => { stopped = true; clearTimeout(t); };
+  }
+
+  /* ---------- Karte ---------- */
+  function card(cfg, typeLabel, bodyEls, footEls) {
+    const fb = h('div', { class: 'fb info', 'aria-live': 'polite' });
+    const foot = (footEls && footEls.length) || true ? h('div', { class: 'act-foot' }, ...(footEls || []), fb) : null;
+    const el = h('section', { class: 'act', id: cfg.id },
+      h('div', { class: 'act-head' }, h('h3', {}, cfg.title), h('span', { class: 'type' }, typeLabel), h('span', { class: 'okbadge' }, '✓ geschafft')),
+      cfg.intro ? h('p', { class: 'intro' }, cfg.intro) : null, ...bodyEls, foot);
+    if (state.done[cfg.id]) el.classList.add('done');
+    allActs.push(cfg.id);
+    return { el, say(msg, kind) { fb.textContent = msg; fb.className = 'fb ' + (kind || 'info'); }, done() { setDone(cfg.id); }, res(o) { setRes(cfg.id, o); } };
+  }
+
+  /* ---------- Zuordnung ---------- */
+  function buildMatch(cfg) {
+    const pairs = cfg.pairs, colors = ['#E4572E', '#2E86DE', '#16A085', '#B8860B', '#8E44AD', '#D81B60'];
+    const order = shuffle(pairs.map((p, i) => i));
+    let sel = null, solved = 0, errs = 0; const solvedIdx = [];
+    const SYM = { rover: 'Rover', rock: 'Gestein', hill: 'Hügel', mark: 'Marke' };
+    const plab = p => (p.l.code ? p.l.code : p.l.text ? p.l.text.replace(/`/g, '') : SYM[p.l.sym] || '?');
+    const recM = () => c.res({ sum: solved + ' von ' + pairs.length + ' Paaren zugeordnet, ' + errs + ' Fehlversuch(e)', lines: solvedIdx.map(i => plab(pairs[i]) + '  =  ' + pairs[i].r) });
+    const lEls = pairs.map((p, i) => {
+      const b = h('button', { class: 'mi', type: 'button', onclick: () => pick('l', i) });
+      b.innerHTML = p.l.sym ? icon(p.l.sym) : p.l.code ? '<code>' + esc(p.l.code) + '</code>' : md(p.l.text);
+      return b;
+    });
+    const rEls = {};
+    order.forEach(i => { rEls[i] = h('button', { class: 'mi', type: 'button', onclick: () => pick('r', i) }, pairs[i].r); });
+    const lookup = (side, i) => (side === 'l' ? lEls[i] : rEls[i]);
+    function clearSel() { if (sel) { lookup(sel.side, sel.i).classList.remove('sel'); sel = null; } }
+    function pick(side, i) {
+      const el = lookup(side, i);
+      if (el.classList.contains('solved')) return;
+      if (sel && sel.side !== side) {
+        const li = side === 'l' ? i : sel.i, ri = side === 'r' ? i : sel.i;
+        const a = lookup(sel.side, sel.i), b = el;
+        if (li === ri) {
+          [a, b].forEach(x => { x.classList.remove('sel'); x.classList.add('solved'); x.style.setProperty('--hc', colors[solved % colors.length]); });
+          sel = null; solved++; solvedIdx.push(li); recM();
+          if (solved === pairs.length) { c.say(errs ? 'Alles zugeordnet, mit ' + errs + ' Fehlversuch(en).' : 'Alles zugeordnet, ohne Fehlversuch!', 'ok'); c.done(); } else c.say(solved + ' von ' + pairs.length + ' zugeordnet.', 'info');
+        } else {
+          errs++; recM();
+          [a, b].forEach(x => { x.classList.remove('shake'); void x.offsetWidth; x.classList.add('shake'); });
+          clearSel(); c.say('Das passt nicht. Versuche es noch einmal.', 'bad');
+        }
+        return;
+      }
+      clearSel(); sel = { side, i }; el.classList.add('sel');
+    }
+    const body = [];
+    if (cfg.code) body.push(codeBlock(cfg.code));
+    body.push(h('div', { class: 'match' }, h('div', { class: 'col' }, lEls), h('div', { class: 'col' }, order.map(i => rEls[i]))));
+    const c = card(cfg, 'Zuordnung', body, []);
+    return c.el;
+  }
+
+  /* ---------- Gruppenzuordnung ---------- */
+  function buildSort(cfg) {
+    let cards = cfg.cards;
+    if (cfg.exprs) cards = cfg.exprs.map(e => ({ t: e, c: RI.evalCondition(e, RI.makeWorld(cfg.world)) ? 0 : 1 }));
+    const items = shuffle(cards.map((k, i) => ({ ...k, id: i, place: -1, st: null })));
+    let selId = null;
+    const pool = h('div', { class: 'pool' });
+    const bks = cfg.buckets.map(b => ({ box: h('div', { class: 'bucket' }) }));
+    function put(id, place) { const it = items.find(x => x.id === id); it.place = place; it.st = null; }
+    function render() {
+      pool.innerHTML = ''; bks.forEach(b => { b.box.innerHTML = ''; });
+      items.forEach(it => {
+        const b = h('button', {
+          class: 'card' + (selId === it.id ? ' sel' : '') + (it.st ? ' ' + it.st : ''), type: 'button', draggable: 'true',
+          ondragstart: e => { e.dataTransfer.setData('text/plain', String(it.id)); },
+          onclick: e => {
+            e.stopPropagation();
+            if (selId != null && selId !== it.id && it.place >= 0) { put(selId, it.place); selId = null; } else selId = selId === it.id ? null : it.id;
+            render();
+          }
+        }, it.t);
+        (it.place < 0 ? pool : bks[it.place].box).append(b);
+      });
+    }
+    const wire = (el, place) => {
+      el.addEventListener('click', () => { if (selId != null) { put(selId, place); selId = null; render(); } });
+      el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('hover'); });
+      el.addEventListener('dragleave', () => el.classList.remove('hover'));
+      el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('hover'); const id = +e.dataTransfer.getData('text/plain'); if (!isNaN(id)) { put(id, place); selId = null; render(); } });
+    };
+    wire(pool, -1);
+    const wraps = cfg.buckets.map((b, i) => {
+      const w = h('div', { class: 'bwrap' }, h('h4', {}, b.t, h('small', {}, b.s)), bks[i].box);
+      wire(w, i); return w;
+    });
+    const body = [];
+    if (cfg.world) { const v = new WorldView(cfg.world); body.push(h('div', { style: 'max-width:420px;margin-bottom:12px' }, v.svg)); }
+    body.push(pool, h('div', { class: 'buckets' }, wraps));
+    const btn = h('button', {
+      class: 'btn', type: 'button', onclick: () => {
+        const placed = items.filter(i => i.place >= 0);
+        if (!placed.length) { c.say('Sortiere zuerst Karten in die Felder ein.', 'info'); return; }
+        placed.forEach(i => { i.st = i.place === i.c ? 'right' : 'wrong'; });
+        const wrong = placed.filter(i => i.st === 'wrong').length, left = items.filter(i => i.place < 0).length;
+        c.res({ sum: (placed.length - wrong) + ' von ' + items.length + ' Karten richtig einsortiert' + (wrong ? ', ' + wrong + ' lagen falsch' : ''), lines: cfg.buckets.map((b, bi) => b.t + ': ' + (items.filter(i => i.place === bi && i.st === 'right').map(i => i.t).join('   |   ') || '-')) });
+        render();
+        if (wrong) {
+          c.say(wrong + ' Karte(n) liegen falsch und springen zurück.', 'bad');
+          setTimeout(() => { items.forEach(i => { if (i.st === 'wrong') { i.place = -1; i.st = null; } }); render(); }, 1300);
+        } else if (left) c.say('Bisher alles richtig. Noch ' + left + ' Karte(n) übrig.', 'info');
+        else { c.say('Alles richtig sortiert!', 'ok'); c.done(); }
+      }
+    }, 'Prüfen');
+    const c = card(cfg, 'Gruppenzuordnung', body, [btn]);
+    render();
+    return c.el;
+  }
+
+  /* ---------- Lückentext ---------- */
+  function gapSplit(src) {
+    const parts = [], re = /\[\[(.+?)\]\]/g; let last = 0, m;
+    while ((m = re.exec(src))) { parts.push({ t: src.slice(last, m.index) }); parts.push({ gap: m[1].split('~~') }); last = re.lastIndex; }
+    parts.push({ t: src.slice(last) });
+    return parts;
+  }
+  function buildGaps(cfg) {
+    const inputs = [];
+    const mkInput = (answers, isCode) => {
+      const longest = Math.max(...answers.map(a => a.length));
+      const inp = h('input', { class: 'gap', type: 'text', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Lücke ' + (inputs.length + 1), style: 'width:' + Math.max(4, longest + 2.5) + 'ch' });
+      inp.addEventListener('input', () => { inp.classList.remove('ok', 'bad', 'shown'); });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+      inputs.push({ el: inp, answers, isCode });
+      return inp;
+    };
+    const body = cfg.blocks.map(b => {
+      if (b.code) {
+        const box = h('div', { class: 'codebox' });
+        for (const p of gapSplit(b.code)) { if (p.gap) box.append(mkInput(p.gap, true)); else { const s = h('span'); s.innerHTML = hl(p.t); box.append(s); } }
+        return box;
+      }
+      const para = h('p');
+      for (const p of gapSplit(b.p)) { if (p.gap) para.append(mkInput(p.gap, false)); else { const s = h('span'); s.innerHTML = md(p.t); para.append(s); } }
+      return para;
+    });
+    const norm = (s, code) => { const t = s.replace(/\s+/g, ''); return code ? t : t.toLowerCase(); };
+    let checked = 0;
+    function recG(okN) {
+      c.res({ sum: okN + ' von ' + inputs.length + ' Lücken richtig' + (checked > 1 ? ' (Prüfung Nr. ' + checked + ')' : ''), lines: inputs.map((g, i) => {
+        const v = g.el.value.trim(), shown = g.el.classList.contains('shown'), good = g.el.classList.contains('ok');
+        return 'Lücke ' + (i + 1) + ': ' + (v ? '"' + v + '"' : '(leer)') + (shown ? ' – Lösung angezeigt' : good ? ' – richtig' : ' – falsch, richtig wäre: ' + g.answers[0]);
+      }) });
+    }
+    function check() {
+      checked++;
+      let ok = 0;
+      inputs.forEach(g => {
+        const good = g.el.value.trim() !== '' && g.answers.some(a => norm(a, g.isCode) === norm(g.el.value, g.isCode));
+        g.el.classList.toggle('ok', good); g.el.classList.toggle('bad', !good); if (good) ok++;
+      });
+      recG(ok);
+      if (ok === inputs.length) { c.say('Alle ' + ok + ' Lücken stimmen!', 'ok'); c.done(); sol.disabled = true; }
+      else { c.say(ok + ' von ' + inputs.length + ' Lücken stimmen. Rot markierte noch einmal prüfen.', 'bad'); sol.disabled = false; }
+    }
+    const sol = h('button', {
+      class: 'btn ghost', type: 'button', disabled: true, onclick: () => {
+        inputs.forEach(g => { if (!g.el.classList.contains('ok')) { g.el.value = g.answers[0]; g.el.classList.remove('bad'); g.el.classList.add('shown'); } });
+        recG(inputs.filter(g => g.el.classList.contains('ok')).length);
+        c.say('Lösung eingetragen. Zählt erst, wenn du es selbst richtig hast.', 'info');
+      }
+    }, 'Lösung zeigen');
+    const c = card(cfg, 'Lückentext', [h('div', { class: 'gaptext' }, body)], [h('button', { class: 'btn', type: 'button', onclick: check }, 'Prüfen'), sol]);
+    return c.el;
+  }
+
+  /* ---------- Reihenfolge ---------- */
+  function buildOrder(cfg) {
+    const n = cfg.lines.length;
+    let ord = shuffle([...Array(n).keys()]);
+    while (ord.every((v, i) => v === i)) ord = shuffle(ord);
+    let marks = [];
+    const list = h('ol', { class: 'olist' });
+    function render() {
+      list.innerHTML = '';
+      ord.forEach((li, pos) => {
+        const ln = cfg.lines[li];
+        const mv = h('div', { class: 'mv' },
+          h('button', { class: 'mvb', type: 'button', 'aria-label': 'Nach oben', disabled: pos === 0, onclick: () => { [ord[pos - 1], ord[pos]] = [ord[pos], ord[pos - 1]]; marks = []; render(); } }, '▲'),
+          h('button', { class: 'mvb', type: 'button', 'aria-label': 'Nach unten', disabled: pos === n - 1, onclick: () => { [ord[pos + 1], ord[pos]] = [ord[pos], ord[pos + 1]]; marks = []; render(); } }, '▼'));
+        const txt = h('div', { class: 'txt' }); txt.innerHTML = '&nbsp;'.repeat(0) + hl('    '.repeat(ln.i) + ln.t);
+        list.append(h('li', { class: 'oitem' + (marks[pos] ? ' ' + marks[pos] : '') }, txt, mv));
+      });
+    }
+    const btn = h('button', {
+      class: 'btn', type: 'button', onclick: () => {
+        marks = ord.map((li, pos) => (cfg.lines[li].t === cfg.lines[pos].t && cfg.lines[li].i === cfg.lines[pos].i ? 'right' : 'wrong'));
+        const ok = marks.filter(m => m === 'right').length; render();
+        c.res({ sum: ok + ' von ' + n + ' Zeilen an der richtigen Stelle', mono: true, lines: ord.map(li => '    '.repeat(cfg.lines[li].i) + cfg.lines[li].t) });
+        if (ok === n) { c.say('Die Methode steht!', 'ok'); c.done(); } else c.say(ok + ' von ' + n + ' Zeilen stehen an der richtigen Stelle.', 'bad');
+      }
+    }, 'Prüfen');
+    const c = card(cfg, 'Reihenfolge', [list], [btn]);
+    render();
+    return c.el;
+  }
+
+  /* ---------- Quiz ---------- */
+  function buildQuiz(cfg) {
+    const nQ = cfg.qs.length, opts = cfg.qs.map(q => shuffle(q.opts));
+    let qi = 0, results = [], answered = false, qlog = [];
+    const root = h('div');
+    function recQ() {
+      const got = qlog.filter(Boolean);
+      c.res({ sum: got.filter(x => x.ok).length + ' von ' + nQ + ' Fragen im ersten Versuch richtig' + (got.length < nQ ? ' (' + got.length + ' beantwortet)' : ''),
+        lines: qlog.map((x, i) => (x ? 'Frage ' + (i + 1) + ': ' + x.q.replace(/`/g, '') + '  Antwort: "' + x.a + '" – ' + (x.ok ? 'richtig' : 'falsch, richtig wäre: "' + x.right + '"') : null)).filter(Boolean) });
+    }
+    function show() {
+      root.innerHTML = ''; answered = false;
+      if (qi >= nQ) {
+        const good = results.filter(Boolean).length, need = Math.ceil(nQ * 0.6);
+        const passed = good >= need;
+        root.append(h('div', { class: 'q' }, good + ' von ' + nQ + ' im ersten Versuch richtig.'),
+          h('p', {}, passed ? 'Stark! Das Thema sitzt.' : 'Noch nicht ganz. Lies die Erklärungen noch einmal und versuche es erneut.'),
+          h('button', { class: 'btn ghost', type: 'button', onclick: () => { qi = 0; results = []; qlog = []; c.say(''); show(); } }, 'Nochmal spielen'));
+        if (passed) { c.say('Quiz geschafft.', 'ok'); c.done(); } else c.say('Für „geschafft“ brauchst du mindestens ' + need + ' richtige.', 'bad');
+        return;
+      }
+      const q = cfg.qs[qi];
+      root.append(h('div', { class: 'qprog' }, cfg.qs.map((_, i) => h('i', { class: i === qi ? 'cur' : results[i] === true ? 'ok' : results[i] === false ? 'bad' : '' }))));
+      const qEl = h('div', { class: 'q' }); qEl.innerHTML = md(q.q); root.append(qEl);
+      if (q.code) root.append(codeBlock(q.code));
+      const box = h('div', { class: 'opts', role: 'group' });
+      const why = h('div', { class: 'why', hidden: true });
+      const next = h('button', { class: 'btn', type: 'button', hidden: true, onclick: () => { qi++; show(); } }, qi === nQ - 1 ? 'Ergebnis' : 'Weiter');
+      opts[qi].forEach(o => {
+        const b = h('button', { class: 'opt', type: 'button' });
+        b.innerHTML = /\(.*\)/.test(o.t) && !/[äöüÄÖÜß]/.test(o.t) && !/\b(der|die|das|und|ein|eine|ist|nur|kein|keine|nicht|Fehler|wenn|bei)\b/i.test(o.t) ? '<code>' + esc(o.t) + '</code>' : md(o.t);
+        b.addEventListener('click', () => {
+          if (answered) return; answered = true;
+          results[qi] = !!o.ok; qlog[qi] = { q: q.q, a: o.t, ok: !!o.ok, right: q.opts.find(x => x.ok).t }; recQ();
+          b.classList.add(o.ok ? 'ok' : 'bad');
+          if (!o.ok) [...box.children].forEach((x, i) => { if (opts[qi][i].ok) x.classList.add('ok'); });
+          [...box.children].forEach(x => { x.disabled = true; });
+          why.hidden = false; why.innerHTML = '<b>' + (o.ok ? 'Richtig. ' : 'Nicht ganz. ') + '</b>' + md(q.why);
+          next.hidden = false; next.focus();
+        });
+        box.append(b);
+      });
+      root.append(box, why, h('div', { style: 'margin-top:10px' }, next));
+    }
+    const c = card(cfg, 'Quiz', [root], []);
+    show();
+    return c.el;
+  }
+
+  /* ---------- Wahrheitstabelle ---------- */
+  function buildTruth(cfg) {
+    const rows = [[1, 1], [1, 0], [0, 1], [0, 0]];
+    const cols = [{ h: 'G && M', f: (g, m) => g && m }, { h: 'G || M', f: (g, m) => g || m }, { h: 'G && !M', f: (g, m) => g && !m }, { h: '!G || M', f: (g, m) => !g || m }];
+    const cells = [];
+    const tbody = h('tbody');
+    rows.forEach(([g, m], ri) => {
+      const tr = h('tr', {}, h('td', { class: 'given' }, g ? 'wahr' : 'falsch'), h('td', { class: 'given' }, m ? 'wahr' : 'falsch'));
+      cols.forEach((col, ci) => {
+        const cell = { v: 0, want: col.f(g, m) ? 1 : 2 };
+        const b = h('button', { class: 'tv', type: 'button', 'aria-label': col.h + ' für G=' + (g ? 'wahr' : 'falsch') + ', M=' + (m ? 'wahr' : 'falsch') });
+        b.textContent = '?';
+        b.addEventListener('click', () => { cell.v = (cell.v + 1) % 3; b.textContent = ['?', 'wahr', 'falsch'][cell.v]; b.className = 'tv' + (cell.v === 1 ? ' t' : cell.v === 2 ? ' f' : ''); });
+        cell.el = b; cells.push(cell); tr.append(h('td', {}, b));
+      });
+      tbody.append(tr);
+    });
+    const table = h('table', { class: 'tt' }, h('thead', {}, h('tr', {}, h('th', {}, 'G', h('br'), 'gesteinVorhanden()'), h('th', {}, 'M', h('br'), 'markeVorhanden()'), cols.map(c2 => h('th', {}, h('code', {}, c2.h))))), tbody);
+    const btn = h('button', {
+      class: 'btn', type: 'button', onclick: () => {
+        let ok = 0, empty = 0;
+        cells.forEach(cl => { if (!cl.v) empty++; const good = cl.v === cl.want; cl.el.classList.toggle('right', good); cl.el.classList.toggle('wrong', !good && cl.v !== 0); if (good) ok++; });
+        c.res({ sum: ok + ' von ' + cells.length + ' Feldern richtig' + (empty ? ', ' + empty + ' noch leer' : '') });
+        if (ok === cells.length) { c.say('Alle ' + ok + ' Felder stimmen.', 'ok'); c.done(); }
+        else c.say(ok + ' von ' + cells.length + ' Feldern stimmen' + (empty ? ', ' + empty + ' sind noch leer.' : '.'), 'bad');
+      }
+    }, 'Prüfen');
+    const c = card(cfg, 'Wahrheitstabelle', [h('div', { class: 'scroll-x' }, table)], [btn]);
+    return c.el;
+  }
+
+  /* ---------- Fehlersuche ---------- */
+  function buildBug(cfg) {
+    const root = h('div'); let si = 0, answered = false, wrongs = 0;
+    const recB = () => { const n = cfg.snippets.length; c.res({ sum: Math.min(n, answered ? si + 1 : si) + ' von ' + n + ' Fehlern gefunden, ' + wrongs + ' Fehlversuch(e)' }); };
+    function show() {
+      root.innerHTML = ''; answered = false;
+      if (si >= cfg.snippets.length) { recB(); root.append(h('p', {}, 'Alle Fehler gefunden. Gut gesehen!')); c.say('Fehlersuche geschafft.', 'ok'); c.done(); return; }
+      const sn = cfg.snippets[si];
+      root.append(h('div', { class: 'qprog' }, cfg.snippets.map((_, i) => h('i', { class: i === si ? 'cur' : i < si ? 'ok' : '' }))));
+      root.append(h('div', { class: 'errmsg' }, 'Compiler: ' + sn.msg));
+      const why = h('div', { class: 'why', hidden: true });
+      const next = h('button', { class: 'btn', type: 'button', hidden: true, onclick: () => { si++; show(); } }, si === cfg.snippets.length - 1 ? 'Fertig' : 'Nächster Code');
+      const lines = h('div', { class: 'lines', role: 'group', 'aria-label': 'Codezeilen' });
+      sn.lines.forEach((ln, i) => {
+        const b = h('button', { class: 'ln' + (sn.eof && i === sn.lines.length - 1 ? ' eof' : ''), type: 'button' });
+        b.innerHTML = '<span class="no">' + (i + 1) + '</span><span>' + (sn.eof && i === sn.lines.length - 1 ? esc(ln) : hl(ln)) + '</span>';
+        b.addEventListener('click', () => {
+          if (answered) return;
+          if (i === sn.bad) {
+            answered = true; recB(); b.classList.add('ok'); why.hidden = false; why.innerHTML = '<b>Gefunden. </b>' + md(sn.why); next.hidden = false; next.focus();
+            c.say(wrongs ? 'Gefunden, nach ' + wrongs + ' Fehlversuch(en) insgesamt.' : 'Gefunden!', 'ok');
+          } else { wrongs++; recB(); b.classList.add('bad'); c.say('Dort ist alles in Ordnung. Lies die Fehlermeldung noch einmal.', 'bad'); }
+        });
+        lines.append(b);
+      });
+      root.append(lines, why, h('div', { style: 'margin-top:10px' }, next));
+    }
+    const c = card(cfg, 'Fehlersuche', [root], []);
+    show();
+    return c.el;
+  }
+
+  /* ---------- Spurensuche ---------- */
+  function buildTrace(cfg) {
+    function rec() {
+      const sv = cases.filter(k => k.solved).length, wr = cases.reduce((n, k) => n + k.wrong, 0);
+      c.res({ sum: sv + ' von ' + cases.length + ' Endfeld' + (cases.length > 1 ? 'ern' : '') + ' gefunden, ' + wr + ' Fehlversuch(e)' });
+    }
+    const cases = cfg.cases.map((cs, i) => {
+      const run = RI.runSource(cfg.code, RI.makeWorld(cs.world));
+      const o = { cs, expect: run.world.rover, frames: run.frames, solved: false, wrong: 0, stop: null };
+      const view = new WorldView(cs.world, {
+        clickable: true,
+        onCell: (x, y, v) => {
+          if (o.solved) return;
+          if (x === o.expect.x && y === o.expect.y) {
+            o.solved = true; rec(); v.highlight([{ x, y, ok: true }]); msg.textContent = 'Richtig! Der Rover steht dort. Sieh dir den Ablauf an, wenn du magst.'; msg.className = 'fb ok'; playBtn.hidden = false;
+            if (cases.every(k => k.solved)) { c.say('Alle Felder richtig gefunden.', 'ok'); c.done(); } else c.say(cases.filter(k => k.solved).length + ' von ' + cases.length + ' gelöst.', 'info');
+          } else {
+            o.wrong++; rec(); v.highlight([{ x, y, ok: false }]); msg.className = 'fb bad';
+            msg.textContent = o.wrong >= 2 ? 'Noch nicht. Spiele den Ablauf ab und vergleiche.' : 'Das ist es nicht. Verfolge den Code Zeile für Zeile.';
+            if (o.wrong >= 2) playBtn.hidden = false;
+          }
+        }
+      });
+      const msg = h('div', { class: 'fb info', style: 'margin-top:8px' }, 'Klicke auf das Feld, in dem der Rover endet.');
+      const playBtn = h('button', {
+        class: 'btn ghost', type: 'button', hidden: true, style: 'margin-top:8px', onclick: () => {
+          if (o.stop) o.stop();
+          view.highlight([]);
+          o.stop = play(view, o.frames, SPEED.normal, null, () => { if (o.solved) view.highlight([{ x: o.expect.x, y: o.expect.y, ok: true }]); });
+        }
+      }, '▶ Ablauf zeigen');
+      o.el = h('div', { class: 'tcase' }, cs.label ? h('div', { class: 'tl' }, cs.label) : null, view.svg, msg, playBtn);
+      return o;
+    });
+    const body = [h('div', { class: 'trace' }, codeBlock(cfg.code), h('div', {}, cases.map(k => k.el)))];
+    const c = card(cfg, 'Spurensuche', body, []);
+    return c.el;
+  }
+
+  /* ---------- Rover-Labor (Programm-Aufgaben und Methoden-Tests) ---------- */
+  function buildLab(act) {
+    const L = act.lab; let runs = [], results = [], cur = 0, stop = null, fails = 0, hintN = 0, reqMsg = null, escTrap = false, runCount = 0;
+    const views = L.worlds.map(w => new WorldView(w.spec));
+    const ta = h('textarea', { spellcheck: 'false', autocapitalize: 'off', autocomplete: 'off', 'aria-label': 'Programmcode für ' + L.title });
+    ta.value = state.code[L.id] || L.starter;
+    const gutter = h('div', { class: 'gutter', 'aria-hidden': 'true' });
+    const lineCount = () => ta.value.split('\n').length;
+    function paintGutter(errLine, runLine) {
+      gutter.innerHTML = '';
+      for (let i = 1; i <= lineCount(); i++) gutter.append(h('div', { class: i === errLine ? 'err' : i === runLine ? 'run' : '' }, String(i)));
+      gutter.scrollTop = ta.scrollTop;
+    }
+    let saveT = null;
+    ta.addEventListener('input', () => { paintGutter(); clearTimeout(saveT); saveT = setTimeout(() => { state.code[L.id] = ta.value; save(); }, 400); });
+    ta.addEventListener('scroll', () => { gutter.scrollTop = ta.scrollTop; });
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { escTrap = true; return; }
+      if (e.key === 'Tab' && !escTrap && !e.shiftKey) {
+        e.preventDefault(); const s = ta.selectionStart, en = ta.selectionEnd;
+        ta.value = ta.value.slice(0, s) + '    ' + ta.value.slice(en); ta.selectionStart = ta.selectionEnd = s + 4; ta.dispatchEvent(new Event('input'));
+      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runAll(); }
+      if (e.key !== 'Escape') escTrap = false;
+    });
+    const status = h('div', { class: 'status', 'aria-live': 'polite' }, 'Schreibe dein Programm und drücke „Starten“.');
+    const tbl = h('div', { class: 'ttwrap' });
+    const fm = v => (v === undefined ? 'nichts' : typeof v === 'string' ? '"' + v + '"' : String(v));
+    function paintTable(syntax) {
+      tbl.innerHTML = '';
+      if (!L.cases || syntax) return;
+      const rows = results.map((r, i) => {
+        const c = L.cases[i];
+        const want = c.expect !== undefined ? fm(c.expect) : 'Welt wie beschrieben';
+        const got = r.err ? 'Fehler: ' + r.msg : (r.got != null ? r.got : '');
+        return h('tr', { class: 'row ' + (r.ok ? 'ok' : 'bad'), onclick: () => select(i) },
+          h('td', {}, c.name), h('td', { class: 'got' }, want), h('td', { class: 'got' }, got), h('td', {}, r.ok ? '✓' : '✗'));
+      });
+      tbl.append(h('table', { class: 'ct' }, h('caption', {}, 'Testtabelle'),
+        h('thead', {}, h('tr', {}, h('th', {}, 'Testfall'), h('th', {}, 'erwartet'), h('th', {}, 'erhalten'), h('th', {}, ''))), h('tbody', {}, rows)));
+    }
+    const setStatus = (m, k) => { status.textContent = m; status.className = 'status' + (k ? ' ' + k : ''); };
+    const worldBox = h('div'); const tabs = h('div', { class: 'wtabs', role: 'tablist' }); const speed = h('select', { 'aria-label': 'Tempo' },
+      h('option', { value: 'slow' }, 'langsam'), h('option', { value: 'normal', selected: true }, 'normal'), h('option', { value: 'fast' }, 'schnell'));
+    const tabEls = L.worlds.map((w, i) => h('button', { class: 'wtab', type: 'button', role: 'tab', onclick: () => select(i) }, w.name));
+    if (L.worlds.length > 1) tabs.append(...tabEls);
+    function select(i) {
+      if (stop) { stop(); stop = null; }
+      cur = i; worldBox.innerHTML = ''; worldBox.append(views[i].svg);
+      tabEls.forEach((t, k) => { t.classList.toggle('sel', k === i); t.setAttribute('aria-selected', k === i); });
+      const r = runs[i]; views[i].reset(); if (r && r.frames.length > 1) views[i].draw(r.frames[r.frames.length - 1], true);
+    }
+    function runAll() {
+      if (stop) { stop(); stop = null; }
+      const src = ta.value; runCount++;
+      const rl = CONTENT.runLab(L, src);
+      runs = rl.runs; results = rl.results; reqMsg = rl.reqMsg;
+      const syntax = rl.syntax;
+      paintTable(syntax);
+      tabEls.forEach((t, i) => { t.classList.remove('ok', 'bad'); if (!syntax) t.classList.add(results[i].ok ? 'ok' : 'bad'); });
+      let show = cur; const fb = results.findIndex(r => !r.ok); if (fb >= 0) show = fb;
+      select(show); views[show].reset(); paintGutter();
+      const finish = () => {
+        const r = results[show];
+        const all = results.every(x => x.ok) && !reqMsg;
+        setRes(L.id, { sum: (all ? 'Bestanden' : 'Noch nicht bestanden') + (L.worlds.length > 1 ? ' (' + results.filter(x => x.ok).length + ' von ' + L.worlds.length + ' Welten)' : '') + ', ' + runCount + ' Programmstart' + (runCount === 1 ? '' : 's'),
+          code: ta.value, lines: results.map((x, i) => L.worlds[i].name + ': ' + (x.ok ? 'bestanden' : (x.err ? 'Zeile ' + x.line + ': ' : '') + x.msg)).concat(reqMsg ? ['Hinweis: ' + reqMsg] : []) });
+        if (r.err) { paintGutter(r.line); setStatus('Zeile ' + r.line + ': ' + r.msg, 'bad'); }
+        else if (!r.ok) setStatus(r.msg, 'bad');
+        else if (reqMsg) setStatus(reqMsg, 'bad');
+        else setStatus('Geschafft! ' + (L.worlds.length > 1 ? 'Dein Programm besteht alle ' + L.worlds.length + ' Welten.' : r.msg), 'ok');
+        if (all) { act.card.classList.add('done'); setDone(L.id); } else { fails++; if (fails >= 2) solBox.hidden = false; }
+      };
+      if (syntax || runs[show].frames.length < 2) { finish(); return; }
+      setStatus('Der Rover fährt …', '');
+      stop = play(views[show], runs[show].frames, SPEED[speed.value], f => paintGutter(null, f.line), () => { stop = null; paintGutter(); finish(); });
+    }
+    const hintBox = h('div', { class: 'hintbox', 'aria-live': 'polite' });
+    const hintBtn = h('button', {
+      class: 'btn ghost', type: 'button', onclick: () => {
+        hintBox.append(h('div', {}, h('b', {}, 'Hinweis ' + (hintN + 1) + ': '), L.hints[hintN])); hintN++;
+        if (hintN >= L.hints.length) { hintBtn.disabled = true; solBox.hidden = false; }
+      }
+    }, 'Hinweis');
+    const solBox = h('details', { class: 'sol', hidden: true }, h('summary', {}, 'Musterlösung ansehen'), codeBlock(L.solution));
+    const left = h('div', {},
+      h('p', { class: 'task' }, L.task),
+      h('div', { class: 'editor' }, gutter, ta),
+      h('div', { class: 'pick' }, 'Tab rückt ein. Esc, dann Tab verlässt den Editor. Strg+Enter startet.'),
+      h('div', { class: 'ctrl' },
+        h('button', { class: 'btn', type: 'button', onclick: runAll }, '▶ Starten'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: () => { ta.value = L.starter; state.code[L.id] = L.starter; save(); paintGutter(); tbl.innerHTML = ''; setStatus('Startcode wiederhergestellt.', ''); } }, 'Zurücksetzen'),
+        hintBtn, speed),
+      status, tbl, hintBox, solBox);
+    const right = h('div', {}, tabs, worldBox);
+    const el = h('section', { class: 'act', id: L.id },
+      h('div', { class: 'act-head' }, h('h3', {}, L.title), h('span', { class: 'type' }, L.concept), h('span', { class: 'okbadge' }, '✓ geschafft')),
+      h('div', { class: 'lab' }, left, right));
+    act.card = el;
+    if (state.done[L.id]) el.classList.add('done');
+    allActs.push(L.id);
+    paintGutter(); select(0);
+    return el;
+  }
+
+  const BUILDERS = { match: buildMatch, sort: buildSort, gaps: buildGaps, order: buildOrder, quiz: buildQuiz, truth: buildTruth, bug: buildBug, trace: buildTrace, lab: buildLab };
+
+  /* ---------- Seite ---------- */
+  const app = document.getElementById('app');
+  const total = CONTENT.STATIONS.reduce((n, s) => n + s.acts.length, 0);
+  const navChips = {};
+  const nav = h('nav', { class: 'nav', 'aria-label': 'Stationen' }, h('div', { class: 'nav-in' }, CONTENT.STATIONS.map(s => {
+    const cnt = h('span', { class: 'cnt' }, '0/' + s.acts.length);
+    const a = h('a', { class: 'chip', href: '#' + s.id }, s.nav, cnt);
+    navChips[s.id] = { a, cnt }; return a;
+  })));
+  nav.querySelector('.nav-in').append(h('a', { class: 'chip', href: '#sichern' }, 'PDF sichern'));
+  const bar = h('i'); const lbl = h('span', {}, ''); const lbl2 = h('span', {}, '');
+  const hero = h('header', { class: 'hero' },
+    h('div', {},
+      h('div', { class: 'kicker' }, 'Informatik EF.1 · Algorithmen entwickeln · Greenfoot-Marsrover'),
+      h('h1', {}, 'Parameter und ', h('em', {}, 'Rückgabe')),
+      h('p', { class: 'lead' }, 'Vom Parameter bis zur Mission: Aufgaben zum Anklicken, Sortieren, Ausfüllen und Programmieren. Im Rover-Labor zeigt dir eine Testtabelle, was deine Methoden liefern.'),
+      h('div', { class: 'progress' }, h('div', { class: 'bar', role: 'progressbar', 'aria-label': 'Gesamtfortschritt' }, bar),
+        h('div', { class: 'lbl' }, lbl, h('button', { class: 'linkbtn', type: 'button', onclick: () => { state.done = {}; state.res = {}; save(); document.querySelectorAll('.act.done').forEach(e => e.classList.remove('done')); updateProgress(); } }, 'Fortschritt zurücksetzen')))),
+    h('div', { html: DOODLES.hero || '' }));
+  app.parentNode.parentNode.insertBefore(nav, app.parentNode);
+  app.append(hero);
+  const stationEls = CONTENT.STATIONS.map(s => {
+    const sum = h('span', { class: 'st-sum' }, '');
+    const head = h('div', { class: 'st-head' }, h('div', { html: DOODLES[s.doodle] || '' }),
+      h('div', {}, h('div', { class: 'kicker' }, s.kicker), h('h2', {}, s.title), h('div', { class: 'merke', html: s.merke })));
+    const acts = s.acts.map(a => { const b = BUILDERS[a.type]; return b(a); });
+    const sec = h('section', { class: 'station', id: s.id }, head, ...acts);
+    return sec;
+  });
+  const finish = h('section', { class: 'finish', 'aria-live': 'polite' }, h('div', { html: DOODLES.trophy || '' }), h('div', {}, h('h2', { style: 'font-size:1.5rem' }, 'Alle Aufgaben geschafft?'), lbl2));
+  const foot = h('footer', {}, 'Die Aufgaben gehören zur Unterrichtsreihe „Algorithmen entwickeln: Parameter und Rückgabe“ (EF.1) und zum Greenfoot-Szenario Marsrover. Das Rover-Labor ist ein vereinfachter Nachbau und keine Original-Greenfoot-Umgebung. In deiner Szenario-Version können Methodennamen leicht abweichen; dein Fortschritt wird nur in diesem Browser gespeichert. Mit „Als PDF speichern“ erzeugst du ein PDF mit deinen Ergebnissen.');
+  /* ---------- Ergebnisse als PDF (für GoodNotes / OneNote) ---------- */
+  const TYPE_LABEL = { match: 'Zuordnung', sort: 'Gruppenzuordnung', gaps: 'Lückentext', order: 'Reihenfolge', quiz: 'Quiz', truth: 'Wahrheitstabelle', bug: 'Fehlersuche', trace: 'Spurensuche' };
+  const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const deDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '.' + m[2] + '.' + m[1] : (iso || ''); };
+  /* Standardschriften des PDFs kennen nur WinAnsi: Umlaute, ß und „ “ gehen, Pfeile und Haken nicht */
+  const pdfText = s => String(s == null ? '' : s)
+    .replace(/`/g, '').replace(/[→⇒➜]/g, '->').replace(/←/g, '<-').replace(/≤/g, '<=').replace(/≥/g, '>=')
+    .replace(/[✓✔]/g, 'ok').replace(/[✗✘]/g, 'x').replace(/ /g, ' ').replace(/\t/g, '    ')
+    .replace(/[^\n -~¡-ÿ–—‘’‚“”„•…€]/g, '?');
+  const slug = s => String(s || '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  function buildPdf(jsPDF) {
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const PW = 210, PH = 297, M = 16, CW = PW - 2 * M, BOT = PH - 20, TOP = 24;
+    const RUST = [194, 70, 30], INK = [30, 41, 59], MUTED = [100, 112, 135], GREEN = [27, 138, 75], LINE = [202, 211, 227], PAPER = [243, 245, 250];
+    const PT = 0.3528;
+    let y = TOP;
+    const fs = (size, style, font) => { doc.setFont(font || 'helvetica', style || 'normal'); doc.setFontSize(size); };
+    const tc = c => doc.setTextColor(c[0], c[1], c[2]);
+    const ensure = hh => { if (y + hh > BOT) { doc.addPage(); y = TOP; } };
+    const para = (text, x, w, size, style, color, gap) => {
+      fs(size, style); tc(color || INK);
+      const lh = size * PT * 1.4;
+      doc.splitTextToSize(pdfText(text), w).forEach(l => { ensure(lh); doc.text(l, x, y + lh * 0.72); y += lh; });
+      y += gap || 0;
+    };
+    const codeBlock = (src, x0, size) => {
+      size = size || 8.2; fs(size, 'normal', 'courier');
+      const cw = size * PT * 0.6, w = PW - M - x0, maxc = Math.floor((w - 5) / cw), lh = size * PT * 1.5, rows = [];
+      pdfText(src).split('\n').forEach(l => {
+        l = l.replace(/\s+$/, '');
+        const ind = (l.match(/^ */) || [''])[0].length; let cur = l, pre = '';
+        while (cur.length > maxc) { rows.push(pre + cur.slice(0, maxc - pre.length)); cur = cur.slice(maxc - pre.length); pre = ' '.repeat(ind + 2); }
+        rows.push(pre + cur);
+      });
+      y += 1;
+      rows.forEach(r => {
+        ensure(lh);
+        doc.setFillColor(PAPER[0], PAPER[1], PAPER[2]); doc.rect(x0, y, w, lh, 'F');
+        doc.setFillColor(RUST[0], RUST[1], RUST[2]); doc.rect(x0, y, 0.9, lh, 'F');
+        fs(size, 'normal', 'courier'); tc(INK); doc.text(r, x0 + 3, y + lh * 0.72); y += lh;
+      });
+      y += 1.5;
+    };
+    const marker = (x, yc, done) => {
+      if (done) {
+        doc.setFillColor(GREEN[0], GREEN[1], GREEN[2]); doc.circle(x, yc, 2.4, 'F');
+        doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.55); doc.line(x - 1.1, yc + 0.1, x - 0.3, yc + 0.95); doc.line(x - 0.3, yc + 0.95, x + 1.2, yc - 0.95);
+      } else { doc.setDrawColor(MUTED[0], MUTED[1], MUTED[2]); doc.setLineWidth(0.4); doc.circle(x, yc, 2.4, 'S'); }
+    };
+    const bar = (x, yb, w, frac, hgt) => {
+      doc.setFillColor(LINE[0], LINE[1], LINE[2]); doc.roundedRect(x, yb, w, hgt, hgt / 2, hgt / 2, 'F');
+      if (frac > 0) { doc.setFillColor(RUST[0], RUST[1], RUST[2]); doc.roundedRect(x, yb, Math.max(hgt, w * frac), hgt, hgt / 2, hgt / 2, 'F'); }
+    };
+
+    const meta = { name: (state.meta.name || '').trim(), kurs: (state.meta.kurs || '').trim(), datum: state.meta.datum || todayISO() };
+    const stations = CONTENT.STATIONS;
+    const doneAll = stations.reduce((n, s) => n + s.acts.filter(a => state.done[a.id]).length, 0);
+
+    /* Seite 1: Titel, Angaben, Überblick */
+    fs(26, 'bold'); tc(INK); doc.text('Parameter und Rückgabe', M, y + 8); y += 13;
+    fs(14, 'bold'); tc(RUST); doc.text('Meine Ergebnisse', M, y + 3); y += 8;
+    fs(9, 'normal'); tc(MUTED); doc.text(pdfText('Informatik EF.1 · Algorithmen entwickeln · Greenfoot-Szenario Marsrover'), M, y + 3); y += 10;
+    const fields = [['NAME', meta.name || ' ', 84], ['KURS / KLASSE', meta.kurs || ' ', 50], ['DATUM', deDate(meta.datum), 36]];
+    let fx = M;
+    fields.forEach(f => {
+      doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.4); doc.roundedRect(fx, y, f[2], 13, 1.5, 1.5, 'S');
+      fs(7, 'bold'); tc(MUTED); doc.text(f[0], fx + 3, y + 4.2);
+      fs(11, 'bold'); tc(INK); doc.text(pdfText(f[1]), fx + 3, y + 10, { maxWidth: f[2] - 6 });
+      fx += f[2] + 5;
+    });
+    y += 20;
+    fs(12, 'bold'); tc(INK); doc.text(doneAll + ' von ' + total + ' Aufgaben geschafft', M, y + 3);
+    fs(10, 'normal'); tc(MUTED); doc.text(Math.round(doneAll / total * 100) + ' %', PW - M, y + 3, { align: 'right' });
+    y += 6; bar(M, y, CW, doneAll / total, 4); y += 12;
+    fs(10, 'bold'); tc(MUTED); doc.text('ÜBERBLICK NACH STATIONEN', M, y + 2); y += 6;
+    stations.forEach(s => {
+      const d = s.acts.filter(a => state.done[a.id]).length, all = d === s.acts.length;
+      marker(M + 2.4, y + 3, all);
+      fs(10, 'normal'); tc(INK); doc.text(pdfText(s.kicker + ' – ' + s.title), M + 8, y + 3.8);
+      bar(M + 104, y + 1.4, 48, d / s.acts.length, 3.2);
+      fs(9, 'bold'); tc(all ? GREEN : MUTED); doc.text(d + ' / ' + s.acts.length, PW - M, y + 3.8, { align: 'right' });
+      y += 8;
+    });
+    y += 4;
+    para('Die Übersicht und die Einzelergebnisse auf den nächsten Seiten stammen aus deinem Trainingsstand. Gefüllte Haken bedeuten: Aufgabe geschafft. Leere Kreise bedeuten: noch offen oder noch nicht bearbeitet.', M, CW, 8.5, 'normal', MUTED);
+
+    /* Einzelergebnisse */
+    stations.forEach(s => {
+      doc.addPage(); y = TOP;
+      const d = s.acts.filter(a => state.done[a.id]).length;
+      doc.setFillColor(RUST[0], RUST[1], RUST[2]); doc.roundedRect(M, y, CW, 9, 1.5, 1.5, 'F');
+      fs(11.5, 'bold'); doc.setTextColor(255, 255, 255); doc.text(pdfText(s.kicker + ' · ' + s.title), M + 4, y + 6.2);
+      fs(9, 'bold'); doc.text(d + ' von ' + s.acts.length + ' geschafft', PW - M - 4, y + 6.2, { align: 'right' });
+      y += 14;
+      s.acts.forEach(a => {
+        const r = state.res[a.id] || {}, done = !!state.done[a.id];
+        ensure(24);
+        marker(M + 2.6, y + 2.8, done);
+        fs(11, 'bold'); tc(INK); doc.text(pdfText(a.title), M + 8, y + 3.7);
+        fs(8, 'normal'); tc(MUTED); doc.text(pdfText(a.type === 'lab' ? a.lab.concept : TYPE_LABEL[a.type]), PW - M, y + 3.7, { align: 'right' });
+        y += 7.5;
+        para(r.sum || (done ? 'geschafft' : 'noch nicht bearbeitet'), M + 8, CW - 8, 9.5, 'bold', done ? GREEN : MUTED, 0.8);
+        if (r.lines && r.lines.length) {
+          if (r.mono) codeBlock(r.lines.join('\n'), M + 8);
+          else { r.lines.forEach(l => para('–  ' + l, M + 10, CW - 10, 9, 'normal', INK)); y += 1.2; }
+        }
+        if (a.type === 'lab') { const src = r.code || state.code[a.id]; if (src && src.trim()) { para('Mein Programm:', M + 8, CW - 8, 8.5, 'bold', MUTED); codeBlock(src, M + 8); } }
+        y += 4;
+      });
+    });
+
+    /* Notizseite */
+    doc.addPage(); y = TOP;
+    fs(14, 'bold'); tc(RUST); doc.text('Eigene Notizen und Fragen', M, y + 4); y += 9;
+    para('Platz für Merksätze, Skizzen und offene Fragen. In GoodNotes oder OneNote kannst du hier direkt weiterschreiben.', M, CW, 9, 'normal', MUTED);
+    y += 3; doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.25);
+    for (let ly = y + 8; ly < BOT; ly += 9) doc.line(M, ly, PW - M, ly);
+
+    /* Kopf- und Fußzeile auf jeder Seite */
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) {
+      doc.setPage(i);
+      fs(8, 'bold'); tc(RUST); doc.text('Marsrover: Parameter und Rückgabe', M, 12);
+      fs(8, 'normal'); tc(MUTED); doc.text(pdfText('Informatik EF'), M + 31, 12); doc.text('Seite ' + i + ' von ' + n, PW - M, 12, { align: 'right' });
+      doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.3); doc.line(M, 15, PW - M, 15); doc.line(M, PH - 14, PW - M, PH - 14);
+      fs(7.5, 'normal'); tc(MUTED);
+      doc.text(pdfText('Bischöfliches St.-Josef-Gymnasium Bocholt'), M, PH - 9.5);
+      doc.text(pdfText((meta.name ? meta.name + ' · ' : '') + deDate(meta.datum)), PW - M, PH - 9.5, { align: 'right' });
+    }
+    doc.setProperties({ title: 'Marsrover: Parameter und Rückgabe, Meine Ergebnisse', subject: 'Informatik EF.1, Greenfoot-Szenario Marsrover', author: meta.name || 'Parameter und Rückgabe', creator: 'Marsrover: Parameter und Rückgabe' });
+    return { doc, meta };
+  }
+
+  function loadJsPdf() {
+    return new Promise((resolve, reject) => {
+      if (window.jspdf) { resolve(window.jspdf); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = () => (window.jspdf ? resolve(window.jspdf) : reject(new Error('jsPDF fehlt')));
+      s.onerror = () => reject(new Error('PDF-Bibliothek konnte nicht geladen werden. Prüfe die Internetverbindung.'));
+      document.head.append(s);
+    });
+  }
+
+  /* Speichern: im veröffentlichten Artifact über die Download-Fähigkeit, in der Einzeldatei über einen normalen Download */
+  async function deliver(blob, filename) {
+    let dl = null;
+    try { if (window.claude && typeof window.claude.use === 'function') dl = await window.claude.use('downloads'); } catch (e) { dl = null; }
+    if (dl) {
+      try { await dl.save({ filename, data: blob }); return 'saved'; }
+      catch (e) {
+        const code = e && e.code;
+        if (code === 'declined') return 'declined';
+        if (code !== 'unavailable') throw new Error(code === 'rate_limited' ? 'Bitte warte einen Moment und versuche es dann noch einmal.' : 'Speichern nicht möglich' + (code ? ' (' + code + ')' : '') + '.');
+      }
+    }
+    const url = URL.createObjectURL(blob), a = h('a', { href: url, download: filename, style: 'display:none' });
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return 'saved';
+  }
+
+  const mkField = (id, label, input) => h('div', { class: 'field' }, h('label', { for: id }, label), input);
+  const fName = h('input', { id: 'f-name', type: 'text', autocomplete: 'name', placeholder: 'Vor- und Nachname', value: state.meta.name || '' });
+  const fKurs = h('input', { id: 'f-kurs', type: 'text', autocomplete: 'off', placeholder: 'z. B. EF Informatik', value: state.meta.kurs || '' });
+  const fDatum = h('input', { id: 'f-datum', type: 'date', value: state.meta.datum || todayISO() });
+  [[fName, 'name'], [fKurs, 'kurs'], [fDatum, 'datum']].forEach(([el, k]) => el.addEventListener('input', () => { state.meta[k] = el.value; save(); }));
+  const pdfSay = h('div', { class: 'fb info', 'aria-live': 'polite' });
+  const pdfBtn = h('button', {
+    class: 'btn big', type: 'button', onclick: async () => {
+      pdfBtn.disabled = true; pdfSay.className = 'fb info'; pdfSay.textContent = 'PDF wird erstellt …';
+      try {
+        state.meta = { name: fName.value, kurs: fKurs.value, datum: fDatum.value }; save();
+        const lib = window.jspdf || await loadJsPdf();
+        const { doc, meta } = buildPdf(lib.jsPDF);
+        const fname = 'Marsrover-Parameter_' + (slug(meta.name) || 'Ergebnisse') + '_' + (meta.datum || todayISO()) + '.pdf';
+        const r = await deliver(doc.output('blob'), fname);
+        if (r === 'saved') { pdfSay.className = 'fb ok'; pdfSay.textContent = 'PDF gespeichert: ' + fname; }
+        else { pdfSay.className = 'fb info'; pdfSay.textContent = 'Speichern abgebrochen. Du kannst es jederzeit noch einmal versuchen.'; }
+      } catch (e) { pdfSay.className = 'fb bad'; pdfSay.textContent = 'Das PDF konnte nicht erstellt werden: ' + ((e && e.message) || e); }
+      finally { pdfBtn.disabled = false; }
+    }
+  }, 'Als PDF speichern');
+  const saveSec = h('section', { class: 'save', id: 'sichern' },
+    h('div', { class: 'kicker' }, 'Zum Abgeben oder Abheften'),
+    h('h2', {}, 'Ergebnisse sichern'),
+    h('p', { class: 'lead' }, 'Das PDF fasst zusammen, was du geschafft hast: mit deinen eigenen Eingaben und dem Code aus dem Rover-Labor. Am Ende gibt es eine Seite für eigene Notizen. Auch angefangene Aufgaben werden festgehalten.'),
+    h('div', { class: 'fields' }, mkField('f-name', 'Name', fName), mkField('f-kurs', 'Kurs / Klasse', fKurs), mkField('f-datum', 'Datum', fDatum)),
+    h('div', { class: 'act-foot' }, pdfBtn, pdfSay),
+    h('p', { class: 'pick' }, 'GoodNotes: PDF öffnen, Teilen, „In GoodNotes öffnen“. OneNote: Einfügen, Datei, PDF auswählen.'));
+
+  app.append(...stationEls, finish, saveSec, foot);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('still', !e.isIntersecting)));
+    document.querySelectorAll('svg.doodle').forEach(d => { d.classList.add('still'); io.observe(d); });
+  }
+
+  function updateProgress() {
+    let done = 0;
+    CONTENT.STATIONS.forEach(s => {
+      const d = s.acts.filter(a => state.done[a.id]).length; done += d;
+      navChips[s.id].cnt.textContent = d + '/' + s.acts.length;
+      navChips[s.id].a.classList.toggle('all', d === s.acts.length);
+    });
+    bar.style.width = (done / total * 100) + '%';
+    lbl.textContent = done + ' von ' + total + ' Aufgaben geschafft';
+    finish.classList.toggle('on', done === total);
+    lbl2.textContent = done === total ? 'Alle ' + total + ' Aufgaben sind geschafft. Starke Leistung, du kannst Methoden mit Parametern und Rückgabe entwickeln und testen.' : 'Noch ' + (total - done) + ' Aufgabe(n) offen. Die Stationen oben führen dich direkt dorthin.';
+    document.querySelector('.bar').setAttribute('aria-valuenow', Math.round(done / total * 100));
+  }
+  updateProgress();
+})();
+
+</script>
+
+
+</body></html>

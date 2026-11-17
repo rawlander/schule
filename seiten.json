@@ -9,6 +9,13 @@
    "pfad": "seiten/test-ablauf/"
   },
   {
+   "ordner": "ef-inf-marsrover-parameter",
+   "titel": "Marsrover: Parameter und Rückgabe",
+   "kurs": "EF Informatik",
+   "ablauf": "2026-12-15",
+   "pfad": "seiten/ef-inf-marsrover-parameter/"
+  },
+  {
    "ordner": "q1-nl-proefwerk-klimaat",
    "titel": "Op weg naar het proefwerk",
    "kurs": "Q1 Niederländisch",
