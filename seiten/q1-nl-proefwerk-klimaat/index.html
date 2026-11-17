@@ -370,42 +370,101 @@ document.querySelectorAll('[data-timer]').forEach(function(b){var out=b.parentNo
  t=setInterval(function(){s--;out.textContent=s>0?s+' s':'Wissel!';if(s<=0)clearInterval(t)},1000)}});
 // Druck/Export: alle Abschnitte
 window.addEventListener('beforeprint',function(){document.querySelectorAll('[data-gap],[data-exp]').forEach(function(x){if(x.hidden)x.dataset.wasHidden='1'})});
-})();</script><!-- ===== One-page v1: jede Aufgabe einzeln, Einblenden beim Scrollen ===== -->
+})();</script><!-- ===== One-page v2: Aufgaben einzeln, Elemente blenden beim Scrollen gestaffelt ein, Navigation unten ===== -->
 <style>
-.step{position:relative;min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding:28px 0 56px;box-sizing:border-box;scroll-snap-align:start}
+.step{position:relative;min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding:32px 0 64px;box-sizing:border-box;scroll-snap-align:start}
 .step>:first-child{margin-top:0}.step>:last-child{margin-bottom:0}
 html.op-snap{scroll-snap-type:y proximity}
-.step.rv{opacity:0;transform:translateY(48px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
-.step.rv.in{opacity:1;transform:none}
-html.still .step.rv{opacity:1;transform:none;transition:none}
-.step-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);border:0;background:none;color:var(--blau);font:700 14px var(--font);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;opacity:.75}
-.step-hint:hover{opacity:1}.step-hint i{font-style:normal;font-size:22px;line-height:1;animation:opHop 1.8s ease-in-out infinite}
-@keyframes opHop{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+/* Einblenden */
+.rvi{opacity:0;transform:translateY(34px);filter:blur(6px);transition:opacity .75s ease,transform .9s cubic-bezier(.16,1,.3,1),filter .75s ease;will-change:opacity,transform}
+.rvi.frame{transform:translateY(60px) scale(.97)}
+.rvi.from-l{transform:translateX(-80px)}
+.rvi.from-r{transform:translateX(80px)}
+.rvi.pop{transform:scale(.4) rotate(-14deg);transition:opacity .5s ease,transform .9s cubic-bezier(.34,1.56,.64,1),filter .5s ease}
+.rvi.row{transform:translateX(28px);filter:none}
+.rvi.title{transform:translateY(46px);letter-spacing:.06em}
+.rvi.title.in{letter-spacing:normal}
+.rvi.in{opacity:1;transform:none;filter:none}
+html.still .rvi{opacity:1!important;transform:none!important;filter:none!important;transition:none!important;letter-spacing:normal!important}
+/* Fortschritt oben */
+.op-bar{position:fixed;left:0;top:0;height:4px;width:100%;background:var(--blau);transform-origin:0 50%;transform:scaleX(0);z-index:50;pointer-events:none}
+/* Pfeil zur nächsten Aufgabe */
+.step-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);border:0;background:none;color:var(--blau);font:700 14px var(--font);cursor:pointer;display:flex;flex-direction:column;align-items:center;opacity:.7;transition:opacity .2s}
+.step-hint:hover{opacity:1}.step-hint i{font-style:normal;font-size:24px;line-height:1;animation:opHop 1.8s ease-in-out infinite}
+@keyframes opHop{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 html.still .step-hint i{animation:none}
-@media print{.step{min-height:0!important;display:block!important;padding:0!important;opacity:1!important;transform:none!important;transition:none!important}.step-hint{display:none!important}}
+/* Navigation am Ende jeder Lektion */
+.op-end{min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:22px;padding:40px 0;scroll-snap-align:start}
+.op-end .klaar{font-size:28px;color:var(--blau);margin:0}
+.op-next{font:700 22px var(--font);background:var(--blau);color:#fff;border:0;padding:18px 34px;cursor:pointer;display:inline-flex;align-items:center;gap:14px;transition:transform .25s,background .25s}
+.op-next span{display:inline-block;transition:transform .25s}
+.op-next:hover{background:#0f2a6e}.op-next:hover span{transform:translateX(6px)}
+.op-tabs{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;border-top:2px solid var(--grau);padding-top:14px}
+.op-tabs button{font:700 15px var(--font);border:0;background:var(--hell);color:var(--blau);padding:9px 14px;cursor:pointer}
+.op-tabs button[aria-current=true]{background:var(--blau);color:#fff}
+.op-up{border:0;background:none;color:var(--blau);font:700 14px var(--font);cursor:pointer;opacity:.75}
+@media print{.step,.op-end{min-height:0!important;display:block!important;padding:0!important}
+ .rvi{opacity:1!important;transform:none!important;filter:none!important;transition:none!important;letter-spacing:normal!important}
+ .step-hint,.op-end,.op-bar{display:none!important}}
 </style>
 <script>
 (function(){
  function go(){
-  var nav=document.querySelector('nav.tabs'),R=document.documentElement;
+  var R=document.documentElement,nav=document.querySelector('nav.tabs'),tabs=nav?[].slice.call(nav.querySelectorAll('button[data-go]')):[];
+  function still(){return R.classList.contains('still')}
   function pad(){R.style.scrollPaddingTop=((nav?nav.offsetHeight:0)+6)+'px'}pad();window.addEventListener('resize',pad);
   R.classList.add('op-snap');
-  var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -12% 0px',threshold:0.08}):null;
-  [].forEach.call(document.querySelectorAll('section.les'),function(sec){
+  // Fortschrittsbalken
+  var bar=document.createElement('div');bar.className='op-bar noprint gn-noexport';document.body.appendChild(bar);
+  function prog(){var h=R.scrollHeight-innerHeight;bar.style.transform='scaleX('+(h>0?Math.min(1,pageYOffset/h):0)+')'}
+  addEventListener('scroll',prog,{passive:true});addEventListener('resize',prog);
+  // gestaffeltes Einblenden
+  var slot=0,io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+    var now=performance.now();es.sort(function(x,y){return x.boundingClientRect.top-y.boundingClientRect.top});
+    es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,d=Math.min(Math.max(0,slot-now),900);
+     el.style.transitionDelay=(d/1000)+'s';slot=now+d+(el.classList.contains('row')?55:110);el.classList.add('in');io.unobserve(el);
+     setTimeout(function(){el.style.transitionDelay=''},d+1000)})},{rootMargin:'0px 0px -8% 0px',threshold:0.05}):null;
+  function rv(el,kind){if(!el||el.classList.contains('rvi'))return;el.classList.add('rvi');if(kind)el.classList.add(kind);if(io)io.observe(el);else el.classList.add('in')}
+  function inner(box){[].forEach.call(box.children,function(c){
+    if(c.classList.contains('tw')){rv(c);[].forEach.call(c.querySelectorAll('tbody tr'),function(r){rv(r,'row')})}
+    else if(c.tagName==='UL'||c.tagName==='OL'){rv(c);[].forEach.call(c.children,function(li){rv(li,'row')})}
+    else if(c.classList.contains('les-head'))head(c);
+    else if(c.classList.contains('row')){[].forEach.call(c.children,function(x,i){rv(x)})}
+    else rv(c)})}
+  function head(h){[].forEach.call(h.children,function(c,i){rv(c,i===0&&c.querySelector('svg')?'pop':'title')})}
+  [].forEach.call(document.querySelectorAll('section.les'),function(sec,si){
    var kids=[].slice.call(sec.children),groups=[],cur=null;
    kids.forEach(function(k,i){
     var withNext=(k.classList.contains('les-head')&&k.hasAttribute('style'))||(k.classList.contains('box')&&kids[i+1]&&kids[i+1].classList.contains('card'));
-    if(!cur){cur=[];groups.push(cur)}cur.push(k);if(!withNext)cur=null;
-   });
+    if(!cur){cur=[];groups.push(cur)}cur.push(k);if(!withNext)cur=null});
    groups.forEach(function(g,i){
-    var st=document.createElement('div');st.className='step rv';sec.insertBefore(st,g[0]);g.forEach(function(k){st.appendChild(k)});
-    if(i<groups.length-1){var h=document.createElement('button');h.type='button';h.className='step-hint noprint gn-noexport';h.setAttribute('aria-label','volgende opdracht');
-     h.innerHTML='volgende<i>&#8964;</i>';h.onclick=function(){var n=st.nextElementSibling;if(n)n.scrollIntoView({behavior:R.classList.contains('still')?'auto':'smooth'})};st.appendChild(h)}
-    if(io)io.observe(st);else st.classList.add('in');
+    var st=document.createElement('div');st.className='step';sec.insertBefore(st,g[0]);
+    g.forEach(function(k,j){st.appendChild(k);
+     if(k.classList.contains('les-head'))head(k);
+     else if(k.classList.contains('praat')){rv(k,j%2?'from-r':'from-l');[].forEach.call(k.children,function(c){rv(c)})}
+     else if(k.classList.contains('card')){rv(k,'frame');inner(k)}
+     else if(k.classList.contains('grid2')){[].forEach.call(k.children,function(c,n){rv(c,n?'from-r':'from-l');if(c.classList.contains('card'))inner(c)})}
+     else if(k.classList.contains('box')){rv(k,'frame');inner(k)}
+     else rv(k)});
+    var h=document.createElement('button');h.type='button';h.className='step-hint noprint gn-noexport';h.setAttribute('aria-label','verder');
+    h.innerHTML='verder<i>&#8964;</i>';h.onclick=function(){var n=st.nextElementSibling;if(n)n.scrollIntoView({behavior:still()?'auto':'smooth'})};st.appendChild(h);
    });
+   // Navigation am Ende der Lektion
+   var me=tabs[si],nx=tabs[si+1],end=document.createElement('div');end.className='op-end noprint gn-noexport';
+   var html='';
+   if(nx)html+='<p class="klaar">'+(si===0?'Klaar? Dan beginnen we!':'Klaar met '+me.textContent+'?')+'</p><button type="button" class="op-next" data-to="'+nx.dataset.go+'">Verder naar '+nx.textContent+' <span>&rarr;</span></button>';
+   else html+='<p class="klaar">Succes met het proefwerk!</p>';
+   html+='<div class="op-tabs">'+tabs.map(function(t){return '<button type="button" data-to="'+t.dataset.go+'"'+(t===me?' aria-current="true"':'')+'>'+t.textContent+'</button>'}).join('')+'</div>';
+   html+='<button type="button" class="op-up">&uarr; naar boven</button>';
+   end.innerHTML=html;sec.appendChild(end);
+   [].forEach.call(end.querySelectorAll('.op-next,.op-tabs button'),function(b){rv(b,b.classList.contains('op-next')?'pop':null)});
+   rv(end.querySelector('.klaar'),'title');
+   end.addEventListener('click',function(e){var b=e.target.closest('[data-to]');
+    if(b){var t=tabs.filter(function(x){return x.dataset.go===b.dataset.to})[0];if(t)t.click();return}
+    if(e.target.closest('.op-up')){var f=sec.firstElementChild;if(f)f.scrollIntoView({behavior:still()?'auto':'smooth'})}});
   });
-  // beim Drucken/Export alles sichtbar
-  window.addEventListener('beforeprint',function(){[].forEach.call(document.querySelectorAll('.step'),function(x){x.classList.add('in')})});
+  addEventListener('beforeprint',function(){[].forEach.call(document.querySelectorAll('.rvi'),function(x){x.classList.add('in')})});
+  prog();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 })();
