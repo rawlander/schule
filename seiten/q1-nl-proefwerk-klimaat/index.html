@@ -370,4 +370,44 @@ document.querySelectorAll('[data-timer]').forEach(function(b){var out=b.parentNo
  t=setInterval(function(){s--;out.textContent=s>0?s+' s':'Wissel!';if(s<=0)clearInterval(t)},1000)}});
 // Druck/Export: alle Abschnitte
 window.addEventListener('beforeprint',function(){document.querySelectorAll('[data-gap],[data-exp]').forEach(function(x){if(x.hidden)x.dataset.wasHidden='1'})});
-})();</script></body></html>
+})();</script><!-- ===== One-page v1: jede Aufgabe einzeln, Einblenden beim Scrollen ===== -->
+<style>
+.step{position:relative;min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding:28px 0 56px;box-sizing:border-box;scroll-snap-align:start}
+.step>:first-child{margin-top:0}.step>:last-child{margin-bottom:0}
+html.op-snap{scroll-snap-type:y proximity}
+.step.rv{opacity:0;transform:translateY(48px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.step.rv.in{opacity:1;transform:none}
+html.still .step.rv{opacity:1;transform:none;transition:none}
+.step-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);border:0;background:none;color:var(--blau);font:700 14px var(--font);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;opacity:.75}
+.step-hint:hover{opacity:1}.step-hint i{font-style:normal;font-size:22px;line-height:1;animation:opHop 1.8s ease-in-out infinite}
+@keyframes opHop{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+html.still .step-hint i{animation:none}
+@media print{.step{min-height:0!important;display:block!important;padding:0!important;opacity:1!important;transform:none!important;transition:none!important}.step-hint{display:none!important}}
+</style>
+<script>
+(function(){
+ function go(){
+  var nav=document.querySelector('nav.tabs'),R=document.documentElement;
+  function pad(){R.style.scrollPaddingTop=((nav?nav.offsetHeight:0)+6)+'px'}pad();window.addEventListener('resize',pad);
+  R.classList.add('op-snap');
+  var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -12% 0px',threshold:0.08}):null;
+  [].forEach.call(document.querySelectorAll('section.les'),function(sec){
+   var kids=[].slice.call(sec.children),groups=[],cur=null;
+   kids.forEach(function(k,i){
+    var withNext=(k.classList.contains('les-head')&&k.hasAttribute('style'))||(k.classList.contains('box')&&kids[i+1]&&kids[i+1].classList.contains('card'));
+    if(!cur){cur=[];groups.push(cur)}cur.push(k);if(!withNext)cur=null;
+   });
+   groups.forEach(function(g,i){
+    var st=document.createElement('div');st.className='step rv';sec.insertBefore(st,g[0]);g.forEach(function(k){st.appendChild(k)});
+    if(i<groups.length-1){var h=document.createElement('button');h.type='button';h.className='step-hint noprint gn-noexport';h.setAttribute('aria-label','volgende opdracht');
+     h.innerHTML='volgende<i>&#8964;</i>';h.onclick=function(){var n=st.nextElementSibling;if(n)n.scrollIntoView({behavior:R.classList.contains('still')?'auto':'smooth'})};st.appendChild(h)}
+    if(io)io.observe(st);else st.classList.add('in');
+   });
+  });
+  // beim Drucken/Export alles sichtbar
+  window.addEventListener('beforeprint',function(){[].forEach.call(document.querySelectorAll('.step'),function(x){x.classList.add('in')})});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
+</script>
+</body></html>
