@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Übersicht – aktive Seiten</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font:16px/1.3 Assistant,Arial,Helvetica,sans-serif;color:#605f5f;background:#fff}
+header{border-bottom:2px solid #b1b2b3}
+header div{max-width:1000px;margin:0 auto;padding:14px 20px;display:flex;gap:16px;align-items:center}
+header img{height:56px}
+main{max-width:1000px;margin:0 auto;padding:32px 20px}
+h1{color:#193b8f;font-weight:400;font-size:40px;margin:0 0 8px}
+table{width:100%;border-collapse:collapse;margin-top:24px}
+th{text-align:left;color:#193b8f;border-bottom:2px solid #dadada;padding:8px}
+td{border-bottom:1px solid #dadada;padding:8px;vertical-align:top}
+a{color:#193b8f}
+.bald{font-weight:700}
+button{font:inherit;color:#193b8f;background:#fff;border:1.5px solid #193b8f;padding:4px 10px;cursor:pointer}
+input{font:inherit;padding:6px;border:1.5px solid #b1b2b3;width:260px}
+</style>
+</head>
+<body>
+<header><div><img src="assets/kapu-bildmarke.png" alt="Kapu" onerror="this.remove()"><b style="color:#193b8f">Bischöfliches St.-Josef-Gymnasium Bocholt</b></div></header>
+<main>
+<h1>Aktive Seiten</h1>
+<p id="stand">Wird geladen …</p>
+<input id="filter" type="search" placeholder="Filtern nach Kurs oder Titel">
+<table>
+<thead><tr><th>Titel</th><th>Kurs</th><th>online bis</th><th>Link</th></tr></thead>
+<tbody id="liste"></tbody>
+</table>
+</main>
+<script>
+function datum(s){var a=s.split('-');return a[2]+'.'+a[1]+'.'+a[0]}
+fetch('seiten.json',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+ document.getElementById('stand').textContent=d.seiten.length+' Seite(n) online · Stand '+datum(d.stand)+' · abgelaufene Seiten werden jede Nacht entfernt.';
+ var tb=document.getElementById('liste'),base=location.href.replace(/[^\/]*$/,''),in7=new Date(Date.now()+7*864e5).toISOString().slice(0,10);
+ d.seiten.forEach(function(s){var tr=document.createElement('tr'),url=base+s.pfad;tr.dataset.such=(s.titel+' '+s.kurs).toLowerCase();
+  tr.innerHTML='<td><a></a></td><td></td><td></td><td><button type="button">Link kopieren</button></td>';
+  var a=tr.querySelector('a');a.href=url;a.textContent=s.titel;tr.children[1].textContent=s.kurs;tr.children[2].textContent=datum(s.ablauf);
+  if(s.ablauf<=in7)tr.children[2].className='bald';
+  tr.querySelector('button').onclick=function(e){navigator.clipboard.writeText(url).then(function(){e.target.textContent='Kopiert'})};
+  tb.appendChild(tr)});
+ document.getElementById('filter').oninput=function(e){var q=e.target.value.toLowerCase();[].forEach.call(tb.children,function(tr){tr.hidden=tr.dataset.such.indexOf(q)<0})};
+}).catch(function(){document.getElementById('stand').textContent='Die Liste konnte nicht geladen werden.'});
+</script>
+</body>
+</html>

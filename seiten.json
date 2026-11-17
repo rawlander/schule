@@ -1,0 +1,12 @@
+{
+ "stand": "2026-11-17",
+ "seiten": [
+  {
+   "ordner": "test-ablauf",
+   "titel": "Testseite Ablaufdatum",
+   "kurs": "Test",
+   "ablauf": "2026-11-24",
+   "pfad": "seiten/test-ablauf/"
+  }
+ ]
+}
