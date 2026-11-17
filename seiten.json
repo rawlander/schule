@@ -7,6 +7,13 @@
    "kurs": "Test",
    "ablauf": "2026-11-24",
    "pfad": "seiten/test-ablauf/"
+  },
+  {
+   "ordner": "q1-nl-proefwerk-klimaat",
+   "titel": "Op weg naar het proefwerk",
+   "kurs": "Q1 Niederländisch",
+   "ablauf": "2027-01-29",
+   "pfad": "seiten/q1-nl-proefwerk-klimaat/"
   }
  ]
 }
