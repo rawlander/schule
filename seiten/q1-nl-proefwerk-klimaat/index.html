@@ -375,9 +375,8 @@ window.addEventListener('beforeprint',function(){document.querySelectorAll('[dat
 .step{position:relative;min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding:32px 0 64px;box-sizing:border-box;scroll-snap-align:start}
 .step>:first-child{margin-top:0}.step>:last-child{margin-bottom:0}
 html.op-snap{scroll-snap-type:y proximity}
-/* Einblenden wie auf auszeitamrhein.de: ruhiges Aufsteigen und Einblenden, je Element einmal */
-.rvi{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.65,.3,1);will-change:opacity,transform}
-.rvi.row{transform:translateY(14px)}
+/* Einblenden wie auf auszeitamrhein.de (style.css: 24px, .8s ease, threshold .15) */
+.rvi{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
 .rvi.in{opacity:1;transform:none}
 html.still .rvi{opacity:1!important;transform:none!important;transition:none!important}
 /* Fortschritt oben */
