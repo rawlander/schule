@@ -379,6 +379,8 @@ html.op-snap{scroll-snap-type:y proximity}
 .rvi{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
 .rvi.in{opacity:1;transform:none}
 html.still .rvi{opacity:1!important;transform:none!important;transition:none!important}
+.op-kopie{margin:6px 0 14px;border:1px solid var(--linie,#b1b2b3)}.op-kopie summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--blau);background:var(--hell)}
+.op-kopie .card{border:0}
 /* Fortschritt oben */
 .op-bar{position:fixed;left:0;top:0;height:4px;width:100%;background:var(--blau);transform-origin:0 50%;transform:scaleX(0);z-index:50;pointer-events:none}
 /* Pfeil zur nächsten Aufgabe */
@@ -417,6 +419,18 @@ html.still .step-hint i{animation:none}
     es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,d=Math.min(Math.max(0,slot-now),900);
      el.style.transitionDelay=(d/1000)+'s';slot=now+d+(el.classList.contains('rv-row')?60:120);el.classList.add('in');io.unobserve(el);
      setTimeout(function(){el.style.transitionDelay=''},d+1000)})},{threshold:0.15}):null;
+  // Lesetext + zugehörige Aufgaben (und Sprechphasen dazu) bilden einen Block, der als Ganzes einblendet: [von, bis) je Lektion
+  var SAMEN={s1:[[2,4],[4,9]],s2:[[3,9]],s4:[[2,4],[4,6],[6,8]],s5:[[2,4],[6,8]],s6:[[2,4]]};
+  var io2=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io2.unobserve(e.target)}})},{rootMargin:'0px 0px -15% 0px',threshold:0}):null;
+  // Oefentekst aus einer früheren Les zum Nachschauen einklappbar bereitstellen
+  function textKopie(vonSec,idx,ziel,label){var src=document.getElementById(vonSec);if(!src||!ziel)return;var t=src.children[idx];if(!t||!t.classList.contains('text'))return;
+   var d=document.createElement('details');d.className='op-kopie noprint gn-noexport';d.innerHTML='<summary>'+label+'</summary>';var c=t.cloneNode(true);
+   [].forEach.call(c.querySelectorAll('[id]'),function(x){x.removeAttribute('id')});c.style.margin='10px 0 0';d.appendChild(c);ziel.insertBefore(d,ziel.children[1]||null)}
+  var s4=document.getElementById('s4'),s5=document.getElementById('s5'),s2=document.getElementById('s2');
+  textKopie('s1',5,s2&&s2.children[5],'Oefentekst 1 bekijken (Lotte, Jesse, Fatima)');
+  textKopie('s2',4,s4&&s4.children[4],'Oefentekst 2 bekijken');
+  textKopie('s2',4,s4&&s4.children[7],'Oefentekst 2 bekijken');
+  textKopie('s2',4,s5&&s5.children[6],'Oefentekst 2 bekijken (voor de e-mail aan Tom)');
   function rv(el,kind){if(!el||el.classList.contains('rvi'))return;el.classList.add('rvi');if(kind)el.classList.add(kind);if(io)io.observe(el);else el.classList.add('in')}
   function inner(box){[].forEach.call(box.children,function(c){
     if(c.classList.contains('tw')){rv(c);[].forEach.call(c.querySelectorAll('tbody tr'),function(r){rv(r,'rv-row')})}
@@ -426,13 +440,15 @@ html.still .step-hint i{animation:none}
     else rv(c)})}
   function head(h){[].forEach.call(h.children,function(c,i){rv(c,i===0&&c.querySelector('svg')?'pop':'title')})}
   [].forEach.call(document.querySelectorAll('section.les'),function(sec,si){
-   var kids=[].slice.call(sec.children),groups=[],cur=null;
+   var kids=[].slice.call(sec.children),groups=[],cur=null,cfg=SAMEN[sec.id]||[];
    kids.forEach(function(k,i){
-    var withNext=(k.classList.contains('les-head')&&k.hasAttribute('style'))||(k.classList.contains('box')&&kids[i+1]&&kids[i+1].classList.contains('card'));
-    if(!cur){cur=[];groups.push(cur)}cur.push(k);if(!withNext)cur=null});
+    var r=cfg.filter(function(x){return i>=x[0]&&i<x[1]-1})[0];
+    var withNext=r?true:((k.classList.contains('les-head')&&k.hasAttribute('style'))||(k.classList.contains('box')&&kids[i+1]&&kids[i+1].classList.contains('card')));
+    if(!cur){cur=[];groups.push(cur);cur.samen=cfg.some(function(x){return x[0]===i})}cur.push(k);if(!withNext)cur=null});
    groups.forEach(function(g,i){
     var st=document.createElement('div');st.className='step';sec.insertBefore(st,g[0]);
-    g.forEach(function(k,j){st.appendChild(k);
+    if(g.samen){st.classList.add('samen');g.forEach(function(k){st.appendChild(k)});st.classList.add('rvi');if(io2)io2.observe(st);else st.classList.add('in')}
+    else g.forEach(function(k,j){st.appendChild(k);
      if(k.classList.contains('les-head'))head(k);
      else if(k.classList.contains('praat')){rv(k,j%2?'from-r':'from-l');[].forEach.call(k.children,function(c){rv(c)})}
      else if(k.classList.contains('card')){rv(k,'frame');inner(k)}
