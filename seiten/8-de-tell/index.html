@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8">
+<meta name="ablauf" content="2026-12-17">
+<meta name="kurs" content="Deutsch 8">
+<meta name="robots" content="noindex, nofollow">
+<title>Wilhelm Tell – Held, Tyrann, Tat (Deutsch 8)</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap">
+<style>
+body{margin:0;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f;background:#fff;font-size:18px}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+header{border-bottom:3px solid #b1b2b3;padding-bottom:14px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+header img{height:56px}
+.k{color:#193b8f;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin:0}
+h1{color:#193b8f;font-weight:400;font-size:32px;margin:2px 0 0}
+ol{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+a{display:flex;align-items:center;gap:14px;text-decoration:none;color:#193b8f;background:#e6e9ea;padding:12px 16px;font-weight:700}
+a:hover{background:#193b8f;color:#fff}
+.nr{min-width:2.2em;height:2.2em;display:flex;align-items:center;justify-content:center;background:#193b8f;color:#fff}
+a:hover .nr{background:#fff;color:#193b8f}
+.f{margin-top:28px;font-size:14px}
+</style></head><body><div class="wrap">
+<header><img src="../../assets/kapu-bildmarke.png" alt="Kapu" onerror="this.remove()"><div><p class="k">Deutsch · Klasse 8</p><h1>Wilhelm Tell – Held, Tyrann, Tat</h1></div></header>
+<ol><li><a href="tell-std01-held-oder-tyrann.html"><span class="nr">1</span><span class="t">Held oder Tyrann?</span></a></li><li><a href="tell-std02-exposition.html"><span class="nr">2</span><span class="t">Exposition I.1: Ort und Atmosphäre</span></a></li><li><a href="tell-std03-auftritt-des-helden.html"><span class="nr">3</span><span class="t">Auftritt des Helden</span></a></li><li><a href="tell-std04-dramentheorie-1.html"><span class="nr">4</span><span class="t">Dramentheorie I</span></a></li><li><a href="tell-std05-erregendes-moment.html"><span class="nr">5</span><span class="t">Erregendes Moment I.3</span></a></li><li><a href="tell-std06-quellenkritik.html"><span class="nr">6</span><span class="t">Quellenkritik: Wer erzählt Tell richtig?</span></a></li><li><a href="tell-std07-hoehepunkt-spielen.html"><span class="nr">7</span><span class="t">Höhepunkt III.3 (1)</span></a></li><li><a href="tell-std08-hoehepunkt-analyse.html"><span class="nr">8</span><span class="t">Höhepunkt III.3 (2)</span></a></li><li><a href="tell-std09-schiller-frisch.html"><span class="nr">9</span><span class="t">Schiller und Frisch</span></a></li><li><a href="tell-std10-hohle-gasse.html"><span class="nr">10</span><span class="t">Lösung IV.3: Hohle Gasse</span></a></li><li><a href="tell-std11-dramentheorie-2.html"><span class="nr">11</span><span class="t">Dramentheorie II</span></a></li><li><a href="tell-std12-produkt.html"><span class="nr">12</span><span class="t">Produkt und Reflexion</span></a></li></ol>
+<p class="f">Online bis <span data-ablauf-text></span>. Dramentext: Friedrich Schiller, „Wilhelm Tell“ (1804), gemeinfrei. Bilder: KI-generierte Illustrationen für den Unterricht.</p>
+</div></body></html>

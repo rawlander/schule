@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta name="ablauf" content="2026-12-17">
+<meta name="kurs" content="Deutsch 8">
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tell – Stunde 4: Dramentheorie I</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style><style>
+:root{--navy:#2F3C7E;--navy-dark:#20295C;--coral:#F96167;--gold:#F9E795;--gold-dark:#C9A227;--text:#2A2A2A;--muted:#5B5B5B;--bg:#fff;--card:#F7F7F9;--border:#E3E3E8;--green:#EAF7EE;--green-txt:#2E7D32;--green-border:#BFE3C8;--paper:#FFFDF6}
+*{box-sizing:border-box}
+body{font-family:Calibri,"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--bg);margin:0;line-height:1.5;font-size:17px}
+.wrap{max-width:980px;margin:0 auto;padding:1.6rem 1.3rem 4rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem;color:var(--muted);margin-bottom:1rem}
+.top a{color:var(--navy);text-decoration:none;font-weight:700}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--coral);font-size:.8rem;margin:0 0 .3rem}
+h1{font-family:Cambria,Georgia,serif;color:var(--navy);font-size:2.05rem;line-height:1.15;margin:0 0 .4rem}
+.subtitle{color:var(--muted);font-size:1.08rem;margin:0 0 1.2rem}
+h2{font-family:Cambria,Georgia,serif;color:var(--navy);font-size:1.35rem;margin:2.2rem 0 .7rem;border-bottom:2px solid var(--border);padding-bottom:.3rem;display:flex;align-items:center;gap:.6rem}
+h2 .min{margin-left:auto;font-family:Calibri,Arial,sans-serif;font-size:.78rem;font-weight:700;background:#E8EBF8;color:var(--navy);padding:.15rem .6rem;border-radius:999px}
+h3{font-size:1.05rem;color:var(--navy-dark);margin:1.1rem 0 .3rem}
+p{margin:.4rem 0}
+.goal{background:var(--navy);color:#fff;border-radius:14px;padding:1.1rem 1.4rem;margin:0 0 1.2rem}
+.goal b.l{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.2rem}
+.goal ul{margin:.2rem 0 0;padding-left:1.2rem}.goal li{margin:.15rem 0}
+.timeline{display:flex;gap:3px;margin:.2rem 0 1.4rem;border-radius:10px;overflow:hidden;font-size:.74rem}
+.timeline div{padding:.45rem .5rem;color:#fff;background:var(--navy);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timeline div:nth-child(2n){background:#4C5BA3}.timeline div:nth-child(3n){background:var(--coral)}
+.timeline small{display:block;opacity:.85}
+figure{margin:1rem 0 1.2rem;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.5rem .5rem .4rem;overflow:hidden}
+figure img{width:100%;height:auto;display:block;border-radius:10px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:.8rem;color:var(--muted);margin:.4rem .3rem .1rem}
+figcaption b{color:var(--coral)}
+.imgrow{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.imgrow figure{margin:.2rem 0}
+.imgrow.three{grid-template-columns:repeat(3,1fr)}
+.imgrow.portrait{grid-template-columns:minmax(0,.55fr) 1fr;align-items:center}
+@media(max-width:700px){.imgrow,.imgrow.three,.imgrow.portrait{grid-template-columns:1fr}}
+.task{display:grid;grid-template-columns:2.2rem 1fr;gap:.8rem;background:#fff;border:1px solid var(--border);border-left:5px solid var(--coral);border-radius:10px;padding:.8rem 1rem;margin:.8rem 0}
+.task .no{background:var(--coral);color:#fff;font-weight:700;width:2.1rem;height:2.1rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.task .q{font-weight:600}
+.task .sub{font-weight:400;color:var(--text)}
+.task ul,.task ol{margin:.3rem 0;padding-left:1.2rem}
+.ln{border-bottom:1.5px solid #9AA0C4;height:2.05rem;margin:0}
+.lns{margin:.5rem 0 .2rem}
+.lbl{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:.08rem .55rem;margin:.1rem .15rem .1rem 0;background:#E8EBF8;color:var(--navy)}
+.tag.ph{background:#FFF3DA;color:#8A6A14}.tag.img{background:#FDE6E7;color:#B3282F}.tag.ok{background:var(--green);color:var(--green-txt)}
+.note{background:#FFF3DA;border:1px solid #F0D89A;border-radius:10px;padding:.7rem 1rem;font-size:.92rem;margin:.8rem 0}
+.note.blue{background:#EEF1FB;border-color:#CBD3F0}
+.note.green{background:var(--green);border-color:var(--green-border)}
+.ph-box{border:2px dashed #E0B94F;background:#FFF9E6;border-radius:12px;padding:1rem;text-align:center;color:#8A6A14;font-size:.9rem;margin:.8rem 0}
+details{background:#FFF9E9;border:1px solid #F0DFA0;border-radius:10px;margin:.5rem 0;overflow:hidden}
+details summary{cursor:pointer;list-style:none;padding:.55rem 1rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:.5rem}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸";color:var(--coral)}details[open] summary::before{content:"▾"}
+details .content{padding:0 1.1rem .9rem;font-size:.94rem}
+details .content ul,details .content ol{margin:.3rem 0;padding-left:1.2rem}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin:.6rem 0 1rem}
+th,td{border:1px solid var(--border);padding:.5rem .65rem;text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em}
+td.f{font-weight:700;color:var(--navy-dark);background:var(--card);width:16%}
+td.e{height:3.1rem}
+td.e2{height:5rem}
+.tbl-wrap{overflow-x:auto}
+/* Drama */
+.dbox{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:1rem;margin:1rem 0 1.4rem;align-items:start}
+@media(max-width:800px){.dbox{grid-template-columns:1fr}}
+.dtext{background:var(--paper);border:1px solid #E9DFB8;border-radius:12px;padding:.9rem 1.1rem 1.1rem;font-family:Cambria,Georgia,serif;font-size:1rem;line-height:1.55}
+.dtext .scene{font-family:Calibri,Arial,sans-serif;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;border-bottom:1px solid #E9DFB8;padding-bottom:.3rem;margin-bottom:.6rem}
+.dtext .bsa{font-style:italic;color:#5a5a5a;margin:.5rem 0;font-size:.95rem}
+.dtext .sp{margin:.55rem 0}
+.dtext .who{font-family:Calibri,Arial,sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--coral)}
+.dtext .who i{text-transform:none;letter-spacing:0;font-weight:400;color:#5a5a5a;font-family:Cambria,Georgia,serif}
+.dtext .v{position:relative;padding-left:.2rem}
+.dtext .v[data-n]::before{content:attr(data-n);position:absolute;left:-1.25rem;font-family:Calibri,Arial,sans-serif;font-size:.7rem;color:#9a9a9a;top:.2rem}
+.dtext{padding-left:1.9rem}
+.dtext em{color:#5a5a5a}
+.dtext .cut{color:#9a9a9a;font-family:Calibri,Arial,sans-serif;font-size:.85rem;margin:.3rem 0}
+.dtext .gl{border-bottom:2px dotted var(--coral);cursor:help}
+.dtext .gl sup{color:var(--coral);font-weight:700;font-family:Calibri,Arial,sans-serif;font-size:.7rem}
+.gloss{background:#EEF1FB;border:1px solid #CBD3F0;border-radius:12px;padding:.8rem 1rem;font-size:.88rem;position:sticky;top:.6rem}
+.gloss h4{margin:0 0 .4rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--navy)}
+.gloss ol{margin:0;padding-left:0;list-style:none}
+.gloss li{margin:.3rem 0;line-height:1.35}
+.gloss li b{color:var(--coral)}
+.recap{display:flex;gap:.8rem;background:#EEF1FB;border:1px solid #CBD3F0;border-radius:12px;padding:.8rem 1rem;font-size:.93rem;margin:.8rem 0}
+.recap .ic{font-size:1.4rem}
+.src{font-size:.78rem;color:var(--muted);margin:.2rem 0 0;font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem;margin:.8rem 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;font-size:.92rem}
+.card h4{margin:0 0 .25rem;color:var(--navy-dark);font-size:.98rem}
+.card.q{background:#fff;border:1.5px dashed #9AA0C4;min-height:5.5rem}
+.card .big{font-family:Cambria,Georgia,serif;font-weight:700;color:var(--coral);font-size:1.15rem}
+.chips span{display:inline-block;background:#E8EBF8;color:var(--navy);border-radius:999px;padding:.12rem .7rem;margin:.15rem .1rem;font-weight:700;font-size:.85rem}
+.lue{display:inline-block;min-width:11rem;border-bottom:1.5px solid #333;margin:0 .15rem}
+.sb{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:.8rem 0}
+@media(max-width:700px){.sb{grid-template-columns:1fr 1fr}}
+.sb .panel{border:2px solid var(--navy);border-radius:6px;background:#fff;aspect-ratio:16/9;padding:.25rem .45rem;font-size:.75rem;color:var(--muted);font-weight:700}
+.sb .cap{border-bottom:1px solid var(--navy);height:1.5rem}
+.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2.4rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.9rem}
+.nav a{color:var(--navy);font-weight:700;text-decoration:none;border:1px solid var(--navy);padding:.35rem .9rem;border-radius:8px}
+.nav a:hover{background:var(--navy);color:#fff}
+.foot{margin-top:1.4rem;color:var(--muted);font-size:.8rem;font-style:italic}
+.check li{list-style:none;margin:.25rem 0}.check li::before{content:"☐ ";color:var(--navy);font-weight:700}
+.check{padding-left:.2rem}
+@media print{.teacher{display:none}.gloss{position:static}details{border:1px solid #ccc}.nav,.top a{display:none}body{font-size:14px}.task,figure,.card{break-inside:avoid}}
+</style></head><body><div class="wrap">
+<div class="top"><span><a href="./">← Alle Stunden</a> · Deutsch · Klasse 8 · <b>Tell – Held, Tyrann, Tat</b></span><span>Schülermaterial · Stunde 4 von 12</span></div>
+<p class="kicker">Stunde 4</p><h1>Dramentheorie I</h1><p class="subtitle">Der Aufbau eines klassischen Dramas</p>
+<div class="goal"><b class="l">Ich kann nach dieser Stunde …</b><ul><li>Fachbegriffe des Dramas erklären (Akt, Szene, Dialog, Monolog, Exposition, erregendes Moment)</li><li>die Pyramide nach Freytag beschriften</li><li>Szenen aus „Tell“ einem Pyramidenteil zuordnen</li></ul></div><div class="timeline"><div style="flex:7" title="Begriffe raten (7 Min.)">Begriffe raten<small>7 Min.</small></div><div style="flex:20" title="Lückentext (20 Min.)">Lückentext<small>20 Min.</small></div><div style="flex:25" title="Freytag (25 Min.)">Freytag<small>25 Min.</small></div><div style="flex:10" title="Sicherung (10 Min.)">Sicherung<small>10 Min.</small></div><div style="flex:5" title="Hausaufgabe (5 Min.)">Hausaufgabe<small>5 Min.</small></div></div><h2>Einstieg: Begriffe raten<span class="min">7 Min.</span></h2><div class="cards"><div class="card"><div class="big">Akt</div>Großer Abschnitt – ein Drama hat meist drei oder fünf.</div><div class="card"><div class="big">Szene</div>Auftritt: kommt oder geht eine Figur, wechselt oft der Ort.</div><div class="card"><div class="big">Monolog</div>Eine Figur spricht allein und denkt laut.</div><div class="card"><div class="big">Dialog</div>Gespräch zwischen Figuren – Motor der Handlung.</div></div><div class="task"><div class="no">1</div><div><div class="q">Zieht Begriffskarten: Eine Person stellt den Begriff <b>pantomimisch</b> oder mit einem Beispiel dar, die anderen raten.</div></div></div><h2>Lückentext: Die Exposition<span class="min">20 Min.</span></h2><div class="task"><div class="no">2</div><div><div class="q">Ergänze den Lückentext mit dem Wortspeicher. Jedes Wort kommt genau einmal vor.</div><div class="sub"><div class="chips"><span>EXPOSITION</span><span>ERREGENDES MOMENT</span><span>DRAMA</span><span>KONFLIKT</span><span>VORGESCHICHTE</span><span>ORT</span><span>HANDLUNG</span><span>FIGURENKONSTELLATION</span><span>AKT</span><span>HELDEN</span><span>ATMOSPHÄRE</span></div><p style="line-height:2.6">Die <span class="lue"></span> umfasst den ersten <span class="lue"></span> oder Teile davon. Der Zuschauer bzw. Leser lernt den <span class="lue"></span> und die <span class="lue"></span> kennen, in denen das <span class="lue"></span> sich abspielt. Er wird mit dem <span class="lue"></span> und anderen wichtigen Figuren bekannt gemacht und erhält Hinweise darauf, wie die <span class="lue"></span> aussieht, wer also mit wem auf derselben Seite steht und wer gegeneinandersteht. Auch werden Hinweise auf die <span class="lue"></span> sowie auf den gesellschaftlichen und geschichtlichen Hintergrund gegeben. Außerdem bahnt sich der <span class="lue"></span> an, der in dem so genannten <span class="lue"></span> seinen deutlichsten Anstoß erhält und die <span class="lue"></span> vorantreibt.</p></div><details><summary>💡 Hilfe</summary><div class="content">Beginne mit dem, was du schon aus Stunde 2 und 3 weißt: Wo spielt I.1? Wer tritt auf? Was bahnt sich an?</div></details></div></div><div class="task"><div class="no">3</div><div><div class="q">Belege drei Aussagen des Textes mit Beispielen aus I.1 (Szene am See).</div><div class="sub"><div class="tbl-wrap"><table><tr><th>Aussage</th><th>Beleg aus I.1</th></tr><tr><td class="f">Ort und Atmosphäre</td><td class="e"></td></tr><tr><td class="f">Figuren und Konstellation</td><td class="e"></td></tr><tr><td class="f">Vorgeschichte / Hintergrund</td><td class="e"></td></tr><tr><td class="f">Anbahnung des Konflikts</td><td class="e"></td></tr></table></div></div><details><summary>💡 Hilfe</summary><div class="content">Beispiele: Idylle und Gewitter · Tell, Baumgarten, Ruodi · Vogt Wolfenschiessen erschlagen · Landvogts Reiter verfolgen Baumgarten.</div></details></div></div><h2>Dramenbegriffe im Überblick</h2><div class="tbl-wrap"><table><tr><th>Begriff</th><th>Das bedeutet</th><th>Beispiel aus „Tell“</th></tr><tr><td class="f">Akt / Aufzug</td><td class="">großer Abschnitt des Dramas</td><td class="">Erster Aufzug</td></tr><tr><td class="f">Auftritt / Szene</td><td class="">Abschnitt, der durch Auftreten oder Abgehen einer Figur oder Ortswechsel endet</td><td class="e"></td></tr><tr><td class="f">Bühnenanweisung</td><td class="">Angaben zu Ort, Stimmung, Auftreten und Verhalten (kursiv gedruckt)</td><td class="e"></td></tr><tr><td class="f">Botenbericht</td><td class="">Eine Figur berichtet von einem früheren Ereignis, das nicht auf der Bühne gezeigt wird</td><td class="e"></td></tr><tr><td class="f">Mauerschau</td><td class="">Eine Figur sieht von oben, was die anderen nicht sehen, und berichtet es</td><td class="e"></td></tr><tr><td class="f">erregendes Moment</td><td class="">Der Konflikt tritt hervor, die Handlung kommt in Gang</td><td class="e"></td></tr></table></div><div class="note blue">Tipp: Ein Beispiel für <b>Botenbericht</b> findest du, wenn Baumgarten erzählt, was beim Burgvogt geschah. Eine <b>Mauerschau</b> findest du am Ende der Szene, wenn Werni vom Felsen aus berichtet. Suche beide!</div><h2>Die Pyramide nach Freytag<span class="min">25 Min.</span></h2><p>Gustav Freytag (1863) beschrieb den Aufbau vieler Dramen so: Er steigt bis zu einem Höhepunkt und fällt dann wieder – wie eine <b>Pyramide</b>. Zwischen den fünf Teilen liegen wichtige Wendepunkte, die <b>Momente</b>.</p><div class="cards"><div class="card"><h4>1 Einleitung</h4>Ort, Zeit, Figuren, Ausgangslage</div><div class="card"><h4>2 Steigerung</h4>Der Konflikt wächst, es wird spannender</div><div class="card"><h4>3 Höhepunkt</h4>Der Konflikt erreicht seinen Gipfel</div><div class="card"><h4>4 Fall / Umkehr</h4>Die Lage dreht sich</div><div class="card"><h4>5 Katastrophe</h4>Ende: Lösung oder Untergang</div></div><figure><svg viewBox="0 0 760 360" role="img" aria-label="Pyramide nach Freytag" font-family="Calibri,Arial,sans-serif"><line x1="30" y1="262" x2="730" y2="262" stroke="#B9C0E6" stroke-width="2"/><polyline points="40,262 120,247 380,48 440,86 560,150 640,172 720,262" fill="none" stroke="#2F3C7E" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="120" cy="247" r="9" fill="#F96167"/><circle cx="440" cy="86" r="9" fill="#F96167"/><circle cx="640" cy="172" r="9" fill="#F96167"/><circle cx="380" cy="48" r="11" fill="#F9E795" stroke="#C9A227" stroke-width="3"/><rect x="28" y="276" width="104" height="30" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="80" y="296" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Teil 1</text><rect x="198" y="276" width="104" height="30" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="250" y="296" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Teil 2</text><rect x="328" y="276" width="104" height="30" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="380" y="296" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Teil 3</text><rect x="458" y="276" width="104" height="30" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="510" y="296" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Teil 4</text><rect x="628" y="276" width="104" height="30" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="680" y="296" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Teil 5</text><rect x="4" y="198" width="100" height="26" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><rect x="456" y="36" width="100" height="26" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><rect x="656" y="122" width="100" height="26" rx="6" fill="#fff" stroke="#9AA0C4" stroke-dasharray="4 3"/><text x="380" y="26" text-anchor="middle" font-size="12" fill="#9AA0C4" font-weight="700">Spitze</text><rect x="28" y="314" width="104" height="38" rx="6" fill="#fff" stroke="#2F3C7E" stroke-width="1.5"/><rect x="198" y="314" width="104" height="38" rx="6" fill="#fff" stroke="#2F3C7E" stroke-width="1.5"/><rect x="328" y="314" width="104" height="38" rx="6" fill="#fff" stroke="#2F3C7E" stroke-width="1.5"/><rect x="458" y="314" width="104" height="38" rx="6" fill="#fff" stroke="#2F3C7E" stroke-width="1.5"/><rect x="628" y="314" width="104" height="38" rx="6" fill="#fff" stroke="#2F3C7E" stroke-width="1.5"/><text x="30" y="346" font-size="10" fill="#5B5B5B" text-anchor="start"></text></svg><figcaption>Pyramide nach Gustav Freytag (1863). Unter den Teilen: Kästen für die Szenen aus „Tell“.</figcaption></figure><div class="chips"><span>Einleitung</span><span>Steigerung</span><span>Höhepunkt</span><span>Fall / Umkehr</span><span>Katastrophe</span><span>erregendes Moment</span><span>Moment der Gegenwirkung</span><span>Moment der letzten Spannung</span></div><div class="task"><div class="no">4</div><div><div class="q">Beschrifte die Pyramide mit den Begriffen aus dem Wortspeicher.</div><details><summary>💡 Hilfe</summary><div class="content">Das erregende Moment liegt <b>zwischen</b> Einleitung und Steigerung. Das Moment der letzten Spannung liegt kurz vor der Katastrophe.</div></details></div></div><div class="task"><div class="no">5</div><div><div class="q">Trage in die Kästen unter der Pyramide ein, welche Szene bisher dazu passt: <b>I.1</b> (Idylle, Rettung) und <b>I.3</b> (Hutgebot). Woran erkennst du es?</div><div class="lns"><div class="ln"></div><div class="ln"></div></div><details><summary>💡 Hilfe</summary><div class="content">I.1 gehört zur Einleitung (Exposition). I.3 bringt das erregende Moment: der Hut auf der Stange.</div></details></div></div><h2>Sicherung: Begriffskarten und Partnerquiz<span class="min">10 Min.</span></h2><div class="task"><div class="no">6</div><div><div class="q">Schreibe zu jedem Begriff eine <b>Frage</b> auf eine Karte und die Antwort auf die Rückseite. Quizzt euch gegenseitig.</div></div></div><div class="cards"><details><summary>Wie nennt man ein Selbstgespräch?</summary><div class="content">Monolog</div></details><details><summary>Was geschieht in der Exposition?</summary><div class="content">Ort, Figuren, Vorgeschichte und Konflikt werden vorgestellt</div></details><details><summary>Welcher Teil liegt in der Mitte der Pyramide?</summary><div class="content">Der Höhepunkt</div></details><details><summary>Was ist ein erregendes Moment?</summary><div class="content">Der Moment, in dem der Konflikt deutlich wird und die Handlung in Gang kommt</div></details></div><h2>Hausaufgabe<span class="min">5 Min.</span></h2><div class="task"><div class="no">7</div><div><div class="q">Übertrage die Pyramide ins Heft und trage die Fachbegriffe ein. Ergänze ein Beispiel aus „Tell“.</div><div class="lns"><div class="ln"></div><div class="ln"></div></div></div></div>
+<div class="nav"><a href="tell-std03-auftritt-des-helden.html">← Std. 3: Auftritt des Helden</a><a href="tell-std05-erregendes-moment.html">Std. 5: Erregendes Moment I.3 →</a></div>
+<p class="foot">Dramentext: Friedrich Schiller, „Wilhelm Tell“ (1804), gemeinfrei; Auszüge gekürzt, Kürzungen mit […] markiert; Zeilenzählung und Erläuterungen nur für diese Auszüge. Alle Bilder sind KI-generierte Illustrationen für den Unterricht.</p>
+</div></body></html>
