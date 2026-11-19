@@ -166,6 +166,12 @@ svg .fx-wapper{transform-box:fill-box;transform-origin:0 50%;animation:fxWapper 
 @keyframes fxWapper{from{transform:skewY(-2deg) scaleX(1)}to{transform:skewY(2deg) scaleX(.96)}}
 html.still svg :is(.wieken,.fx-wapper){animation:none!important}
 </style>
+<style>
+/* ===== Keine rote Tinte: Akzentstift (#E05A00) statt Rotstift ===== */
+.red-pen-line,.red-pen-line.red-pen-line{stroke:#E05A00!important}
+.red-fill{fill:#E05A00!important}
+[stroke="#E63946"]{stroke:#E05A00!important} [fill="#E63946"]{fill:#E05A00!important} [fill="#F43F5E"]{fill:#E05A00!important}
+</style>
 </head>
 <body>
 <header class="kapu-kopf">
@@ -312,7 +318,7 @@ html.still svg :is(.wieken,.fx-wapper){animation:none!important}
  <div class="kop-doodle">
   <svg viewBox="0 0 200 150" aria-hidden="true">
    <g transform="rotate(-28 100 80)"><rect x="40" y="66" width="120" height="26" rx="4" class="hl-pink" transform="translate(4 4)"/><rect x="40" y="66" width="120" height="26" rx="4" class="paper"/><path d="M160 66 l24 13 l-24 13 z" class="paper"/><path d="M178 76 l6 3 l-6 3z" class="dot"/><path d="M52 66 v26" class="ink-detail"/></g>
-   <text x="18" y="134" style="font-size:34px;font-weight:700;fill:#E63946">d</text><text x="44" y="134" style="font-size:34px;font-weight:700;fill:#1E293B">/</text><text x="58" y="134" style="font-size:34px;font-weight:700;fill:#E63946">t</text><text x="74" y="134" style="font-size:34px;font-weight:700;fill:#1E293B">/</text><text x="88" y="134" style="font-size:34px;font-weight:700;fill:#E63946">dt</text>
+   <text x="18" y="134" style="font-size:34px;font-weight:700;fill:#E05A00">d</text><text x="44" y="134" style="font-size:34px;font-weight:700;fill:#1E293B">/</text><text x="58" y="134" style="font-size:34px;font-weight:700;fill:#E05A00">t</text><text x="74" y="134" style="font-size:34px;font-weight:700;fill:#1E293B">/</text><text x="88" y="134" style="font-size:34px;font-weight:700;fill:#E05A00">dt</text>
    <path class="tw" d="M160 120 L163 111 L166 120 L175 123 L166 126 L163 135 L160 126 L151 123 Z" fill="#FFE600" stroke="#1E293B" stroke-width="1.5"/>
   </svg>
   <div><h2 class="h1">2 · Spelling</h2><p class="lead">De lastige gevallen</p></div>
