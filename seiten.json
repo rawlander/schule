@@ -30,6 +30,20 @@
    "pfad": "seiten/8-de-tell/"
   },
   {
+   "ordner": "6-inf-scratch-beetle-race",
+   "titel": "Plateau-Check Beetle-Race",
+   "kurs": "Informatik 6",
+   "ablauf": "2026-12-23",
+   "pfad": "seiten/6-inf-scratch-beetle-race/"
+  },
+  {
+   "ordner": "6-inf-scratch-plateau-check",
+   "titel": "Plateau-Check Scratch",
+   "kurs": "Informatik 6",
+   "ablauf": "2026-12-23",
+   "pfad": "seiten/6-inf-scratch-plateau-check/"
+  },
+  {
    "ordner": "q1-nl-proefwerk-klimaat",
    "titel": "Op weg naar het proefwerk",
    "kurs": "Q1 Niederländisch",

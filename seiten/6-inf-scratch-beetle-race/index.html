@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta name="ablauf" content="2026-12-23">
+<meta name="kurs" content="Informatik 6">
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plateau-Check Beetle-Race</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style>
+<style>body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+.ink-bold{fill:none;stroke:#1E293B;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.ink-detail{fill:none;stroke:#1E293B;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ink-fine{fill:none;stroke:#334155;stroke-width:1.5;stroke-linecap:round}
+.paper{fill:#fff;stroke:#1E293B;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dot{fill:#1E293B}
+.mouth{fill:#FDA4AF;stroke:#1E293B;stroke-width:2;stroke-linejoin:round}
+.hl-yellow{fill:#FFE600;opacity:.72;mix-blend-mode:multiply}
+.hl-blue{fill:#38BDF8;opacity:.70;mix-blend-mode:multiply}
+.hl-green{fill:#4ADE80;opacity:.70;mix-blend-mode:multiply}
+.hl-pink{fill:#F43F5E;opacity:.55;mix-blend-mode:multiply}
+.hl-orange{fill:#FB923C;opacity:.72;mix-blend-mode:multiply}
+.hl-line-green{fill:none;stroke:#4ADE80;stroke-width:9;stroke-linecap:round;opacity:.7;mix-blend-mode:multiply}
+.hl-line-yellow{fill:none;stroke:#FFE600;stroke-width:11;stroke-linecap:round;opacity:.8;mix-blend-mode:multiply}
+.hl-line-blue{fill:none;stroke:#38BDF8;stroke-width:10;stroke-linecap:round;opacity:.7;mix-blend-mode:multiply}
+.red-pen-line{fill:none;stroke:#E63946;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.red-pen-fill{fill:#E63946}
+/* ===== Doodle-Animation (nur transform/opacity, GPU-freundlich) ===== */
+.eye{transform-box:fill-box;transform-origin:50% 50%;animation:fxBlink 5.5s infinite;animation-delay:var(--fxd,0s)}
+.eye-r{animation-name:fxWink;animation-duration:11s}
+@keyframes fxBlink{0%,91%{transform:scaleY(1)}92.5%,93.5%{transform:scaleY(.08)}95.5%,100%{transform:scaleY(1)}}
+@keyframes fxWink{0%,19%{transform:scaleY(1)}20.5%,25%{transform:scaleY(.08)}27%,45%{transform:scaleY(1)}46.5%,47.5%{transform:scaleY(.08)}49%,95%{transform:scaleY(1)}96.5%,97.5%{transform:scaleY(.08)}99%,100%{transform:scaleY(1)}}
+.tw{animation:fxTwinkle 2.6s ease-in-out infinite;animation-delay:var(--fxd,0s)}
+@keyframes fxTwinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.28) rotate(16deg)}}
+.bub{animation:fxBubble 3.6s ease-in infinite;animation-delay:var(--fxd,0s)}
+@keyframes fxBubble{0%{transform:translateY(4px) scale(.85);opacity:0}15%{opacity:1}100%{transform:translateY(-18px) scale(1);opacity:0}}
+.fx-weed{transform-box:fill-box;transform-origin:50% 100%;animation:fxWeed 4.2s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+@keyframes fxWeed{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.fx-bob{animation:fxBob 4.6s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+@keyframes fxBob{from{transform:translateY(1.5px) rotate(-1.6deg)}to{transform:translateY(-3px) rotate(1.6deg)}}
+.fx-sway{transform-box:fill-box;transform-origin:50% 100%;animation:fxSway 5.2s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+.fx-sway.s2{animation-duration:6.4s}
+@keyframes fxSway{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
+.fx-swim{animation:fxSwim 3.6s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+.fx-swim.s2{animation-duration:4.4s}.fx-swim.s3{animation-duration:5.1s}
+@keyframes fxSwim{from{transform:translateX(-6px) rotate(-2deg)}to{transform:translateX(6px) rotate(2deg)}}
+.fx-scuttle{animation:fxScuttle 7s ease-in-out infinite;animation-delay:var(--fxd,0s)}
+@keyframes fxScuttle{0%,100%{transform:translateX(0)}22%,42%{transform:translateX(-7px)}58%,78%{transform:translateX(7px)}}
+.fx-claw{transform-box:fill-box;transform-origin:85% 85%;animation:fxClaw 2.8s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+@keyframes fxClaw{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.fx-wave{animation:fxWave 9s linear infinite}.fx-wave.w1{animation-duration:13s;animation-direction:reverse}
+@keyframes fxWave{from{transform:translateX(0)}to{transform:translateX(100px)}}
+.fx-ray{transform-box:fill-box;transform-origin:50% 0;animation:fxRay 9s ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+@keyframes fxRay{from{transform:rotate(-3deg);opacity:.7}to{transform:rotate(3deg);opacity:1}}
+/* Parallaxe: Mausbewegung (--mx/--my am svg.scene) + sanftes Eigendriften */
+.px{transform:translate(calc(var(--mx,0)*var(--k,1)*1px),calc(var(--my,0)*var(--k,1)*.3px));transition:transform .3s ease-out}
+.drift{animation:fxDrift var(--t,9s) ease-in-out infinite alternate;animation-delay:var(--fxd,0s)}
+@keyframes fxDrift{from{transform:translateX(calc(var(--a,6px)*-1))}to{transform:translateX(var(--a,6px))}}
+/* ruhig stellen: Schalter (html.still) oder Systemeinstellung */
+html.still :is(.eye,.tw,.bub,.fx-weed,.fx-bob,.fx-sway,.fx-swim,.fx-scuttle,.fx-claw,.fx-wave,.fx-ray,.drift){animation:none!important}
+html.still .px{transform:none!important;transition:none!important}
+html.still .bub{opacity:1}
+.fxbtn{font:800 14px 'Nunito',system-ui,sans-serif;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:10px;padding:4px 12px;min-height:40px;cursor:pointer}
+.fxbtn[aria-pressed="true"]{background:var(--sun,#FFE600)}
+
+:root{--paper:#FFFBEF;--ink:#1E293B;--ink2:#475569;--sea:#0E7490;--seasoft:#CFF3F8;--sun:#FFE600;--red:#E63946;--green:#15803D;--greensoft:#DCFCE7;--redsoft:#FFE4E6;--line:#CBD5E1;color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.5 'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px;margin:0}
+main{max-width:720px;margin:0 auto}
+h1,h2{font-family:'Caveat','Comic Sans MS',cursive;font-weight:700;margin:0;text-wrap:balance;line-height:1.05}
+h1{font-size:clamp(34px,8vw,52px)}
+h2{font-size:clamp(26px,6vw,34px)}
+.top{display:flex;align-items:center;gap:14px}
+.top svg{width:84px;height:84px;flex:none}
+.top p{margin:4px 0 0;color:var(--ink2);font-size:15px}
+.dots{display:flex;gap:6px;margin:18px 0 14px;flex-wrap:wrap}
+.dots i{flex:1;min-width:18px;height:10px;border-radius:6px;border:2px solid var(--ink);background:#fff}
+.dots i.cur{background:var(--sun)}
+.dots i.ok{background:#4ADE80}.dots i.half{background:#FB923C}.dots i.bad{background:#FDA4AF}
+.card{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:20px 18px;min-width:0}
+.kz{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--ink2)}
+.tag{display:inline-block;font:700 15px 'Caveat','Comic Sans MS',cursive;background:var(--sun);border:2px solid var(--ink);border-radius:999px;padding:0 12px;letter-spacing:.02em;margin-bottom:8px;transform:rotate(-2deg)}
+.q{margin:6px 0 16px;font-weight:600}
+.opts{display:grid;gap:10px}
+.opt,.btn{font:800 17px 'Nunito',system-ui,sans-serif;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px 14px;text-align:left;cursor:pointer;min-height:48px;transition:transform .08s}
+.opt:hover:not(:disabled){background:var(--seasoft)}
+.opt:active:not(:disabled),.btn:active:not(:disabled){transform:translate(2px,2px)}
+.opt.sel{background:var(--seasoft);box-shadow:3px 3px 0 var(--ink)}
+.opt.right{background:var(--greensoft);border-color:var(--green)}
+.opt.wrong{background:var(--redsoft);border-color:var(--red)}
+.opt:disabled{cursor:default;color:var(--ink)}
+.btn{background:var(--sun);text-align:center;box-shadow:4px 4px 0 var(--ink)}
+.btn.sec{background:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.imgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.imgs .opt{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:14px}
+.imgs svg{width:100%;max-width:130px;height:auto;aspect-ratio:1}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.pairs .opt{padding:10px;font-size:15px;line-height:1.3}
+.pairs .opt.done{opacity:.85}
+.pairs .c0{background:#BAE6FD}.pairs .c1{background:#FEF08A}.pairs .c2{background:#BBF7D0}.pairs .c3{background:#FBCFE8}
+.pairs .opt.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.gap{font-size:19px;line-height:2.4}
+select{font:700 17px 'Nunito',system-ui,sans-serif;border:3px solid var(--ink);border-radius:10px;padding:4px 6px;background:#fff;color:var(--ink);max-width:100%}
+select.right{background:var(--greensoft);border-color:var(--green)}select.wrong{background:var(--redsoft);border-color:var(--red)}
+.ord{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.ord li{display:flex;align-items:center;gap:8px;border:3px solid var(--ink);border-radius:12px;padding:6px 8px 6px 12px;background:#fff;min-width:0}
+.ord li span{flex:1;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.ord li.right{background:var(--greensoft);border-color:var(--green)}.ord li.wrong{background:var(--redsoft);border-color:var(--red)}
+.mv{border:2px solid var(--ink);background:var(--seasoft);border-radius:8px;width:40px;height:40px;font-size:18px;cursor:pointer;color:var(--ink)}
+.tf{display:grid;gap:10px}
+.tfr{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px dashed var(--line);padding-bottom:10px}
+.tfr p{flex:1 1 220px;margin:0;font-weight:600;min-width:0}
+.tfr .opt{padding:8px 14px;min-height:42px}
+.code{background:#0F172A;border-radius:12px;padding:10px;display:grid;gap:6px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.code .opt{background:#1E293B;color:#E2E8F0;border:2px solid #475569;font:600 15px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;min-height:0;padding:8px 10px}
+.code .opt:hover:not(:disabled){background:#334155}
+.code .opt.sel{outline:3px solid var(--sun)}
+.code .opt.right{background:#14532D;border-color:#4ADE80}.code .opt.wrong{background:#7F1D1D;border-color:#FDA4AF}
+.bprog{background:#F8FAFC;border:3px solid var(--ink);border-radius:12px;padding:10px 12px;margin:0 0 14px;overflow-x:auto}
+.bprog svg{display:block}
+.opt.blk{display:flex;align-items:center;justify-content:flex-start;padding:6px 8px;min-height:0;overflow-x:auto}
+.opt.blk svg{display:block;flex:0 1 auto;max-width:100%}
+.pairs .opt.blk{background:#fff}
+.ord li .bl{flex:1;min-width:0;overflow-x:auto}.ord li .bl svg{display:block;max-width:none!important}
+.ord li .mvs{display:grid;gap:4px;flex:none}.ord li .mvs .mv{width:36px;height:30px;font-size:15px}
+.ord li .nr{font-weight:800;flex:none}
+.codeb{display:grid;gap:6px;background:#F8FAFC;border:3px solid var(--ink);border-radius:12px;padding:10px}
+.codeb .opt{display:flex;align-items:center;gap:8px;padding:5px 8px;min-height:0;background:#fff;overflow-x:auto}
+.codeb .opt .nr{font:800 14px ui-monospace,Menlo,Consolas,monospace;flex:none;width:18px;text-align:right}
+.codeb .opt svg{display:block;flex:0 1 auto;max-width:100%}
+.codeb .opt.sel{outline:3px solid var(--sun)}
+.codeb .opt.right{background:var(--greensoft);border-color:var(--green)}.codeb .opt.wrong{background:var(--redsoft);border-color:var(--red)}
+.nums{display:grid;gap:10px}
+.nums label{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:700}
+.nums input{font:800 20px 'Nunito',system-ui,sans-serif;width:84px;border:3px solid var(--ink);border-radius:10px;padding:6px 8px;text-align:center;color:var(--ink);background:#fff}
+.nums input.right{background:var(--greensoft);border-color:var(--green)}.nums input.wrong{background:var(--redsoft);border-color:var(--red)}
+.fb{display:flex;gap:12px;align-items:flex-start;margin-top:16px;border:3px solid var(--ink);border-radius:14px;padding:10px 12px}
+.fb svg{width:64px;height:64px;flex:none}
+.fb p{margin:0;font-size:16px;min-width:0}
+.fb.ok{background:var(--greensoft)}.fb.bad{background:var(--redsoft)}.fb.half{background:#FFEDD5}
+.res{text-align:center}
+.res svg.big{width:150px;height:150px}
+.score{font:700 clamp(40px,12vw,64px) 'Caveat','Comic Sans MS',cursive;line-height:1}
+.rev{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px;text-align:left}
+.rev li{display:flex;gap:10px;border-bottom:2px dashed var(--line);padding-bottom:8px;font-size:15px;min-width:0}
+.rev b{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:14px}
+.rev .ok b{background:#4ADE80}.rev .half b{background:#FB923C}.rev .bad b{background:#FDA4AF}
+.rev span{min-width:0}
+.pls{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px;text-align:left}
+.pls li{display:flex;gap:10px;align-items:center;border:3px solid var(--ink);border-radius:14px;padding:6px 10px;background:#fff;font-size:15px;min-width:0}
+.pls svg{width:52px;height:52px;flex:none}.pls span{min-width:0}
+.pls .ok{background:var(--greensoft)}.pls .half{background:#FFEDD5}.pls .bad{background:var(--redsoft)}
+.foot{margin-top:22px;font-size:13px;color:var(--ink2)}
+.foot a{color:var(--sea)}
+@media (max-width:420px){.pairs{grid-template-columns:1fr}.card{padding:16px 14px}}
+@media (prefers-reduced-motion:reduce){.opt.shake{animation:none}}
+
+/* ---- Beetle-Race-Erweiterungen ---- */.fx-hand{transform-box:fill-box;transform-origin:50% 100%;animation:fxHand 6s linear infinite;animation-delay:var(--fxd,0s)}@keyframes fxHand{to{transform:rotate(360deg)}}html.still .fx-hand{animation:none!important}.s-title .scene.beetle{background:#FFF6E0}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<!-- ===== Deko & Bausteine ===== -->
+<g id="deco-star" class="tw"><path d="M0,-7 L2,-2.2 L7,-2 L3,1.5 L4.4,6.5 L0,3.6 L-4.4,6.5 L-3,1.5 L-7,-2 L-2,-2.2 Z" fill="#FFE600" stroke="#1E293B" stroke-width="1.5" stroke-linejoin="round"/></g>
+<g id="deco-sparkle" class="tw"><path d="M-5,-5 L5,5 M5,-5 L-5,5" stroke="#E63946" stroke-width="2.5" stroke-linecap="round" fill="none"/></g>
+<g id="deco-bubble" class="bub"><circle r="6" fill="#fff" fill-opacity=".55" stroke="#1E293B" stroke-width="1.5"/><path d="M-3,-1 Q-2,-4 1,-4" stroke="#1E293B" stroke-width="1.2" fill="none" stroke-linecap="round"/></g>
+<g id="deco-check"><path d="M-7,0 L-2,6 L8,-7" class="red-pen-line"/></g>
+<g id="deco-seaweed" class="fx-weed"><path class="hl-line-green" transform="translate(3,2)" d="M0,0 C-10,-14 10,-26 0,-40 C-8,-52 6,-60 0,-70"/><path class="ink-detail" d="M0,0 C-10,-14 10,-26 0,-40 C-8,-52 6,-60 0,-70"/></g>
+
+<g id="part-eyes"><g class="eye eye-l"><circle cx="-13" cy="0" r="9" class="paper"/><circle cx="-11" cy="1.5" r="3.8" class="dot"/><circle cx="-12" cy="0" r="1.3" fill="#fff"/></g><g class="eye eye-r"><circle cx="13" cy="0" r="9" class="paper"/><circle cx="15" cy="1.5" r="3.8" class="dot"/><circle cx="14" cy="0" r="1.3" fill="#fff"/></g></g>
+<g id="part-smile"><path class="ink-detail" d="M-10,0 Q0,11 10,0"/></g>
+<g id="part-grin"><path class="mouth" d="M-12,0 Q0,17 12,0 Z"/><path class="ink-fine" d="M-6,4 L6,4"/></g>
+<g id="part-cheeks"><ellipse cx="-26" cy="0" rx="6" ry="4" fill="#F43F5E" fill-opacity=".35"/><ellipse cx="26" cy="0" rx="6" ry="4" fill="#F43F5E" fill-opacity=".35"/></g>
+
+<!-- ===== FIGUREN ===== -->
+<g id="doodle-figur-star" class="fx-bob">
+  <path class="hl-orange" transform="translate(5,6) rotate(3 100 108)" d="M100,28 L122.34,77.26 L176.08,83.28 L136.14,119.74 L147.02,172.72 L100,146 L52.98,172.72 L63.86,119.74 L23.92,83.28 L77.66,77.26 Z"/>
+  <path class="ink-bold" d="M100,28 L122.34,77.26 L176.08,83.28 L136.14,119.74 L147.02,172.72 L100,146 L52.98,172.72 L63.86,119.74 L23.92,83.28 L77.66,77.26 Z"/>
+  <circle cx="60" cy="100" r="1.8" class="dot"/><circle cx="140" cy="100" r="1.8" class="dot"/><circle cx="100" cy="60" r="1.8" class="dot"/><circle cx="76" cy="146" r="1.8" class="dot"/><circle cx="124" cy="146" r="1.8" class="dot"/>
+  <use href="#part-eyes" transform="translate(100,96)"/>
+  <use href="#part-cheeks" transform="translate(100,108)"/>
+  <use href="#part-smile" transform="translate(100,116)"/>
+  <use href="#deco-sparkle" transform="translate(178,34)"/>
+  <use href="#deco-star" transform="translate(22,44)"/>
+</g>
+
+<g id="part-crab-side">
+  <g class="fx-claw"><path class="hl-pink" transform="translate(3,3)" d="M22,74 C10,58 28,44 44,56 L34,68 L46,74 C42,90 26,90 22,74 Z"/>
+  <path class="ink-bold" d="M22,74 C10,58 28,44 44,56 L34,68 L46,74 C42,90 26,90 22,74 Z"/></g>
+  <path class="ink-detail" d="M56,112 C44,104 42,94 42,86"/>
+  <path class="ink-detail" d="M60,138 L44,152 L40,166 M72,146 L60,162 L58,176 M86,150 L82,168 L84,180"/>
+</g>
+<g id="doodle-figur-krabbe" class="fx-scuttle">
+  <use href="#part-crab-side"/>
+  <use href="#part-crab-side" transform="translate(200,0) scale(-1,1)"/>
+  <path class="ink-detail" d="M86,93 L84,74 M114,93 L116,74"/>
+  <ellipse class="hl-pink" cx="104" cy="124" rx="48" ry="32" transform="rotate(-4 100 120)"/>
+  <ellipse class="ink-bold" cx="100" cy="120" rx="48" ry="32"/>
+  <g class="eye eye-l"><circle cx="84" cy="66" r="9" class="paper"/><circle cx="86" cy="68" r="3.8" class="dot"/></g><g class="eye eye-r"><circle cx="116" cy="66" r="9" class="paper"/><circle cx="114" cy="68" r="3.8" class="dot"/></g>
+  <path class="red-pen-line" d="M72,50 L92,57 M128,50 L108,57"/>
+  <use href="#part-cheeks" transform="translate(100,122)"/>
+  <use href="#part-grin" transform="translate(100,124)"/>
+  <use href="#deco-sparkle" transform="translate(170,40)"/>
+</g>
+
+<g id="part-fish">
+  <path class="hl-orange" transform="translate(4,5)" d="M130,110 L172,80 Q166,110 172,140 Z"/>
+  <ellipse class="hl-orange" cx="86" cy="115" rx="52" ry="33" transform="rotate(-4 86 110)"/>
+  <path class="ink-bold" d="M126,110 L170,80 Q164,110 170,140 Z"/>
+  <ellipse class="ink-bold" cx="82" cy="110" rx="52" ry="33"/>
+  <path class="ink-detail" d="M70,80 Q86,58 108,80"/>
+  <path class="ink-fine" d="M104,86 Q112,110 104,134 M118,92 Q124,110 118,128"/>
+  <g class="eye eye-r"><circle cx="52" cy="102" r="8" class="paper"/><circle cx="50" cy="103" r="3.2" class="dot"/></g>
+  <path class="ink-detail" d="M32,118 Q44,126 54,120"/>
+</g>
+<g id="doodle-figur-fisch">
+  <g transform="translate(-6,-12) scale(.95)"><g class="fx-swim"><use href="#part-fish"/></g></g>
+  <g transform="translate(120,6) scale(.36)"><g class="fx-swim s2"><use href="#part-fish"/></g></g>
+  <g transform="translate(24,146) scale(.34)"><g class="fx-swim s3"><use href="#part-fish"/></g></g>
+  <use href="#deco-bubble" transform="translate(166,150)"/><use href="#deco-sparkle" transform="translate(34,40)"/>
+</g>
+
+<!-- ===== MÜLL ===== -->
+<g id="doodle-muell-flasche" class="fx-sway">
+  <g transform="rotate(12 100 110)">
+    <path class="hl-blue" transform="translate(4,5)" d="M88,50 L112,50 L112,78 C130,92 134,104 134,124 L134,168 Q134,178 124,178 L76,178 Q66,178 66,168 L66,124 C66,104 70,92 88,78 Z"/>
+    <rect class="hl-green" x="88" y="38" width="28" height="14" rx="4" transform="rotate(-3 100 45)"/>
+    <path class="ink-bold" d="M88,50 L112,50 L112,78 C130,92 134,104 134,124 L134,168 Q134,178 124,178 L76,178 Q66,178 66,168 L66,124 C66,104 70,92 88,78 Z"/>
+    <rect class="ink-detail" x="86" y="38" width="28" height="14" rx="4"/>
+    <path class="ink-fine" d="M68,108 L132,108 M68,160 L132,160"/>
+    <use href="#part-eyes" transform="translate(100,128)"/>
+    <use href="#part-smile" transform="translate(100,146)"/>
+  </g>
+  <use href="#deco-bubble" transform="translate(150,40)"/><use href="#deco-bubble" transform="translate(166,22) scale(.7)"/><use href="#deco-sparkle" transform="translate(40,60)"/>
+</g>
+<g id="doodle-muell-dose" class="fx-bob">
+  <g transform="rotate(-10 100 110)">
+    <path class="hl-yellow" transform="translate(5,4)" d="M68,62 L68,166 Q100,182 132,166 L132,62 Z"/>
+    <path class="ink-bold" d="M68,62 L68,166 Q100,182 132,166 L132,62"/>
+    <ellipse class="paper" cx="100" cy="62" rx="32" ry="9"/>
+    <path class="ink-detail" d="M92,60 Q100,56 108,60"/>
+    <path class="ink-fine" d="M68,84 Q100,94 132,84 M68,148 Q100,158 132,148"/>
+    <use href="#part-eyes" transform="translate(100,108)"/>
+    <use href="#part-cheeks" transform="translate(100,120)"/>
+    <use href="#part-smile" transform="translate(100,128)"/>
+  </g>
+  <use href="#deco-star" transform="translate(160,40)"/><use href="#deco-sparkle" transform="translate(34,48)"/>
+</g>
+<g id="doodle-muell-tuete" class="fx-sway s2">
+  <g transform="rotate(6 100 110)">
+    <path class="hl-blue" transform="translate(5,5)" d="M62,72 L138,72 L150,172 Q100,184 50,172 Z"/>
+    <path class="ink-bold" d="M62,72 L138,72 L150,172 Q100,184 50,172 Z"/>
+    <path class="ink-detail" d="M80,72 C78,34 98,34 98,72 M102,72 C104,34 124,34 122,72"/>
+    <path class="ink-fine" d="M70,150 L84,138 M126,92 L136,104"/>
+    <use href="#part-eyes" transform="translate(100,116)"/>
+    <use href="#part-cheeks" transform="translate(100,128)"/>
+    <use href="#part-smile" transform="translate(100,136)"/>
+  </g>
+  <use href="#deco-bubble" transform="translate(160,56)"/><use href="#deco-sparkle" transform="translate(36,40)"/>
+</g>
+
+<!-- ===== PLATEAU-MOTIVE ===== -->
+<g id="doodle-plateau-treppe">
+  <path class="hl-blue" transform="translate(4,4)" d="M20,176 L20,150 L65,150 L65,118 L110,118 L110,86 L155,86 L155,54 L190,54 L190,176 Z"/>
+  <path class="hl-line-yellow" d="M24,143 L62,143 M69,111 L107,111 M114,79 L152,79 M159,47 L187,47"/>
+  <path class="ink-bold" d="M20,176 L20,150 L65,150 L65,118 L110,118 L110,86 L155,86 L155,54 L190,54 L190,176 Z"/>
+  <path class="red-pen-line" d="M36,138 Q46,114 82,110 M74,103 L83,110 L74,117"/>
+  <path class="red-pen-line" d="M82,106 Q92,82 128,78 M120,71 L129,78 L120,85"/>
+  <use href="#doodle-figur-star" transform="translate(140,4) scale(.3)"/>
+  <use href="#deco-sparkle" transform="translate(30,100)"/><use href="#deco-star" transform="translate(100,52)"/>
+</g>
+<g id="doodle-plateau-plattform">
+  <g transform="rotate(-3 50 150)"><path class="hl-green" transform="translate(3,4)" d="M14,140 h70 v18 h-70 z"/><rect class="ink-bold" x="14" y="140" width="70" height="18" rx="7"/></g>
+  <g transform="rotate(2 110 105)"><path class="hl-green" transform="translate(3,4)" d="M70,96 h80 v18 h-80 z"/><rect class="ink-bold" x="70" y="96" width="80" height="18" rx="7"/></g>
+  <g transform="rotate(-2 160 61)"><path class="hl-green" transform="translate(3,4)" d="M128,52 h64 v18 h-64 z"/><rect class="ink-bold" x="128" y="52" width="64" height="18" rx="7"/></g>
+  <use href="#deco-seaweed" transform="translate(26,140) scale(.55)"/><use href="#deco-seaweed" transform="translate(70,142) scale(.4)"/>
+  <use href="#doodle-figur-star" transform="translate(88,42) scale(.3)"/>
+  <path class="red-pen-line" stroke-dasharray="6 5" d="M40,60 L40,126 M33,118 L40,129 L47,118"/>
+  <use href="#deco-bubble" transform="translate(170,100)"/><use href="#deco-bubble" transform="translate(182,86) scale(.7)"/><use href="#deco-bubble" transform="translate(20,90) scale(.8)"/>
+</g>
+<g id="doodle-scene-unterwasser">
+  <rect x="-400" y="0" width="1400" height="200" fill="#F0FBFD"/>
+  <g class="px" style="--k:2"><g class="fx-ray"><path d="M120,0 L190,0 L130,176 L40,176 Z" fill="#fff" opacity=".45"/><path d="M360,0 L420,0 L380,176 L300,176 Z" fill="#fff" opacity=".35"/></g></g>
+  <g class="px" style="--k:3"><g class="fx-wave w1"><path class="ink-fine" d="M-400,34 Q-375,24 -350,34 T-300,34 T-250,34 T-200,34 T-150,34 T-100,34 T-50,34 T0,34 T50,34 T100,34 T150,34 T200,34 T250,34 T300,34 T350,34 T400,34 T450,34 T500,34 T550,34 T600,34 T650,34 T700,34 T750,34 T800,34 T850,34 T900,34" opacity=".5"/></g><g class="fx-wave"><path class="ink-fine" d="M-400,18 Q-375,8 -350,18 T-300,18 T-250,18 T-200,18 T-150,18 T-100,18 T-50,18 T0,18 T50,18 T100,18 T150,18 T200,18 T250,18 T300,18 T350,18 T400,18 T450,18 T500,18 T550,18 T600,18 T650,18 T700,18 T750,18 T800,18 T850,18 T900,18"/></g></g>
+  <g class="px" style="--k:9"><g class="drift" style="--t:11s;--a:5px">
+    <use href="#deco-seaweed" transform="translate(172,176)" style="--fxd:-1.1s"/><use href="#deco-seaweed" transform="translate(560,176) scale(.8)" style="--fxd:-2.7s"/><use href="#deco-seaweed" transform="translate(70,178) scale(.6)" style="--fxd:-3.9s"/><use href="#deco-seaweed" transform="translate(-110,178) scale(.9)" style="--fxd:-1.9s"/><use href="#deco-seaweed" transform="translate(-60,178) scale(.6)" style="--fxd:-4.4s"/><use href="#deco-seaweed" transform="translate(690,178)" style="--fxd:-0.4s"/><use href="#deco-seaweed" transform="translate(745,178) scale(.7)" style="--fxd:-3.1s"/></g></g>
+  <g class="px" style="--k:16"><g class="drift" style="--t:8s;--a:6px">
+    <use href="#doodle-muell-flasche" transform="translate(190,30) scale(.7)" style="--fxd:-1.4s"/>
+    <use href="#doodle-muell-dose" transform="translate(300,48) scale(.6)" style="--fxd:-4.2s"/>
+    <use href="#deco-bubble" transform="translate(180,100)" style="--fxd:-0.5s"/><use href="#deco-bubble" transform="translate(194,84) scale(.7)" style="--fxd:-1.6s"/><use href="#deco-bubble" transform="translate(560,80)" style="--fxd:-2.4s"/><use href="#deco-bubble" transform="translate(330,120) scale(.8)" style="--fxd:-0.9s"/><use href="#deco-bubble" transform="translate(-90,110)" style="--fxd:-1.2s"/><use href="#deco-bubble" transform="translate(-72,90) scale(.7)" style="--fxd:-2.8s"/><use href="#deco-bubble" transform="translate(700,100)" style="--fxd:-3.2s"/><use href="#deco-bubble" transform="translate(720,76) scale(.7)" style="--fxd:-0.2s"/></g></g>
+  <g class="px" style="--k:12"><g class="drift" style="--t:12s;--a:14px"><g transform="translate(-170,60) scale(.34)"><g class="fx-swim s2"><use href="#part-fish" style="--fxd:-1s"/></g></g><g transform="translate(-120,100) scale(.26)"><g class="fx-swim s3"><use href="#part-fish" style="--fxd:-2s"/></g></g><g transform="translate(790,50) scale(-.3,.3)"><g class="fx-swim"><use href="#part-fish" style="--fxd:-3s"/></g></g></g></g>
+  <g class="px" style="--k:22"><path d="M-400,172 Q-330,160 -260,174 T-120,170 T0,176 Q60,160 120,174 T250,172 T380,176 T520,170 T660,174 T800,170 T900,174 L900,200 L-400,200 Z" fill="#FDE8B0" stroke="#1E293B" stroke-width="2.2" stroke-linejoin="round"/></g>
+  <g class="px" style="--k:30"><g class="drift" style="--t:10s;--a:4px">
+    <use href="#doodle-figur-star" transform="translate(20,20) scale(.78)" style="--fxd:-0.7s"/>
+    <use href="#doodle-figur-krabbe" transform="translate(420,22) scale(.8)" style="--fxd:-3.3s"/></g></g>
+</g>
+
+<!-- ===== PIKTOGRAMME ===== -->
+<g id="doodle-icon-lernkurve">
+  <path class="ink-bold" d="M30,172 L30,30 M30,172 L184,172 M23,40 L30,28 L37,40 M174,165 L186,172 L174,179"/>
+  <path class="hl-line-yellow" d="M64,112 L92,110 M118,66 L150,63"/>
+  <path class="ink-bold" d="M34,160 C50,150 52,122 62,113 L94,111 C106,100 108,74 118,67 L152,64"/>
+  <ellipse class="red-pen-line" cx="78" cy="108" rx="26" ry="12" transform="rotate(-4 78 108)"/>
+  <path class="red-pen-line" d="M132,92 q-4,-12 8,-12 q12,0 8,10 q-6,6 -8,12 M140,112 l0.1,0.1"/>
+  <use href="#deco-star" transform="translate(166,50)"/><use href="#deco-sparkle" transform="translate(52,70)"/>
+</g>
+<g id="doodle-icon-variable">
+  <path class="hl-yellow" transform="translate(5,5)" d="M44,92 L156,92 L148,170 L52,170 Z"/>
+  <path class="ink-bold" d="M44,92 L156,92 L148,170 L52,170 Z"/>
+  <g transform="rotate(-8 100 84)"><rect class="paper" x="40" y="72" width="120" height="20" rx="5"/></g>
+  <path class="red-pen-line" d="M70,46 L70,70 M88,44 L88,68 M106,46 L106,70"/>
+  <path class="red-pen-line" d="M62,62 L114,54"/>
+  <use href="#part-eyes" transform="translate(100,124)"/>
+  <use href="#part-smile" transform="translate(100,144)"/>
+  <use href="#deco-star" transform="translate(156,50)"/>
+</g>
+<g id="doodle-icon-bedingung">
+  <path class="hl-green" transform="translate(5,5)" d="M100,34 L162,100 L100,166 L38,100 Z"/>
+  <path class="ink-bold" d="M100,34 L162,100 L100,166 L38,100 Z"/>
+  <path class="red-pen-line" d="M88,90 Q88,76 100,76 Q112,76 112,88 Q112,96 100,102 L100,110 M100,124 l0.1,0.1"/>
+  <path class="ink-detail" d="M162,100 L186,100 M100,166 L100,188"/>
+  <use href="#deco-check" transform="translate(178,82) scale(.8)"/><use href="#deco-sparkle" transform="translate(114,184)"/>
+</g>
+<g id="doodle-icon-schleife">
+  <path class="hl-line-blue" transform="translate(3,3)" d="M46,100 A54,54 0 0 1 140,66 M154,100 A54,54 0 0 1 60,134"/>
+  <path class="ink-bold" d="M46,100 A54,54 0 0 1 140,66 M154,100 A54,54 0 0 1 60,134"/>
+  <path class="ink-bold" d="M126,56 L142,64 L132,80 M74,144 L58,136 L68,120"/>
+  <use href="#part-eyes" transform="translate(100,92)"/><use href="#part-smile" transform="translate(100,112)"/>
+  <use href="#deco-sparkle" transform="translate(166,40)"/>
+</g>
+<g id="doodle-icon-lupe">
+  <circle class="hl-blue" cx="96" cy="88" r="44"/>
+  <circle class="paper" cx="90" cy="84" r="42" fill-opacity="0.6"/>
+  <path class="ink-bold" d="M122,118 L170,168" stroke-width="9"/>
+  <path class="ink-fine" d="M62,62 Q70,50 84,48"/>
+  <use href="#part-eyes" transform="translate(90,80)"/><use href="#part-smile" transform="translate(90,102)"/>
+  <use href="#deco-sparkle" transform="translate(160,50)"/><use href="#deco-star" transform="translate(30,150)"/>
+</g>
+<g id="doodle-icon-gluehbirne">
+  <path class="hl-yellow" transform="translate(5,4)" d="M100,34 C62,34 52,76 74,100 C82,110 82,118 82,128 L118,128 C118,118 118,110 126,100 C148,76 138,34 100,34 Z"/>
+  <path class="ink-bold" d="M100,34 C62,34 52,76 74,100 C82,110 82,118 82,128 L118,128 C118,118 118,110 126,100 C148,76 138,34 100,34 Z"/>
+  <path class="ink-detail" d="M84,140 L116,140 M86,152 L114,152 M92,163 L108,163"/>
+  <use href="#part-eyes" transform="translate(100,76)"/><use href="#part-smile" transform="translate(100,96)"/>
+  <path class="red-pen-line" d="M100,10 L100,20 M48,28 L56,36 M152,28 L144,36 M30,76 L40,76 M170,76 L160,76"/>
+</g>
+<g id="doodle-icon-pokal">
+  <path class="hl-yellow" transform="translate(5,4)" d="M60,50 L140,50 L136,100 Q130,128 100,130 Q70,128 64,100 Z"/>
+  <path class="ink-bold" d="M60,50 L140,50 L136,100 Q130,128 100,130 Q70,128 64,100 Z"/>
+  <path class="ink-detail" d="M60,60 C30,56 30,98 66,102 M140,60 C170,56 170,98 134,102 M100,130 L100,156"/>
+  <rect class="ink-bold" x="72" y="156" width="56" height="14" rx="4"/>
+  <use href="#part-eyes" transform="translate(100,76)"/><use href="#part-smile" transform="translate(100,96)"/>
+  <use href="#deco-star" transform="translate(100,38)"/><use href="#deco-sparkle" transform="translate(40,28)"/><use href="#deco-star" transform="translate(166,30)"/>
+</g>
+<g id="doodle-icon-sanduhr">
+  <path class="hl-yellow" transform="translate(4,4)" d="M72,140 L128,140 L136,160 L64,160 Z M82,48 L118,48 L104,88 L96,88 Z"/>
+  <path class="ink-bold" d="M60,36 L140,36 M60,164 L140,164 M66,36 C66,76 94,90 94,100 C94,110 66,124 66,164 M134,36 C134,76 106,90 106,100 C106,110 134,124 134,164"/>
+  <path class="ink-fine" d="M100,92 L100,142"/>
+  <use href="#deco-sparkle" transform="translate(160,60)"/><use href="#deco-star" transform="translate(40,90)"/>
+</g>
+<g id="doodle-icon-stolperstein">
+  <path class="hl-pink" transform="translate(4,4)" d="M44,150 C40,120 56,96 84,92 C110,84 140,92 152,120 C160,138 156,152 150,156 L50,156 Z"/>
+  <path class="ink-bold" d="M44,150 C40,120 56,96 84,92 C110,84 140,92 152,120 C160,138 156,152 150,156 L50,156 Z"/>
+  <use href="#part-eyes" transform="translate(98,122)"/>
+  <path class="ink-detail" d="M88,142 Q98,134 108,142"/>
+  <path class="red-pen-line" d="M100,28 L100,56 M100,70 l0.1,0.1" stroke-width="5"/>
+  <path class="ink-fine" d="M24,150 L36,150 M20,160 L34,160 M162,150 L176,150"/>
+</g>
+<g id="doodle-icon-sprechblase">
+  <path class="hl-pink" transform="translate(5,5)" d="M30,50 Q30,36 44,36 L156,36 Q170,36 170,50 L170,110 Q170,124 156,124 L96,124 L66,156 L70,124 L44,124 Q30,124 30,110 Z"/>
+  <path class="ink-bold" d="M30,50 Q30,36 44,36 L156,36 Q170,36 170,50 L170,110 Q170,124 156,124 L96,124 L66,156 L70,124 L44,124 Q30,124 30,110 Z"/>
+  <path class="red-pen-line" d="M92,62 Q92,50 102,50 Q114,50 114,62 Q114,70 104,76 L104,84 M104,100 l0.1,0.1" stroke-width="4.5"/>
+  <use href="#deco-star" transform="translate(150,22)"/><use href="#deco-sparkle" transform="translate(46,22)"/>
+</g>
+<g id="doodle-icon-klemmbrett">
+  <g transform="rotate(-5 100 100)">
+    <path class="hl-blue" transform="translate(5,5)" d="M44,36 h112 v136 h-112 z"/>
+    <rect class="paper" x="44" y="36" width="112" height="136" rx="8"/>
+    <rect class="ink-bold" x="80" y="26" width="40" height="20" rx="6" style="fill:#FFE600"/>
+    <rect class="ink-detail" x="58" y="64" width="16" height="16" rx="3"/><path class="ink-fine" d="M86,72 L142,72"/>
+    <rect class="ink-detail" x="58" y="96" width="16" height="16" rx="3"/><path class="ink-fine" d="M86,104 L134,104"/>
+    <rect class="ink-detail" x="58" y="128" width="16" height="16" rx="3"/><path class="ink-fine" d="M86,136 L138,136"/>
+    <path class="red-pen-line" d="M60,72 L66,79 L78,60 M60,104 L66,111 L78,92"/>
+  </g>
+  <use href="#deco-star" transform="translate(166,40)"/><use href="#deco-sparkle" transform="translate(30,170)"/>
+</g>
+
+<!-- ===== MEILENSTEIN-PLATEAUS ===== -->
+<g id="doodle-icon-meilenstein">
+  <path class="hl-blue" transform="translate(5,5)" d="M36,172 L36,142 Q36,128 50,128 L150,128 Q164,128 164,142 L164,172 Z"/>
+  <path class="ink-bold" d="M36,172 L36,142 Q36,128 50,128 L150,128 Q164,128 164,142 L164,172 Z"/>
+  <path class="ink-bold" d="M100,128 L100,44"/>
+  <path class="hl-yellow" transform="translate(4,4)" d="M100,46 L156,62 L100,82 Z"/>
+  <path class="ink-bold" d="M100,46 L156,62 L100,82 Z"/>
+  <use href="#part-eyes" transform="translate(100,146)"/><use href="#part-smile" transform="translate(100,162)"/>
+  <use href="#deco-star" transform="translate(40,60)"/><use href="#deco-sparkle" transform="translate(172,104)"/><use href="#deco-sparkle" transform="translate(30,106)"/>
+</g>
+<g id="doodle-icon-gemeinsam">
+  <use href="#doodle-figur-star" transform="translate(-8,66) scale(.4)"/>
+  <use href="#doodle-figur-star" transform="translate(60,66) scale(.4)"/>
+  <use href="#doodle-figur-star" transform="translate(128,66) scale(.4)"/>
+  <path class="hl-line-yellow" d="M14,148 L186,148"/>
+  <path class="ink-bold" d="M10,148 L190,148"/>
+  <path class="red-pen-line" d="M100,52 C90,38 74,44 82,56 C86,62 96,68 100,72 C104,68 114,62 118,56 C126,44 110,38 100,52 Z" fill="#E63946" fill-opacity=".25"/>
+  <path class="red-pen-line" d="M40,170 L160,170 M150,164 L162,170 L150,176" stroke-dasharray="6 5"/>
+  <use href="#deco-star" transform="translate(30,40)"/><use href="#deco-sparkle" transform="translate(170,44)"/>
+</g>
+<g id="doodle-icon-musterstand">
+  <g transform="rotate(-4 100 100)">
+    <path class="hl-blue" transform="translate(5,5)" d="M54,28 L132,28 L156,52 L156,172 L54,172 Z"/>
+    <path class="paper" d="M54,28 L132,28 L156,52 L156,172 L54,172 Z"/>
+    <path class="ink-detail" d="M132,28 L132,52 L156,52"/>
+    <use href="#doodle-figur-star" transform="translate(76,56) scale(.28)"/>
+    <path class="ink-fine" d="M70,126 L140,126 M70,142 L124,142"/>
+    <use href="#deco-check" transform="translate(138,156) scale(.9)"/>
+  </g>
+  <use href="#deco-star" transform="translate(170,34)"/><use href="#deco-sparkle" transform="translate(34,150)"/>
+</g>
+
+<!-- ===== NEU: Alpaka-Projekt & Konzepte ===== -->
+<g id="doodle-figur-lama" class="fx-sway">
+  <path class="hl-orange" transform="translate(6,7) rotate(2 100 120)" d="M44,100 Q44,86 78,86 L120,86 Q150,100 150,128 Q150,152 120,156 L66,156 Q44,150 44,120 Z"/>
+  <path class="hl-orange" transform="translate(5,5)" d="M122,100 Q132,70 128,40 L158,40 Q154,80 152,108 Z"/>
+  <path class="ink-bold" d="M66,150 L64,184 M88,154 L88,184 M118,154 L118,184 M140,150 L142,184"/>
+  <path class="ink-detail" d="M48,112 Q34,106 32,92"/>
+  <path fill="#fff" d="M118,122 Q130,78 126,50 L156,50 Q152,92 150,122 Z"/>
+  <path class="ink-bold" d="M118,112 Q130,78 126,50 M156,50 Q152,92 150,112"/>
+  <ellipse class="paper" style="stroke-width:3.2" cx="100" cy="128" rx="56" ry="32"/>
+  <path class="ink-fine" d="M70,122 Q80,114 90,122 M100,134 Q110,126 120,134"/>
+  <g transform="rotate(-14 130 24)"><ellipse class="paper" cx="130" cy="24" rx="5" ry="12"/></g>
+  <g transform="rotate(14 152 24)"><ellipse class="paper" cx="152" cy="24" rx="5" ry="12"/></g>
+  <ellipse class="paper" style="stroke-width:3.2" cx="141" cy="44" rx="26" ry="19"/>
+  <use href="#part-eyes" transform="translate(141,40) scale(.55)"/>
+  <use href="#part-cheeks" transform="translate(141,50) scale(.55)"/>
+  <use href="#part-smile" transform="translate(141,56) scale(.6)"/>
+  <use href="#deco-star" transform="translate(30,60)"/><use href="#deco-sparkle" transform="translate(176,90)"/>
+</g>
+<g id="doodle-figur-alpaka" class="fx-sway s2">
+  <path class="hl-green" transform="translate(6,6) rotate(-3 100 120)" d="M42,138 Q34,112 62,108 Q66,88 92,94 Q110,78 130,98 Q158,98 154,126 Q168,146 142,152 Q134,168 110,158 Q92,172 70,158 Q46,162 42,138 Z"/>
+  <path class="ink-bold" d="M80,160 L80,184 M122,158 L122,184"/>
+  <path class="paper" style="stroke-width:3.2" d="M44,136 Q36,112 62,108 Q66,88 92,94 Q110,78 130,98 Q158,98 154,124 Q166,144 142,150 Q134,166 110,157 Q92,170 72,156 Q48,160 44,136 Z"/>
+  <path class="ink-fine" d="M70,128 Q78,120 86,128 M104,120 Q112,112 120,120 M96,142 Q104,134 112,142"/>
+  <path fill="#fff" d="M128,106 Q140,92 136,74 L164,74 Q162,96 158,108 Z"/>
+  <path class="ink-bold" d="M130,102 Q140,90 136,74 M164,74 Q162,92 160,104"/>
+  <ellipse class="paper" style="stroke-width:3.2" cx="150" cy="62" rx="24" ry="20"/>
+  <path class="ink-detail" d="M134,46 Q138,30 148,42 Q156,28 164,44"/>
+  <g transform="rotate(-18 132 44)"><ellipse class="paper" cx="132" cy="44" rx="4.5" ry="10"/></g>
+  <g transform="rotate(18 168 44)"><ellipse class="paper" cx="168" cy="44" rx="4.5" ry="10"/></g>
+  <use href="#part-eyes" transform="translate(150,60) scale(.52)"/>
+  <use href="#part-cheeks" transform="translate(150,69) scale(.5)"/>
+  <use href="#part-smile" transform="translate(150,74) scale(.55)"/>
+  <path class="red-pen-line" d="M30,52 Q36,40 44,48 Q50,56 42,62 M42,72 l0.1,0.1"/>
+  <use href="#deco-star" transform="translate(176,120)"/>
+</g>
+<g id="doodle-icon-hoehle">
+  <path fill="#94A3B8" opacity=".55" style="mix-blend-mode:multiply" transform="translate(6,6)" d="M18,180 L18,112 Q28,46 100,36 Q172,46 182,112 L182,180 Z"/>
+  <path class="ink-bold" d="M18,180 L18,112 Q28,46 100,36 Q172,46 182,112 L182,180"/>
+  <path d="M62,180 L62,128 Q100,84 138,128 L138,180 Z" fill="#1E293B" stroke="#1E293B" stroke-width="3.2" stroke-linejoin="round"/>
+  <circle cx="90" cy="146" r="5" fill="#FFE600"/><circle cx="112" cy="146" r="5" fill="#FFE600"/><circle cx="91" cy="146" r="2" class="dot"/><circle cx="113" cy="146" r="2" class="dot"/>
+  <path class="ink-fine" d="M34,92 L48,100 M150,88 L164,96 M40,140 L52,134 M148,150 L160,156"/>
+  <path class="red-pen-line" d="M92,30 Q92,16 104,16 Q116,16 116,28 Q116,36 104,42 L104,48 M104,58 l0.1,0.1"/>
+  <use href="#deco-star" transform="translate(30,40)"/>
+</g>
+<g id="doodle-icon-nachricht">
+  <path class="ink-fine" stroke-dasharray="6 5" d="M8,166 Q18,126 40,108"/>
+  <path class="hl-yellow" transform="translate(6,6) rotate(-5 100 104)" d="M40,62 L160,62 L160,148 L40,148 Z"/>
+  <g transform="rotate(-5 100 104)">
+    <rect class="paper" style="stroke-width:3.2" x="40" y="62" width="120" height="86" rx="8" stroke-dasharray="1 0"/>
+    <path class="ink-bold" d="M42,66 L100,112 L158,66"/>
+    <use href="#part-eyes" transform="translate(100,100) scale(.62)"/>
+    <use href="#part-smile" transform="translate(100,118) scale(.7)"/>
+  </g>
+  <path class="red-pen-line" d="M152,40 L168,28 M164,52 L184,50 M142,30 L146,14"/>
+  <use href="#deco-star" transform="translate(30,48)"/>
+</g>
+<g id="doodle-icon-koordinaten">
+  <path class="hl-blue" transform="translate(5,5)" d="M100,24 L176,24 L176,100 L100,100 Z"/>
+  <path class="ink-fine" d="M40,40 L40,160 M70,40 L70,160 M130,40 L130,160 M160,40 L160,160 M24,70 L176,70 M24,130 L176,130 M24,160 L176,160 M24,40 L176,40"/>
+  <path class="ink-bold" d="M20,100 L180,100 M100,180 L100,20"/>
+  <path class="ink-bold" d="M170,92 L182,100 L170,108 M92,30 L100,18 L108,30"/>
+  <path class="ink-detail" d="M140,70 L140,100 M100,70 L140,70" stroke-dasharray="5 4"/>
+  <circle class="paper" style="stroke:#E63946;stroke-width:3" cx="140" cy="70" r="11"/>
+  <circle cx="140" cy="70" r="3" class="red-pen-fill"/>
+  <circle cx="100" cy="100" r="4" class="dot"/>
+  <use href="#deco-star" transform="translate(40,142)"/><use href="#deco-sparkle" transform="translate(172,150)"/>
+</g>
+<g id="doodle-icon-wuerfel">
+  <path class="hl-pink" transform="translate(7,7) rotate(-10 100 100)" d="M44,44 L156,44 L156,156 L44,156 Z"/>
+  <g transform="rotate(-10 100 100)">
+    <rect class="paper" style="stroke-width:3.2" x="44" y="44" width="112" height="112" rx="20"/>
+    <circle cx="72" cy="72" r="8" class="dot"/><circle cx="128" cy="72" r="8" class="dot"/><circle cx="100" cy="100" r="8" class="dot"/><circle cx="72" cy="128" r="8" class="dot"/><circle cx="128" cy="128" r="8" class="dot"/>
+  </g>
+  <path class="ink-detail" d="M16,60 Q10,44 26,36 M184,150 Q192,168 174,176"/>
+  <path class="ink-bold" d="M20,32 L28,38 L18,44 M178,182 L170,176 L180,170"/>
+  <use href="#deco-sparkle" transform="translate(176,40)"/><use href="#deco-star" transform="translate(28,170)"/>
+</g>
+<g id="doodle-icon-kostuem">
+  <path class="hl-yellow" transform="translate(5,5)" d="M20,52 L180,52 L180,148 L20,148 Z"/>
+  <rect class="paper" style="stroke-width:3.2" x="20" y="52" width="160" height="96" rx="6"/>
+  <path class="ink-detail" d="M100,52 L100,148"/>
+  <path d="M30,30 L30,44 M60,30 L60,44 M130,30 L130,44 M160,30 L160,44 M30,156 L30,170 M60,156 L60,170 M130,156 L130,170 M160,156 L160,170" class="ink-bold"/>
+  <circle class="paper" style="stroke:#1E293B" cx="60" cy="86" r="14"/><path class="ink-bold" d="M60,100 L60,122 M60,108 L46,118 M60,108 L74,98 M60,122 L50,140 M60,122 L72,138"/>
+  <circle class="paper" style="stroke:#1E293B" cx="140" cy="86" r="14"/><path class="ink-bold" d="M140,100 L140,122 M140,108 L126,98 M140,108 L154,118 M140,122 L128,138 M140,122 L152,140"/>
+  <path class="red-pen-line" d="M84,100 L118,100 M110,92 L118,100 L110,108"/>
+</g>
+
+<!-- ===== NEU: Beetle-Race ===== -->
+<g id="part-heart"><path class="hl-pink" transform="translate(3,4)" d="M0,12 C-26,-6 -16,-30 0,-16 C16,-30 26,-6 0,12 Z"/><path class="ink-bold" d="M0,12 C-26,-6 -16,-30 0,-16 C16,-30 26,-6 0,12 Z"/><path class="red-pen-line" d="M-12,-14 Q-16,-8 -14,-3" stroke-width="2.2"/></g>
+
+<g id="doodle-figur-kaefer" class="fx-sway">
+  <g class="fx-weed"><path class="ink-detail" d="M92,40 C84,24 74,18 64,22"/><circle cx="64" cy="22" r="3" class="dot"/></g>
+  <g class="fx-weed" style="animation-direction:alternate-reverse"><path class="ink-detail" d="M108,40 C116,24 126,18 136,22"/><circle cx="136" cy="22" r="3" class="dot"/></g>
+  <path class="ink-detail" d="M60,92 L38,82 L28,92 M58,120 L32,120 L22,132 M62,148 L40,160 L30,156"/>
+  <path class="ink-detail" d="M140,92 L162,82 L172,92 M142,120 L168,120 L178,132 M138,148 L160,160 L170,156"/>
+  <ellipse class="hl-green" cx="105" cy="122" rx="44" ry="56" transform="rotate(2 100 118)"/>
+  <ellipse class="ink-bold" cx="100" cy="118" rx="44" ry="56"/>
+  <path class="ink-detail" d="M100,64 L100,174"/>
+  <circle class="hl-orange" cx="80" cy="104" r="9"/><circle class="ink-detail" cx="78" cy="102" r="8"/>
+  <circle class="hl-orange" cx="122" cy="106" r="9"/><circle class="ink-detail" cx="120" cy="104" r="8"/>
+  <circle class="hl-orange" cx="78" cy="140" r="8"/><circle class="ink-detail" cx="76" cy="138" r="7"/>
+  <circle class="hl-orange" cx="124" cy="142" r="8"/><circle class="ink-detail" cx="122" cy="140" r="7"/>
+  <circle class="hl-yellow" cx="104" cy="58" r="22"/><circle class="ink-bold" cx="100" cy="54" r="22"/>
+  <use href="#part-eyes" transform="translate(100,50) scale(.8)"/>
+  <use href="#part-smile" transform="translate(100,68) scale(.8)"/>
+  <use href="#deco-sparkle" transform="translate(168,44)"/><use href="#deco-star" transform="translate(30,176)"/>
+</g>
+
+<g id="doodle-icon-labyrinth">
+  <rect class="hl-orange" x="34" y="34" width="144" height="140" rx="10" transform="rotate(2 100 100)"/>
+  <rect class="paper" x="30" y="30" width="140" height="140" rx="8"/>
+  <path class="ink-bold" d="M30,68 H130 M70,100 H170 M30,132 H130" stroke-width="7"/>
+  <path class="ink-bold" d="M30,68 H130 M70,100 H170 M30,132 H130" stroke="#FB923C" stroke-width="3.5"/>
+  <rect class="ink-bold" x="30" y="30" width="140" height="140" rx="8"/>
+  <path class="red-pen-line" stroke-dasharray="6 5" d="M46,152 L150,152 L150,116 L50,116 L50,84 L150,84 L150,50"/>
+  <path class="red-pen-line" d="M142,56 L150,46 L158,56"/>
+  <circle class="hl-green" cx="150" cy="42" r="9"/>
+  <use href="#doodle-figur-kaefer" transform="translate(24,126) scale(.2)"/>
+  <use href="#deco-sparkle" transform="translate(178,24)"/><use href="#deco-star" transform="translate(20,24)"/>
+</g>
+
+<g id="doodle-icon-vorrat">
+  <path class="hl-orange" transform="translate(5,5)" d="M28,172 L28,112 Q28,52 100,52 Q172,52 172,112 L172,172 Z"/>
+  <path class="ink-bold" d="M28,172 L28,112 Q28,52 100,52 Q172,52 172,112 L172,172 Z"/>
+  <path class="hl-green" d="M52,172 Q52,132 100,132 Q148,132 148,172 Z"/>
+  <path class="ink-detail" d="M52,172 Q52,132 100,132 Q148,132 148,172"/>
+  <path class="ink-fine" d="M70,150 L74,142 M92,146 L92,138 M116,148 L120,140 M132,158 L138,152"/>
+  <use href="#part-eyes" transform="translate(100,106) scale(.75)"/><use href="#part-smile" transform="translate(100,124) scale(.75)"/>
+  <circle class="hl-pink" cx="152" cy="92" r="9"/><circle class="ink-detail" cx="150" cy="90" r="8"/><path class="ink-detail" d="M150,82 L152,76"/>
+  <use href="#deco-star" transform="translate(40,66)"/><use href="#deco-sparkle" transform="translate(168,40)"/>
+</g>
+
+<g id="doodle-icon-leben">
+  <g transform="translate(40,104) scale(1.25)"><g class="fx-bob"><use href="#part-heart"/><use href="#part-eyes" transform="translate(0,-4) scale(.5)"/></g></g>
+  <g transform="translate(100,104) scale(1.25)"><g class="fx-bob" style="--fxd:-1.3s"><use href="#part-heart"/><use href="#part-eyes" transform="translate(0,-4) scale(.5)"/></g></g>
+  <g transform="translate(160,104) scale(1.25)"><g class="fx-bob" style="--fxd:-2.6s"><use href="#part-heart"/><use href="#part-eyes" transform="translate(0,-4) scale(.5)"/></g></g>
+  <text x="100" y="168" text-anchor="middle" font-family="Caveat,'Comic Sans MS',cursive" font-size="34" font-weight="700" fill="#E63946">leben = 3</text>
+  <use href="#deco-sparkle" transform="translate(100,40)"/><use href="#deco-star" transform="translate(170,52)"/>
+</g>
+
+<g id="doodle-icon-stoppuhr">
+  <circle class="hl-yellow" cx="105" cy="118" r="56"/>
+  <circle class="paper" cx="100" cy="114" r="56" fill-opacity=".7"/>
+  <circle class="ink-bold" cx="100" cy="114" r="56"/>
+  <rect class="ink-bold" x="88" y="38" width="24" height="12" rx="4"/>
+  <path class="ink-bold" d="M100,50 L100,58 M146,76 L156,66"/>
+  <path class="ink-detail" d="M100,64 L100,72 M100,156 L100,164 M52,114 L60,114 M140,114 L148,114"/>
+  <g class="fx-hand"><path class="red-pen-line" d="M100,114 L100,78"/></g>
+  <circle class="dot" cx="100" cy="114" r="4"/>
+  <text x="100" y="146" text-anchor="middle" font-family="Caveat,'Comic Sans MS',cursive" font-size="22" font-weight="700" fill="#1E293B">80 s</text>
+  <use href="#deco-sparkle" transform="translate(166,38)"/><use href="#deco-star" transform="translate(32,52)"/>
+</g>
+
+<g id="doodle-icon-liste">
+  <g transform="rotate(-4 100 100)">
+    <path class="hl-blue" transform="translate(5,5)" d="M46,30 H154 V172 H46 Z"/>
+    <rect class="paper" x="46" y="30" width="108" height="142" rx="8"/>
+    <path class="hl-line-yellow" d="M60,66 L142,66"/>
+    <text x="102" y="52" text-anchor="middle" font-family="Caveat,'Comic Sans MS',cursive" font-size="22" font-weight="700" fill="#1E293B">Ergebnisse</text>
+    <text x="58" y="76" font-family="Caveat,'Comic Sans MS',cursive" font-size="30" font-weight="700" fill="#E63946">1</text><path class="ink-fine" d="M80,74 L140,74"/>
+    <text x="58" y="106" font-family="Caveat,'Comic Sans MS',cursive" font-size="30" font-weight="700" fill="#1E293B">2</text><path class="ink-fine" d="M80,104 L132,104"/>
+    <text x="58" y="136" font-family="Caveat,'Comic Sans MS',cursive" font-size="30" font-weight="700" fill="#1E293B">3</text><path class="ink-fine" d="M80,134 L126,134"/>
+    <text x="58" y="166" font-family="Caveat,'Comic Sans MS',cursive" font-size="30" font-weight="700" fill="#1E293B">4</text><path class="ink-fine" d="M80,164 L120,164"/>
+  </g>
+  <use href="#deco-star" transform="translate(160,50)"/><use href="#deco-sparkle" transform="translate(32,150)"/>
+</g>
+
+<g id="doodle-icon-buehne">
+  <g transform="rotate(4 120 80)"><rect class="hl-green" x="66" y="32" width="112" height="86" rx="8" transform="translate(4,5)"/><rect class="paper" x="62" y="28" width="112" height="86" rx="8"/><rect class="ink-bold" x="62" y="28" width="112" height="86" rx="8"/><path class="ink-bold" stroke="#4ADE80" stroke-width="8" d="M76,60 H150 M150,60 V92"/><circle class="hl-green" cx="150" cy="96" r="9"/><text x="166" y="46" font-family="Caveat,'Comic Sans MS',cursive" font-size="26" font-weight="700" fill="#E63946">2</text></g>
+  <g transform="rotate(-3 80 120)"><rect class="hl-orange" x="30" y="76" width="112" height="86" rx="8" transform="translate(4,5)"/><rect class="paper" x="26" y="72" width="112" height="86" rx="8"/><rect class="ink-bold" x="26" y="72" width="112" height="86" rx="8"/><path class="ink-bold" stroke="#FB923C" stroke-width="8" d="M40,100 H114 M60,128 H128"/><text x="40" y="150" font-family="Caveat,'Comic Sans MS',cursive" font-size="26" font-weight="700" fill="#E63946">1</text></g>
+  <path class="red-pen-line" d="M118,70 Q130,46 150,42 M141,34 L151,42 L142,50"/>
+  <use href="#deco-sparkle" transform="translate(28,52)"/><use href="#deco-star" transform="translate(176,150)"/>
+</g>
+
+<g id="doodle-icon-tempo">
+  <path class="hl-yellow" transform="translate(4,5)" d="M36,148 A64,64 0 0 1 164,148 Z"/>
+  <path class="ink-bold" d="M36,148 A64,64 0 0 1 164,148 Z"/>
+  <path class="ink-detail" d="M46,120 L56,126 M66,88 L74,96 M100,76 L100,88 M134,88 L126,96 M154,120 L144,126"/>
+  <path class="red-pen-line" d="M100,148 L132,102" stroke-width="4"/><circle class="dot" cx="100" cy="148" r="6"/>
+  <path class="ink-fine" d="M20,96 L44,96 M12,112 L36,112 M22,128 L40,128"/>
+  <use href="#deco-sparkle" transform="translate(166,60)"/><use href="#deco-star" transform="translate(40,60)"/>
+</g>
+
+<g id="doodle-scene-labyrinth">
+  <rect x="-400" y="0" width="1400" height="200" fill="#FFF6E0"/>
+  <g class="px" style="--k:2"><circle cx="640" cy="44" r="26" class="hl-yellow"/><path class="red-pen-line" d="M640,6 V-4 M640,82 V92 M602,44 H592 M678,44 H688 M613,17 L606,10 M667,71 L674,78 M667,17 L674,10 M613,71 L606,78"/></g>
+  <g class="px" style="--k:6"><path d="M-400,150 Q-300,120 -200,146 T0,140 T200,148 T420,138 T640,148 T900,140 L900,200 L-400,200 Z" fill="#D9F99D" stroke="#1E293B" stroke-width="2.2" stroke-linejoin="round"/></g>
+  <g class="px" style="--k:12">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="#1E293B" stroke-width="20" d="M-140,70 H210 V124 M120,176 V130 H430 M300,60 H560 V108"/>
+      <path stroke="#FB923C" stroke-width="13" d="M-140,70 H210 V124 M120,176 V130 H430 M300,60 H560 V108"/>
+    </g>
+    <path class="red-pen-line" stroke-dasharray="7 6" d="M-130,104 H160 V98 H330 V96 H600"/>
+  </g>
+  <g class="px" style="--k:16"><g class="drift" style="--t:9s;--a:6px">
+    <use href="#doodle-icon-stoppuhr" transform="translate(230,8) scale(.5)" style="--fxd:-1.1s"/>
+    <use href="#doodle-icon-leben" transform="translate(-90,4) scale(.5)" style="--fxd:-2.2s"/>
+    <use href="#doodle-icon-liste" transform="translate(430,4) scale(.46)" style="--fxd:-0.6s"/></g></g>
+  <g class="px" style="--k:30"><g class="drift" style="--t:7s;--a:10px">
+    <use href="#doodle-figur-kaefer" transform="translate(120,42) scale(.62)" style="--fxd:-0.7s"/></g></g>
+  <g class="px" style="--k:22"><use href="#doodle-icon-vorrat" transform="translate(560,36) scale(.72)"/></g>
+</g>
+
+</defs></svg>
+<main>
+  <div class="top">
+    <svg viewBox="0 0 200 200" role="img" aria-label="Käfer Karl lächelt"><use href="#doodle-figur-kaefer"/></svg>
+    <div><h1>Plateau-Check</h1><p>Beetle-Race 2.0: Neue Bühne · Timer · Highscore · 14 Aufgaben · ca. 15 Minuten</p></div>
+    <button class="fxbtn" data-fx aria-pressed="true" title="Doodles bewegen oder ruhig stellen" style="margin-left:auto">Bewegung</button>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="card" id="stage" aria-live="polite"></div>
+  <p class="foot">Aufgaben zum Projekt „Beetle-Race 2.0“ auf <a href="https://inf-schule.de/kids/scratch/BeetleRace2-0" target="_blank" rel="noopener">inf-schule.de</a> (CC BY-SA 4.0). Die Fragen und Lösungsvorschläge sind eigene Formulierungen; Beschriftungen der Bausteine können in deinem Scratch leicht abweichen.</p>
+</main>
+<script>
+/* Doodle-FX: Augenzwinkern, Bewegung, Parallaxe – mit Schalter und Rücksicht auf „Bewegung reduzieren“ */
+var FX=(function(){
+var R=document.documentElement,KEY='uw-still',ex=null,mq=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)');
+try{ex=localStorage.getItem(KEY)}catch(e){}
+var still=ex==='1'||(ex!=='0'&&!!(mq&&mq.matches)),mx=0,my=0,raf=0;
+function btns(){[].forEach.call(document.querySelectorAll('[data-fx]'),function(b){b.setAttribute('aria-pressed',String(!still))})}
+function scenes(){[].forEach.call(document.querySelectorAll('svg.scene'),function(s){s.style.setProperty('--mx',still?0:mx.toFixed(3));s.style.setProperty('--my',still?0:my.toFixed(3))})}
+function apply(){R.classList.toggle('still',still);btns();scenes()}
+function set(v){still=!!v;try{localStorage.setItem(KEY,still?'1':'0')}catch(e){}apply()}
+function seed(root){if(!root||!root.querySelectorAll)return;var us=root.tagName==='use'?[root]:[].slice.call(root.querySelectorAll('use'));
+ us.forEach(function(u){if(u.closest('defs')||u.style.getPropertyValue('--fxd'))return;u.style.setProperty('--fxd',(-Math.random()*9).toFixed(2)+'s')})}
+function go(){seed(document.body);
+ var q=[],t=0;new MutationObserver(function(ms){ms.forEach(function(m){[].forEach.call(m.addedNodes,function(n){if(n.nodeType===1)q.push(n)})});
+  if(!t)t=requestAnimationFrame(function(){t=0;var a=q;q=[];a.forEach(seed)})}).observe(document.body,{childList:true,subtree:true});
+ apply();
+ function move(x,y){mx=Math.max(-1,Math.min(1,x));my=Math.max(-1,Math.min(1,y));if(!raf&&!still)raf=requestAnimationFrame(function(){raf=0;scenes()})}
+ addEventListener('pointermove',function(e){move(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1)},{passive:true});
+ if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission!=='function')addEventListener('deviceorientation',function(e){if(e.gamma!=null)move(e.gamma/25,(e.beta||0)/50-0.6)},{passive:true});
+ document.addEventListener('click',function(e){if(e.target.closest('[data-fx]'))set(!still)});
+ if(mq&&mq.addEventListener)mq.addEventListener('change',function(){if(ex==null||ex==='')set(mq.matches)});
+}
+if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
+return {still:function(){return still},set:set};
+})();
+/* BLOCK-DOODLES: Scratch-/MakeCode-Bausteine im Sketchnote-Stil als SVG.
+   Gleicher Code für Webseiten (inline) und Node (Standalone-SVG). */
+var BLK=(function(){
+var INK='#1E293B',FS=14,CW=8.1,GAP=7,R=6,NX=16;
+var PAL={
+ scratch:{
+  bewegung:['#4C97FF','#3373CC','Bewegung','blau'],aussehen:['#9966FF','#774DCB','Aussehen','lila'],klang:['#CF63CF','#BD42BD','Klang','pink'],
+  ereignisse:['#FFBF00','#CC9900','Ereignisse','gelb'],steuerung:['#FFAB19','#CF8B17','Steuerung','orange'],fuehlen:['#5CB1D6','#2E8EB8','Fühlen','hellblau'],
+  operatoren:['#59C059','#389438','Operatoren','grün'],variablen:['#FF8C1A','#DB6E00','Variablen','dunkelorange'],listen:['#FF661A','#E64D00','Listen','rotorange'],
+  meine:['#FF6680','#FF4D6A','Meine Blöcke','rot'],stift:['#0FBD8C','#0B8E69','Stift','türkis']},
+ makecode:{
+  basic:['#1E90FF','#1A73CC','Grundlagen','blau'],input:['#D400D4','#A900A9','Eingabe','magenta'],music:['#E30FC0','#B60C9A','Musik','pink'],led:['#5C2D91','#49247A','LED','violett'],
+  radio:['#E3008C','#B60070','Funk','pink-rot'],loops:['#00AA00','#008800','Schleifen','grün'],logic:['#00A4A6','#008385','Logik','türkis'],variables:['#DC143C','#B01030','Variablen','rot'],
+  math:['#9400D3','#7600A9','Mathe','violett'],text:['#B8860B','#926B09','Text','ocker'],arrays:['#E65722','#B8461B','Listen','orange'],functions:['#3455DB','#2A44AF','Funktionen','blau'],
+  advanced:['#00272B','#001A1D','Erweitert','dunkelgrün'],pins:['#B22222','#8E1B1B','Pins','rot']}};
+var ALIAS={ev:'ereignisse',mot:'bewegung',lk:'aussehen',ctl:'steuerung','var':'variablen',sen:'fuehlen',op:'operatoren',snd:'klang'};
+var pal='scratch';
+var SLOT={v:'#FFFFFF','$':'#FF8C1A',r:'#59C059',s:'#5CB1D6',o:'#59C059',d:'#FFFFFF'};
+function tw(s){var w=0;for(var i=0;i<s.length;i++){var c=s[i];w+=/[mwMW]/.test(c)?12.2:/[iIl.,:;!|'¡]/.test(c)?4.6:/[ftjr ]/.test(c)?6.4:/[A-ZÄÖÜ]/.test(c)?9.6:/[0-9]/.test(c)?8.4:8.0}return w}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function lum(h){var c=[1,3,5].map(function(i){var v=parseInt(h.substr(i,2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]}
+function tcol(h){var L=lum(h),ci=(L+.05)/.0722,cw=1.05/(L+.05);return ci>=cw*.9?INK:'#fff'}
+function col(c){var p=PAL[pal];c=ALIAS[c]||c;return p[c]||['#94A3B8','#64748B',c,'grau']}
+function parse(s){var out=[],i=0,buf='';
+ function flush(){var t=buf.trim();if(t)out.push({t:'text',s:t});buf=''}
+ while(i<s.length){var ch=s[i];
+  if(ch==='{'){flush();var d=1,j=i+1;while(j<s.length&&d>0){if(s[j]==='{')d++;else if(s[j]==='}')d--;j++}
+   var inner=s.slice(i+1,j-1),bar=inner.indexOf('|');out.push({t:'slot',k:inner.slice(0,bar),c:parse(inner.slice(bar+1))});i=j}
+  else{buf+=ch;i++}}
+ flush();return out}
+function plain(s){return parse(s).map(function(n){return n.t==='text'?n.s:'['+plain2(n)+']'}).join(' ')}
+function plain2(n){return n.c.map(function(m){return m.t==='text'?m.s:'['+plain2(m)+']'}).join(' ')}
+function meas(nodes){var parts=[],w=0,h=0;
+ nodes.forEach(function(n,i){var p;
+  if(n.t==='text'){var tx=n.s;p={w:tw(tx),h:16,r:function(x,cy,c){return '<text x="'+x.toFixed(1)+'" y="'+(cy+5).toFixed(1)+'" fill="'+c+'" font-size="'+FS+'" font-weight="800" font-family="Nunito,system-ui,-apple-system,Segoe UI,sans-serif">'+esc(tx)+'</text>'}}}
+  else{var k=n.k,inner=meas(k==='d'?n.c.concat([{t:'text',s:'▾'}]):n.c),hexa=(k==='s'||k==='o'),px=hexa?18:11,sh=Math.max(24,inner.h+8),sw=inner.w+2*px;
+   p={w:sw,h:sh,r:function(x,cy){var y=cy-sh/2,f=SLOT[k]||'#fff',d;
+    if(hexa){d='M'+x+','+(y+sh/2)+' L'+(x+sh/2)+','+y+' H'+(x+sw-sh/2)+' L'+(x+sw)+','+(y+sh/2)+' L'+(x+sw-sh/2)+','+(y+sh)+' H'+(x+sh/2)+' Z';return '<path d="'+d+'" fill="'+f+'" stroke="'+INK+'" stroke-width="2" stroke-linejoin="round"/>'+inner.r(x+px,cy,INK)}
+    return '<rect x="'+x+'" y="'+y+'" width="'+sw+'" height="'+sh+'" rx="'+(sh/2)+'" fill="'+f+'" stroke="'+INK+'" stroke-width="2"/>'+inner.r(x+px,cy,INK)}}}
+  parts.push(p);w+=p.w+(i?GAP:0);h=Math.max(h,p.h)});
+ return {w:w,h:h,r:function(x,cy,c){var s='',cx=x;parts.forEach(function(p){s+=p.r(cx,cy,c);cx+=p.w+GAP});return s}}}
+function shape(b,w,h,innerH){var k=b.k,r=R,d='',ih=innerH||0;
+ var top=(k==='hat')?'M0,16 c25,-22 71,-22 96,0 H'+(w-r):'M0,'+r+' a'+r+','+r+' 0 0 1 '+r+',-'+r+' h'+(NX-r)+' l4,4 h12 l4,-4 H'+(w-r);
+ if(k==='hat')top+=' a'+r+','+r+' 0 0 1 '+r+','+r;else top+=' a'+r+','+r+' 0 0 1 '+r+','+r;
+ if(k==='c'){var ind=16,bh=26,H=h+ih;
+  d=top+' V'+(h-r)+' a'+r+','+r+' 0 0 1 -'+r+','+r+' H'+(ind+36)+' l-4,4 h-12 l-4,-4 H'+(ind+r)+' a'+r+','+r+' 0 0 0 -'+r+','+r+' V'+(H-r)+' a'+r+','+r+' 0 0 0 '+r+','+r+' H'+(ind+NX)+' l4,4 h12 l4,-4 H'+(w-r)+' a'+r+','+r+' 0 0 1 '+r+','+r+' V'+(H+bh-r)+' a'+r+','+r+' 0 0 1 -'+r+','+r+' H36 l-4,4 h-12 l-4,-4 H'+r+' a'+r+','+r+' 0 0 1 -'+r+',-'+r+' Z';return d}
+ d=top+' V'+(h-r)+' a'+r+','+r+' 0 0 1 -'+r+','+r;
+ if(k==='cap')d+=' H'+r;else d+=' H36 l-4,4 h-12 l-4,-4 H'+r;
+ d+=' a'+r+','+r+' 0 0 1 -'+r+',-'+r+(k==='hat'?' V16':'')+' Z';return d}
+function blk(b,x,y){var c=col(b.c),m=meas(parse(b.t)),k=b.k||'stack';
+ if(k==='rep'||k==='bool'){var hx=k==='bool',px=hx?20:14,sh=Math.max(32,m.h+12),sw=m.w+2*px,d=hx?'M0,'+sh/2+' L'+sh/2+',0 H'+(sw-sh/2)+' L'+sw+','+sh/2+' L'+(sw-sh/2)+','+sh+' H'+sh/2+' Z':'M'+sh/2+',0 H'+(sw-sh/2)+' a'+sh/2+','+sh/2+' 0 0 1 0,'+sh+' H'+sh/2+' a'+sh/2+','+sh/2+' 0 0 1 0,-'+sh+' Z';
+  return {s:'<g transform="translate('+x+','+y+')"><path d="'+d+'" fill="'+c[1]+'" opacity=".5" transform="translate(3.5,3.5)"/><path d="'+d+'" fill="'+c[0]+'" stroke="'+INK+'" stroke-width="2.6" stroke-linejoin="round"/>'+m.r(px,sh/2,tcol(c[0]))+'</g>',h:sh+4,w:sw}}
+ var pad=14,w=Math.max(m.w+2*pad,64),hh=Math.max(38,m.h+14),hat=k==='hat'?16:0,h=hh+hat,tc=tcol(c[0]);
+ var body='',ih=0,bw=0;
+ if(k==='c'){var st=stack(b.body||[],x+16,y+h,0);ih=Math.max(st.h,22);body=st.s;bw=st.w+16}
+ var d=shape(b,w,h,ih),tot=h+(k==='c'?ih+26:0),cy=hat+hh/2;
+ var s='<g transform="translate('+x+','+y+')"><path d="'+d+'" fill="'+c[1]+'" opacity=".5" transform="translate(3.5,3.5)"/><path d="'+d+'" fill="'+c[0]+'" stroke="'+INK+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>'+m.r(pad,cy,tc)+'</g>'+body;
+ return {s:s,h:tot,w:Math.max(w,bw+0)}}
+function stack(list,x,y){var s='',cy=y,w=0;list.forEach(function(b){var r=blk(b,x,cy);s+=r.s;cy+=r.h;w=Math.max(w,r.w);
+  if(b.k==='hat'&&b.body){var r2=stack(b.body,x,cy);s+=r2.s;cy+=r2.h;w=Math.max(w,r2.w)}});return {s:s,h:cy-y,w:w}}
+function guess(c,t){c=ALIAS[c]||c;if((c==='ereignisse'||c==='basic'||c==='input')&&/^(wenn|beim|bei|immer|beim Start)/.test(t))return 'hat';if(/^stoppe/.test(t))return 'cap';return 'stack'}
+function tree(list){var pos=0;
+ function build(lvl){var out=[];while(pos<list.length&&list[pos][2]>=lvl){var it=list[pos++];var b={c:it[0],t:it[1],k:it[3]||guess(it[0],it[1])};
+   if(pos<list.length&&list[pos][2]>it[2]){b.body=build(it[2]+1);if(b.k==='stack')b.k='c'}out.push(b)}return out}
+ return build(0)}
+function group(list,y0){var t=tree(list),s='',y=y0||6,w=0,scripts=[];t.forEach(function(b){if(b.k==='hat'||!scripts.length)scripts.push([b]);else scripts[scripts.length-1].push(b)});scripts.forEach(function(sc){var r=stack(sc,4,y);s+=r.s;y+=r.h+14;w=Math.max(w,r.w)});return {s:s,w:w,h:y-(y0||6)-14}}
+function program(list,o){o=o||{};var t=tree(list),s='',y=6,w=0,first=true,label=[];
+ // Skripte: jeder Hut beginnt ein neues Skript
+ var scripts=[];t.forEach(function(b){if(b.k==='hat'||!scripts.length)scripts.push([b]);else scripts[scripts.length-1].push(b)});
+ scripts.forEach(function(sc){var r=stack(sc,4,y);s+=r.s;y+=r.h+14;w=Math.max(w,r.w)});
+ list.forEach(function(it){label.push(plain(it[1]))});
+ var W=Math.ceil(w+14),H=Math.ceil(y-14+14);
+ return '<svg class="blkprog" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(o.label||('Bausteine: '+label.join('; ')))+'" style="width:'+W+'px;max-width:100%;height:auto"><g'+(o.tilt?' transform="rotate('+o.tilt+' 4 4)"':'')+'>'+s+'</g></svg>'}
+function one(c,t,k){return program([[c,t,0,k||'stack']])}
+return {group:group,PAL:PAL,palette:function(n){if(PAL[n])pal=n},program:program,one:one,tree:tree,plain:plain,col:col,ALIAS:ALIAS,tcol:tcol,parse:parse}
+})();
+
+const PLM=[
+{k:'Bühne',n:'Neue Bühne und Spielende',ic:'doodle-icon-buehne',col:'#FED7AA'},
+{k:'Timer',n:'Variable, Timer und Leben',ic:'doodle-icon-stoppuhr',col:'#BAE6FD'},
+{k:'Highscore',n:'Liste und Nachricht',ic:'doodle-icon-liste',col:'#BBF7D0'}
+];
+const TASKS=[
+/* ---------- Plateau 1: Bühne ---------- */
+{p:0,t:'pair',title:'Begriffe zur Bühne',kz:'Bühnenbild · Abfrage · Pipette · Spielende',
+ q:'Tippe erst links einen Begriff an, dann rechts die passende Erklärung.',
+ pairs:[['Bühnenbild','ein Hintergrund, den man selbst zeichnen und wechseln kann'],['Rand berührt?','eine Abfrage: Karl merkt, dass er am Ende der Bühne ist'],['Pipette','ein Werkzeug, mit dem man die genaue Farbe aus dem Bild bestimmt'],['Spielende','der Moment, in dem das Spiel stoppt, zum Beispiel bei „gewonnen!“']],
+ why:'Mit Bühnenbildern lassen sich mehrere Labyrinthe zeigen. Karl prüft mit Abfragen, ob er den Rand oder eine bestimmte Farbe berührt. Die Pipette hilft, genau diese Farbe zu treffen.',
+ lsg:'Bühnenbild = Hintergrund · Rand berührt? = Abfrage · Pipette = Farbe bestimmen · Spielende = Spiel stoppt'},
+{p:0,t:'mc',title:'Karl ist verschwunden',kz:'Fehlersuche · Abfrage „Rand berührt?“',
+ q:'Auf der neuen Bühne ist Karl nicht mehr zu sehen. Was ist die wahrscheinlichste Ursache?',
+ opts:['Seine neue Startposition liegt noch am Rand, deshalb wird er immer wieder neu gesetzt','Die Variable timer wurde nicht angelegt','Das zweite Bühnenbild hat zu viele Farben','Die Liste „Ergebnisse“ ist leer'],ans:0,
+ why:'„Wird Rand berührt?“ bleibt wahr, solange Karl am Rand steht. Dann wird er sofort wieder auf die neue Startposition gesetzt, so schnell, dass man ihn nicht sieht. Die Startposition etwas vom Rand wegsetzen.',
+ lsg:'Startposition liegt am Rand'},
+{p:0,t:'order',title:'Start des Spiels',kz:'Algorithmus · Reihenfolge',
+ q:'Bringe diese vier Bausteine in eine sinnvolle Reihenfolge. Oben steht der erste Baustein.',
+ items:['wenn Flagge angeklickt','wechsle zu Bühnenbild {d|Bühnenbild1}','gehe zu x: {v|-211} y: {v|-128}','wiederhole fortlaufend'],cats:['ev','lk','mot','ctl'],
+ why:'Zuerst startet das Ereignis. Dann wird die erste Bühne eingestellt, Karl geht an den Start und erst danach beginnt die Schleife, die ständig prüft.',
+ lsg:'Flagge → Bühnenbild 1 → Startposition → fortlaufend prüfen'},
+{p:0,t:'tf',title:'Bühne und Farbe',kz:'Zeichnen · Farbabfrage',
+ q:'Richtig oder falsch?',
+ stm:[['Das zweite Bühnenbild zeichnet man im Zeichenprogramm von Scratch.',true],['Wand und Moos dürfen genau dieselbe Farbe haben.',false],['Karl merkt mit „wird Farbe … berührt?“, dass er das Moos erreicht hat.',true],['Der Eingang des neuen Labyrinths muss zum Ausgang des ersten passen.',true]],
+ why:'Gezeichnet wird im Zeichenprogramm. Karl prüft eine Farbe, deshalb müssen sich Wand und Moos unterscheiden. Und damit der Weg weitergeht, passt der Eingang zum Ausgang.',
+ lsg:'richtig · falsch · richtig · richtig'},
+/* ---------- Plateau 2: Timer ---------- */
+{p:1,t:'mc',title:'Was ist eine Variable?',kz:'Variable',
+ q:'Du hast die Variable „timer“ angelegt. Was beschreibt eine Variable am besten?',
+ opts:['Ein Name für einen Wert, der sich ändern kann','Eine Figur, die auf der Bühne läuft','Ein Bühnenbild mit einer Zahl darin','Ein Befehl, der das Spiel stoppt'],ans:0,
+ why:'Eine Variable hat einen Namen und einen Wert. Der Wert kann sich ändern, zum Beispiel wächst timer jede Sekunde um 1.',
+ lsg:'Name für einen veränderbaren Wert'},
+{p:1,t:'order',title:'Timer bauen',kz:'Variable · Initialisierung',
+ q:'Bringe die Bausteine für den Timer in die richtige Reihenfolge. Oben steht der erste Baustein.',
+ items:['wenn Flagge angeklickt','setze {$|timer} auf {v|0}','warte {v|1} Sekunden','ändere {$|timer} um {v|1}'],cats:['ev','var','ctl','var'],
+ why:'Nach dem Start bekommt timer seinen Anfangswert 0. Dann wird eine Sekunde gewartet und der Wert um 1 erhöht. (Im echten Skript steht das Warten und Ändern in einer Schleife.)',
+ lsg:'Flagge → timer auf 0 → warten → um 1 ändern'},
+{p:1,t:'mc',title:'Stopp nach 80 Sekunden',kz:'Schleife mit Bedingung',
+ q:'Das Spiel soll nach 80 Sekunden stoppen. Welcher Baustein beendet die Wiederholung genau dann?',
+ opts:[{b:['ctl','wiederhole fortlaufend']},{b:['ctl','wiederhole bis {o|{$|timer} = {v|80}}']},{b:['ctl','warte {v|80} Sekunden']},{b:['var','setze {$|timer} auf {v|80}']}],ans:1,
+ why:'„wiederhole fortlaufend“ hört nie auf. „wiederhole bis timer = 80“ prüft bei jedem Durchlauf, ob 80 erreicht ist. Danach folgt „stoppe alle“.',
+ lsg:'wiederhole bis timer = 80'},
+{p:1,t:'num',title:'Countdown',kz:'Rechnen mit der Variablen',
+ q:'Der Timer zählt jetzt von 80 herunter. Rechne aus:',
+ nums:[{lab:'Wert von timer nach 25 Sekunden',a:55},{lab:'gebrauchte Zeit, wenn timer = 30 zeigt (in Sekunden)',a:50}],
+ why:'Beim Herunterzählen ist timer die verbleibende Zeit. Gebraucht hat man 80 − timer: nach 25 Sekunden bleiben 55, und bei timer = 30 sind 50 Sekunden vergangen.',
+ lsg:'55 und 50'},
+{p:1,t:'mc',title:'Alle Leben auf einmal weg',kz:'Leben · Warten',
+ q:'Karl hat 3 Leben. Berührt er die Wand, sind trotzdem sofort alle drei Leben verloren. Was fehlt im Skript?',
+ opts:['Nach der Wandabfrage fehlt „warte 1 Sekunden“','Es fehlt die grüne Flagge','Die Variable leben muss „timer“ heißen','Das Bühnenbild muss gewechselt werden'],ans:0,
+ why:'Solange Karl die Wand berührt, würde die Schleife bei jedem Durchlauf ein Leben abziehen. Mit einer Pause nach dem Abziehen verliert er nur eins pro Berührung.',
+ lsg:'warte 1 Sekunden nach der Wandabfrage'},
+/* ---------- Plateau 3: Highscore ---------- */
+{p:2,t:'pair',title:'Variable, Liste, Nachricht',kz:'Liste · Nachricht',
+ q:'Tippe erst links einen Begriff an, dann rechts die passende Erklärung.',
+ pairs:[['Variable','hält einen Wert, zum Beispiel timer'],['Liste','hält mehrere zusammengehörige Werte, zum Beispiel Ergebnisse'],['Nachricht „spielende“','wird gesendet, wenn das Spiel zu Ende ist'],['Element 1 von Ergebnisse','der Wert auf Platz 1 der Liste']],
+ why:'Eine Variable speichert einen Wert, eine Liste viele. Mit einer Nachricht kann ein Skript ein anderes starten, hier die Anzeige der Liste am Spielende.',
+ lsg:'Variable = ein Wert · Liste = mehrere Werte · Nachricht = Auslöser · Element 1 = Platz 1'},
+{p:2,t:'tf',title:'Liste und Nachricht',kz:'Liste anzeigen · Nachricht senden',
+ q:'Richtig oder falsch?',
+ stm:[['Am Anfang des Spiels darf die Liste mit „lösche alles“ geleert werden, damit der Highscore erhalten bleibt.',false],['Vor „sende spielende“ wartet man 1 Sekunde, damit die Sprechblase sichtbar bleibt.',true],['Eine Liste mit „für alle Figuren“ können Karl und die Bühne benutzen.',true],['„zeige Liste“ und „verstecke Liste“ steuern, ob die Liste auf der Bühne zu sehen ist.',true]],
+ why:'Wird die Liste beim Start geleert, gehen alle früheren Zeiten verloren. Eine Sekunde warten sorgt dafür, dass „sage …“ noch zu lesen ist, bevor das Spiel endet.',
+ lsg:'falsch · richtig · richtig · richtig'},
+{p:2,t:'find',title:'Die schnellste Zeit finden',kz:'Bedingung mit Liste',
+ q:'Dieses Skript hält die schnellste Zeit auf Platz 1. Tippe auf die Zeile, die prüft, ob die neue Zeit schneller ist als die bisherige Nummer 1.',
+ lines:[['ev','wenn ich {d|spielende} empfange',0],['listen','füge {$|timer} zu {d|Ergebnisse} hinzu',1],['ctl','falls {o|{$|timer} < {r|Element {v|1} von {d|Ergebnisse}}} dann',1],['listen','entferne {r|Länge von {d|Ergebnisse}} aus {d|Ergebnisse}',2],['listen','füge {$|timer} bei {v|1} von {d|Ergebnisse} ein',2]],ans:2,
+ why:'In der „falls“-Zeile steht der Vergleich: timer < Element 1 von Ergebnisse. Nur wenn er stimmt, wird die neue Zeit auf Platz 1 eingefügt.',
+ lsg:'Die Zeile mit „falls timer < Element 1 von Ergebnisse“'},
+{p:2,t:'order',title:'Pseudocode Highscore',kz:'Algorithmus mit Liste',
+ q:'Bringe den Pseudocode in die richtige Reihenfolge. Oben steht der erste Schritt.',
+ items:['füge timer ans Ende der Liste an','falls timer kleiner als Element 1 ist …','entferne das letzte Element','füge timer bei Platz 1 ein','zeige die Liste'],
+ why:'Erst kommt die neue Zeit an das Ende. Ist sie schneller als Platz 1, wird die Kopie am Ende entfernt und die Zeit auf Platz 1 eingefügt. Zuletzt wird die Liste gezeigt.',
+ lsg:'anfügen → vergleichen → letztes entfernen → bei 1 einfügen → zeigen'},
+{p:2,t:'num',title:'Liste im Kopf',kz:'Liste · Algorithmus nachvollziehen',
+ q:'Die Liste enthält zuerst 40, 50, 60. Nach dem Skript aus der Aufgabe davor: Was kommt heraus?',
+ nums:[{lab:'Platz 1 nach einem Durchgang mit 35',a:35},{lab:'Länge der Liste danach',a:4},{lab:'Platz 1 nach einem Durchgang mit 55 (statt 35)',a:40}],
+ why:'Bei 35: Die Zeit wird angehängt (35 steht hinten), ist kleiner als 40, also wird sie hinten entfernt und vorn eingefügt: 35, 40, 50, 60 mit 4 Elementen. Bei 55 bleibt Platz 1 unverändert (40), die 55 steht am Ende.',
+ lsg:'35 · 4 · 40'}
+];
+
+(function(){
+var stage=document.getElementById('stage'),dotsEl=document.getElementById('dots');
+var i=0,res=[];
+function $(h){var d=document.createElement('div');d.innerHTML=h;return d.firstElementChild}
+function ic(id,cls){return '<svg viewBox="0 0 200 200" class="'+(cls||'')+'" aria-hidden="true"><use href="#'+id+'"/></svg>'}
+function dots(){dotsEl.innerHTML=TASKS.map(function(_,k){var c=k===i&&res[k]===undefined?'cur':(res[k]===undefined?'':res[k]>=1?'ok':res[k]>0?'half':'bad');return '<i class="'+c+'"></i>'}).join('')}
+function isb(o){return o&&typeof o==='object'&&o.b}
+function bo(o){return isb(o)?BLK.one(o.b[0],o.b[1],o.b[0]==='ev'?'hat':undefined):o}
+function shuffle(a,seed){var r=a.map(function(x,k){return [x,k]});var s=seed;r.sort(function(p,q){s=(s*9301+49297)%233280;return (s/233280)-.5});return r}
+function done(score,why,ok){
+  res[i]=score;dots();
+  var cls=score>=1?'ok':score>0?'half':'bad';
+  var msg=score>=1?'Super gemacht!':score>0?'Fast – ein Teil stimmt schon.':'Nicht schlimm, so lernst du es.';
+  var fb=$('<div class="fb '+cls+'">'+ic(score>=1?'doodle-figur-kaefer':'doodle-icon-stolperstein')+'<p><b>'+msg+'</b><br>'+why+'</p></div>');
+  stage.appendChild(fb);
+  var nb=stage.querySelector('[data-next]');nb.hidden=false;nb.textContent=i===TASKS.length-1?'Ergebnis ansehen':'Weiter ▶';nb.focus();
+  var cb=stage.querySelector('[data-check]');if(cb)cb.hidden=true;
+}
+function frame(T,body,needCheck){
+  stage.innerHTML='<span class="tag">'+PLM[T.p].k+' · Aufgabe '+(i+1)+' von '+TASKS.length+' · '+T.title+'</span><p class="kz">Das übst du: '+T.kz+'</p><p class="q">'+T.q+'</p>'+(T.bl?'<div class="bprog">'+BLK.program(T.bl)+'</div>':'')+body+
+  '<div class="row">'+(needCheck?'<button class="btn" data-check disabled>Prüfen</button>':'')+'<button class="btn" data-next hidden>Weiter ▶</button></div>';
+  stage.querySelector('[data-next]').onclick=function(){i++;render()};
+}
+var R={
+mc:function(T){
+  frame(T,'<div class="opts">'+T.opts.map(function(o,k){return '<button class="opt'+(isb(o)?' blk':'')+'" data-k="'+k+'">'+bo(o)+'</button>'}).join('')+'</div>',true);
+  var sel=-1,cb=stage.querySelector('[data-check]');
+  stage.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){sel=+b.dataset.k;stage.querySelectorAll('.opt').forEach(function(x){x.classList.toggle('sel',x===b)});cb.disabled=false}});
+  cb.onclick=function(){stage.querySelectorAll('.opt').forEach(function(b,k){b.disabled=true;b.classList.remove('sel');if(k===T.ans)b.classList.add('right');else if(k===sel)b.classList.add('wrong')});done(sel===T.ans?1:0,T.why)};
+},
+img:function(T){
+  frame(T,'<div class="imgs">'+T.opts.map(function(o,k){return '<button class="opt" data-k="'+k+'">'+ic(o)+'<span>'+T.alts[k]+'</span></button>'}).join('')+'</div>',true);
+  R.mc._bind(T);
+},
+pair:function(T){
+  var L=T.pairs.map(function(p,k){return {t:p[0],k:k}});
+  var Rr=shuffle(T.pairs.map(function(p,k){return {t:p[1],k:k}}),7).map(function(x){return x[0]});
+  frame(T,'<div class="pairs"><div class="opts" id="pl"></div><div class="opts" id="pr"></div></div>',false);
+  var pl=stage.querySelector('#pl'),pr=stage.querySelector('#pr'),selL=null,miss=0,matched=0;
+  L.forEach(function(x){var b=document.createElement('button');b.className='opt'+(isb(x.t)?' blk':'');if(isb(x.t))b.innerHTML=bo(x.t);else b.textContent=x.t;b.dataset.k=x.k;pl.appendChild(b)});
+  Rr.forEach(function(x){var b=document.createElement('button');b.className='opt';b.textContent=x.t;b.dataset.k=x.k;pr.appendChild(b)});
+  pl.onclick=function(e){var b=e.target.closest('.opt');if(!b||b.classList.contains('done'))return;pl.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');selL=b};
+  pr.onclick=function(e){var b=e.target.closest('.opt');if(!b||b.classList.contains('done')||!selL)return;
+    if(b.dataset.k===selL.dataset.k){var c='c'+matched;matched++;[selL,b].forEach(function(x){x.classList.remove('sel');x.classList.add('done',c);x.disabled=true});selL=null;
+      if(matched===T.pairs.length){var sc=miss===0?1:miss<=2?.5:0;done(sc,T.why+(miss?' ('+miss+' Fehlversuch'+(miss>1?'e':'')+')':''))}}
+    else{miss++;b.classList.add('shake');setTimeout(function(){b.classList.remove('shake')},400)}};
+},
+gap:function(T){
+  var html='<div class="gap">'+T.parts.map(function(p){return typeof p==='string'?p:'<select>'+['– wähle –'].concat(p.o).map(function(o,k){return '<option value="'+(k-1)+'">'+o+'</option>'}).join('')+'</select>'}).join('')+'</div>';
+  frame(T,html,true);
+  var sels=[].slice.call(stage.querySelectorAll('select')),cb=stage.querySelector('[data-check]');
+  var ans=T.parts.filter(function(p){return typeof p!=='string'}).map(function(p){return p.a});
+  sels.forEach(function(s){s.onchange=function(){cb.disabled=sels.some(function(x){return x.value==='-1'})}});
+  cb.onclick=function(){var ok=0;sels.forEach(function(s,k){var r=+s.value===ans[k];if(r)ok++;s.className=r?'right':'wrong';s.disabled=true});done(ok===ans.length?1:ok>0?.5:0,T.why)};
+},
+num:function(T){
+  frame(T,'<div class="nums">'+T.nums.map(function(n,k){return '<label>'+n.lab+' = <input inputmode="numeric" autocomplete="off" data-k="'+k+'"></label>'}).join('')+'</div>',true);
+  var ins=[].slice.call(stage.querySelectorAll('input')),cb=stage.querySelector('[data-check]');
+  ins.forEach(function(x){x.oninput=function(){cb.disabled=ins.some(function(y){return !y.value.trim()})}});
+  cb.onclick=function(){var ok=0;ins.forEach(function(x,k){var r=parseFloat(x.value.replace(',','.'))===T.nums[k].a;if(r)ok++;x.className=r?'right':'wrong';x.disabled=true});done(ok===ins.length?1:ok>0?.5:0,T.why)};
+},
+order:function(T){
+  var items=shuffle(T.items.map(function(t,k){return {t:T.cats?BLK.one(T.cats[k],t,T.cats[k]==='ev'?'hat':undefined):t,k:k,b:!!T.cats}}),3).map(function(x){return x[0]});
+  if(items.every(function(x,k){return x.k===k}))items.reverse();
+  frame(T,'<ol class="ord" id="ol"></ol>',true);
+  var ol=stage.querySelector('#ol'),cb=stage.querySelector('[data-check]');cb.disabled=false;
+  function fit(){var sv=[].slice.call(ol.querySelectorAll('.bl svg'));if(!sv.length)return;var av=ol.querySelector('.bl').clientWidth,mw=0;sv.forEach(function(e){mw=Math.max(mw,+e.getAttribute('viewBox').split(' ')[2])});var f=Math.min(1,av/mw);sv.forEach(function(e){e.style.width=(+e.getAttribute('viewBox').split(' ')[2]*f)+'px'})}
+  function draw(){ol.innerHTML='';items.forEach(function(x,k){var li=document.createElement('li');li.dataset.k=x.k;li.innerHTML=(x.b?'<span class="nr">'+(k+1)+'.</span><div class="bl">'+x.t+'</div>':'<span>'+(k+1)+'. '+x.t+'</span>')+'<div class="mvs"><button class="mv" aria-label="nach oben">▲</button><button class="mv" aria-label="nach unten">▼</button></div>';
+    var b=li.querySelectorAll('button');b[0].onclick=function(){if(k>0){var t=items[k];items[k]=items[k-1];items[k-1]=t;draw()}};b[1].onclick=function(){if(k<items.length-1){var t=items[k];items[k]=items[k+1];items[k+1]=t;draw()}};ol.appendChild(li)});fit()}
+  draw();
+  cb.onclick=function(){var ok=0;ol.querySelectorAll('li').forEach(function(li,k){var r=items[k].k===k;if(r)ok++;li.classList.add(r?'right':'wrong');li.querySelectorAll('button').forEach(function(b){b.disabled=true})});
+    done(ok===items.length?1:ok>=items.length-2?.5:0,ok===items.length?T.why:'Richtig wäre: '+T.lsg+'. '+T.why)};
+},
+tf:function(T){
+  frame(T,'<div class="tf">'+T.stm.map(function(s,k){return '<div class="tfr" data-k="'+k+'"><p>'+s[0]+'</p><button class="opt" data-v="1">Richtig</button><button class="opt" data-v="0">Falsch</button></div>'}).join('')+'</div>',true);
+  var ans={},cb=stage.querySelector('[data-check]');
+  stage.querySelectorAll('.tfr').forEach(function(row){row.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){ans[row.dataset.k]=b.dataset.v==='1';row.querySelectorAll('.opt').forEach(function(x){x.classList.toggle('sel',x===b)});cb.disabled=Object.keys(ans).length<T.stm.length}})});
+  cb.onclick=function(){var ok=0;stage.querySelectorAll('.tfr').forEach(function(row){var k=row.dataset.k,r=ans[k]===T.stm[k][1];if(r)ok++;row.querySelectorAll('.opt').forEach(function(b){b.disabled=true;b.classList.remove('sel');var v=b.dataset.v==='1';if(v===T.stm[k][1])b.classList.add('right');else if(v===ans[k])b.classList.add('wrong')})});
+    done(ok===T.stm.length?1:ok>=T.stm.length-1?.5:0,T.why)};
+},
+find:function(T){
+  frame(T,'<div class="codeb">'+T.lines.map(function(l,k){var kind=l[0]==='ev'?'hat':(l[0]==='ctl'&&/^(wiederhole|falls|wenn)/.test(l[1])&&l[1].indexOf('wenn {d')<0?'c':undefined);return '<button class="opt" data-k="'+k+'" style="margin-left:'+(l[2]*22)+'px"><span class="nr">'+(k+1)+'</span>'+BLK.one(l[0],l[1],kind)+'</button>'}).join('')+'</div>',true);
+  R.mc._bind(T,true);
+}
+};
+R.mc._bind=function(T){
+  var sel=-1,cb=stage.querySelector('[data-check]');
+  stage.querySelectorAll('.opt').forEach(function(b){b.onclick=function(){sel=+b.dataset.k;stage.querySelectorAll('.opt').forEach(function(x){x.classList.toggle('sel',x===b)});cb.disabled=false}});
+  cb.onclick=function(){stage.querySelectorAll('.opt').forEach(function(b,k){b.disabled=true;b.classList.remove('sel');if(k===T.ans)b.classList.add('right');else if(k===sel)b.classList.add('wrong')});done(sel===T.ans?1:0,T.why)};
+};
+function result(){
+  dotsEl.innerHTML='';
+  var sum=res.reduce(function(a,b){return a+b},0),pct=sum/TASKS.length;
+  var medal=pct>=.85?['doodle-icon-pokal','Meilensteine sicher! Du kannst das Gelernte gut anwenden.']:pct>=.55?['doodle-figur-kaefer','Stark – du stehst auf den meisten Plateaus. Schau dir die orangen Bereiche noch einmal an.']:['doodle-icon-sanduhr','Noch nicht auf allen Plateaus – das ist okay. Wir gehen gemeinsam weiter und wiederholen die Bereiche mit Partner:in.'];
+  var pl=PLM.map(function(m,pi){var t=TASKS.map(function(T,k){return T.p===pi?k:-1}).filter(function(k){return k>=0});var s2=t.reduce(function(a,k){return a+(res[k]||0)},0);var r=s2/t.length;
+    var st=r>=.8?['ok','Meilenstein sicher']:r>=.5?['half','fast – kurz wiederholen']:['bad','gemeinsam nochmal ansehen'];
+    return '<li class="'+st[0]+'"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#'+m.ic+'"/></svg><span><b>'+m.k+': '+m.n+'</b><br>'+st[1]+' ('+s2.toString().replace('.',',')+' von '+t.length+')</span></li>'}).join('');
+  stage.innerHTML='<div class="res">'+ic(medal[0],'big')+'<div class="score">'+sum.toString().replace('.',',')+' von '+TASKS.length+'</div><p class="q">'+medal[1]+'</p>'+
+  '<h2>Deine Plateaus</h2><ul class="pls">'+pl+'</ul>'+
+  '<h2 style="margin-top:18px">Alle Aufgaben</h2><ul class="rev">'+TASKS.map(function(T,k){var c=res[k]>=1?'ok':res[k]>0?'half':'bad';return '<li class="'+c+'"><b>'+(k+1)+'</b><span><b style="all:unset;font-weight:800">'+T.title+':</b> '+T.lsg+'</span></li>'}).join('')+'</ul>'+
+  '<div class="row" style="justify-content:center"><button class="btn" id="again">Nochmal versuchen</button></div></div>';
+  document.getElementById('again').onclick=function(){i=0;res=[];render()};
+}
+function render(){if(i>=TASKS.length){result();return}dots();R[TASKS[i].t](TASKS[i]);window.scrollTo({top:0,behavior:'smooth'})}
+render();
+})();
+
+</script>
+
+
+</body>
+</html>
