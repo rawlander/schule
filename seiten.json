@@ -1,13 +1,6 @@
 {
- "stand": "2026-11-24",
+ "stand": "2026-11-25",
  "seiten": [
-  {
-   "ordner": "test-ablauf",
-   "titel": "Testseite Ablaufdatum",
-   "kurs": "Test",
-   "ablauf": "2026-11-24",
-   "pfad": "seiten/test-ablauf/"
-  },
   {
    "ordner": "ef-inf-marsrover-parameter",
    "titel": "Marsrover: Parameter und Rückgabe",
