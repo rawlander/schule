@@ -92,6 +92,7 @@ button:hover { filter: brightness(1.06); }
 .focus-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .focus { border-left: 6px solid var(--redpen); background: var(--paper); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
 .focus .rank { font-size: .8rem; font-weight: 700; color: var(--redpen); text-transform: uppercase; letter-spacing: .04em; }
+a.chip { text-decoration: none; } a.chip:hover { filter: brightness(.95); }
 .chip { display: inline-block; font-size: .78rem; font-weight: 700; border-radius: 999px; padding: 2px 10px; background: var(--marker); color: #1b2a4a; }
 .bars { display: grid; gap: 6px; }
 .bar { display: grid; grid-template-columns: minmax(120px, 230px) 1fr 3ch; gap: 10px; align-items: center; font-size: .9rem; }
@@ -285,7 +286,7 @@ footer { color: var(--muted); font-size: .85rem; }
 })();
 </script>
 
-<footer>Je invoer blijft alleen in deze browser bewaard. Hoofdstuknummers verwijzen naar het oefenboekje ‘Grammatica in de sociale-mediawereld’.</footer>
+<footer>Je invoer blijft alleen in deze browser bewaard. Hoofdstuknummers verwijzen naar het <a href="../q1-nl-oefenboekje-grammatica/">oefenboekje ‘Grammatica in de sociale-mediawereld’</a>.</footer>
 </div>
 
 <script>
@@ -354,6 +355,9 @@ const CATS = [
 const EXAMPLE = { v2: 3, eind: 4, modaal: 1, te: 2, wwspel: 2, klank: 1, dehet: 3, vz: 2, germ: 1, die: 1 };
 const EXAMPLE_META = { naam: "Voorbeeld", tekst: "e-mail aan Sanne (voorbeeld)", woorden: 220 };
 const KEY = "foutenanalyse-nl-q1";
+const OB = "../q1-nl-oefenboekje-grammatica/oefenboekje-grammatica-sociale-media.pdf";
+const OBPG = {"v2": 4, "eind": 15, "modaal": 1, "te": 5, "klank": 6, "dehet": 7, "vz": 8, "zich": 9, "als": 10, "die": 11, "germ": 12, "er": 13};
+function obChip(c, label) { return OBPG[c.id] ? `<a class="chip" href="${OB}#page=${OBPG[c.id]}" target="_blank" rel="noopener">${label} ↗</a>` : `<span class="chip">${label}</span>`; }
 
 let state = { counts: {}, own: {}, naam: "", tekst: "", woorden: "", plan: "", example: true };
 
@@ -404,7 +408,7 @@ function renderGrid() {
           <textarea id="own-${c.id}" data-own="${c.id}" placeholder="fout → goed"></textarea>
         </label>
       </details>
-      <span class="chip">Oefenboekje ${c.h}</span>
+      ${obChip(c, "Oefenboekje " + c.h)}
     </article>`).join("");
   grid.addEventListener("click", e => {
     const b = e.target.closest("button[data-id]"); if (!b) return;
@@ -440,7 +444,7 @@ function update() {
       <h3>${c.t}</h3>
       <p style="font-size:.93rem">${c.u}</p>
       <p style="font-size:.93rem"><strong>Tip:</strong> ${c.tip}</p>
-      <span><span class="chip">Oefen in het oefenboekje: ${c.h}</span></span>
+      <span>${obChip(c, "Oefen in het oefenboekje: " + c.h)}</span>
     </div>`).join("") : '<p class="empty">Nog geen fouten geteld. Klik in de turflijst op + bij elke fout uit je tekst.</p>';
 
   const used = CATS.map(c => ({ ...c, n: state.counts[c.id] || 0 })).filter(c => c.n > 0).sort((a, b) => b.n - a.n);
