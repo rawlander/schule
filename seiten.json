@@ -23,6 +23,13 @@
    "pfad": "seiten/8-de-tell/"
   },
   {
+   "ordner": "q1-nl-foutenanalyse",
+   "titel": "Mijn foutenanalyse Nederlands",
+   "kurs": "Q1 Niederländisch",
+   "ablauf": "2026-12-23",
+   "pfad": "seiten/q1-nl-foutenanalyse/"
+  },
+  {
    "ordner": "6-inf-scratch-beetle-race",
    "titel": "Plateau-Check Beetle-Race",
    "kurs": "Informatik 6",
