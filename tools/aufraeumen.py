@@ -4,6 +4,7 @@
 Jede Schülerseite liegt in seiten/<name>/index.html und trägt im <head>:
     <meta name="ablauf" content="JJJJ-MM-TT">   letzter Tag, an dem sie online ist
     <meta name="kurs"   content="EF Informatik"> optional, für die Übersicht
+    <meta name="uebersicht" content="nein">      optional: online, aber nicht in seiten.json/Übersicht
 
 Das Skript
   1. löscht mit --loeschen alle Seiten, deren Ablaufdatum vor heute (Europe/Berlin) liegt,
@@ -61,7 +62,8 @@ def main():
             continue
         eintrag = {"ordner": ordner.name, "titel": titel(text, ordner.name),
                    "kurs": meta(text, "kurs") or "", "ablauf": ablauf.isoformat(),
-                   "pfad": f"seiten/{ordner.name}/"}
+                   "pfad": f"seiten/{ordner.name}/",
+                   "versteckt": (meta(text, "uebersicht") or "").strip().lower() in ("nein", "no", "false", "0")}
         (abgelaufen if ablauf < heute else aktiv).append(eintrag)
 
     for e in abgelaufen:
@@ -73,9 +75,10 @@ def main():
               file=sys.stderr)
 
     aktiv.sort(key=lambda e: (e["ablauf"], e["titel"].lower()))
-    daten = {"stand": heute.isoformat(), "seiten": aktiv}
+    sichtbar = [e for e in aktiv if not e.get("versteckt")]
+    daten = {"stand": heute.isoformat(), "seiten": [{k: v for k, v in e.items() if k != "versteckt"} for e in sichtbar]}
     (ROOT / "seiten.json").write_text(json.dumps(daten, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"aktiv: {len(aktiv)}, abgelaufen: {len(abgelaufen)}, ohne Ablaufdatum: {len(ohne)}")
+    print(f"aktiv: {len(aktiv)} (davon nicht in der Übersicht: {len(aktiv) - len(sichtbar)}), abgelaufen: {len(abgelaufen)}, ohne Ablaufdatum: {len(ohne)}")
 
     if a.site:
         ziel = Path(a.site).resolve()
