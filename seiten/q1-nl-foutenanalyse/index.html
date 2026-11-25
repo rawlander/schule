@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="ablauf" content="2026-12-23">
+<meta name="kurs" content="Q1 Niederländisch">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mijn foutenanalyse Nederlands</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Schrift-ergonomie: navy inkt, markeerstift-geel, oranje accentpen; kaarten in een raster, resultaat bovenaan zichtbaar */
+  --ink: #1b2a4a;
+  --paper: #f7f8fb;
+  --card: #ffffff;
+  --line: #d8dde8;
+  --muted: #5b6680;
+  --marker: #ffe45c;
+  --cyan: #38bdf8;
+  --redpen: #E05A00;
+  --good: #1f8a4c;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e7ebf5; --paper: #121826; --card: #1a2235; --line: #2e3a55; --muted: #a3adc4;
+    --marker: #c9ad1f; --cyan: #4cc3f5; --redpen: #FF9A3D; --good: #4cd38a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #e7ebf5; --paper: #121826; --card: #1a2235; --line: #2e3a55; --muted: #a3adc4;
+  --marker: #c9ad1f; --cyan: #4cc3f5; --redpen: #FF9A3D; --good: #4cd38a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; }
+h2 { font-size: 1.4rem; font-weight: 800; }
+h3 { font-size: 1.08rem; font-weight: 600; }
+.hl { background: linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 90%, transparent 90%); padding: 0 .1em; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+header { display: grid; gap: 12px; }
+.lead { max-width: 68ch; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+label { font-weight: 700; font-size: .9rem; display: grid; gap: 4px; }
+input[type=text], input[type=number], textarea {
+  font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 10px; width: 100%;
+}
+textarea { min-height: 64px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; counter-reset: s; }
+.steps li { list-style: none; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 48px; position: relative; }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 12px; top: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: .9rem; }
+.steps { padding: 0; margin: 0; }
+.banner { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; border: 2px dashed var(--marker); border-radius: 12px; padding: 12px 16px; background: var(--card); }
+button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; font-weight: 700; }
+button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+button:hover { filter: brightness(1.06); }
+/* Resultaat */
+.result { display: grid; gap: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+.stats { display: flex; flex-wrap: wrap; gap: 24px; }
+.stat b { display: block; font-family: var(--font-display); font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: .9rem; }
+.focus-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.focus { border-left: 6px solid var(--redpen); background: var(--paper); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
+.focus .rank { font-size: .8rem; font-weight: 700; color: var(--redpen); text-transform: uppercase; letter-spacing: .04em; }
+.chip { display: inline-block; font-size: .78rem; font-weight: 700; border-radius: 999px; padding: 2px 10px; background: var(--marker); color: #1b2a4a; }
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: minmax(120px, 230px) 1fr 3ch; gap: 10px; align-items: center; font-size: .9rem; }
+.bar .track { height: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--cyan); border-radius: 7px 0 0 7px; }
+.bar.is-focus .fill { background: var(--redpen); }
+.bar .n { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+.empty { color: var(--muted); font-style: italic; }
+/* Kaarten */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; position: relative; }
+.card.has { border-color: var(--cyan); }
+.card.is-focus { border-color: var(--redpen); box-shadow: 0 0 0 2px var(--redpen) inset; }
+.card-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.num { font-family: var(--font-display); font-weight: 800; color: var(--muted); font-size: .9rem; }
+.ex { display: grid; gap: 2px; font-size: .92rem; background: var(--paper); border-radius: 8px; padding: 8px 10px; }
+.ex .bad { color: var(--redpen); text-decoration: line-through; text-decoration-thickness: 2px; }
+.ex .ok { color: var(--good); font-weight: 700; }
+.counter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.counter button { width: 40px; height: 40px; padding: 0; font-size: 1.3rem; line-height: 1; }
+.counter .count { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.tally { min-height: 30px; flex: 1; }
+.tally svg { display: block; }
+details summary { cursor: pointer; font-weight: 700; font-size: .9rem; color: var(--muted); }
+details[open] summary { margin-bottom: 6px; }
+.plan { display: grid; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.toast { color: var(--good); font-weight: 700; }
+footer { color: var(--muted); font-size: .85rem; }
+@media (max-width: 420px) { .bar { grid-template-columns: 1fr 3ch; } .bar .track { grid-column: 1 / -1; grid-row: 2; } }
+@media (prefers-reduced-motion: no-preference) { .bar .fill { transition: width .25s ease; } }
+@media print { :root, :root[data-theme="dark"] { --ink:#1b2a4a; --paper:#fff; --card:#fff; --line:#d8dde8; --muted:#5b6680; --marker:#ffe45c; --cyan:#38bdf8; --redpen:#E05A00; --good:#1f8a4c; color-scheme: light; } .counter button, .row button { display:none; } .card, .focus { break-inside: avoid; } }
+.kapu-logo { height: 40px; width: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px;justify-content:space-between"><p class="muted">Nederlands · Q1 · zelfanalyse na een gecorrigeerde tekst</p><img class="kapu-logo" src="../../assets/kapu-bildmarke.png" alt="Kapu" onerror="this.remove()"></div>
+  <p class="muted gn-noexport" style="font-size:.85rem">online tot <span data-ablauf-text></span></p>
+  <h1>Mijn <span class="hl">foutenanalyse</span></h1>
+  <p class="lead">Wat gaat er vaak mis in jouw teksten? Tel de fouten uit je gecorrigeerde tekst per categorie. Daarna zie je meteen je <strong>aandachtspunten</strong> en waar je in het oefenboekje kunt oefenen.</p>
+  <form class="meta" id="meta" autocomplete="off">
+    <label for="f-naam">Naam<input type="text" id="f-naam" data-gn-name placeholder="bijv. Mia"></label>
+    <label for="f-tekst">Tekst / opdracht<input type="text" id="f-tekst" placeholder="bijv. e-mail aan Sanne (proefwerk 1)"></label>
+    <label for="f-woorden">Aantal woorden van je tekst<input type="number" id="f-woorden" min="0" step="1" placeholder="bijv. 230"></label>
+  </form>
+  <ol class="steps">
+    <li>Leg je gecorrigeerde tekst naast je. Kijk bij elke fout: <strong>welke categorie</strong> is het? De voorbeelden helpen je.</li>
+    <li>Klik per fout op <strong>+</strong>. Je ziet een streepje in de turflijst. Een keer te veel geklikt? Klik op <strong>−</strong>.</li>
+    <li>Schrijf bij minstens twee categorieën <strong>je eigen fout</strong> en de goede vorm op.</li>
+    <li>Lees bovenaan je <strong>aandachtspunten</strong>, maak je leerplan en kopieer het resultaat voor je docent of je map.</li>
+  </ol>
+</header>
+
+<div class="banner gn-noexport" id="example-banner">
+  <p><strong>Dit is een voorbeeld.</strong> De streepjes hieronder horen bij een voorbeeldtekst, zodat je ziet hoe het werkt.</p>
+  <button class="primary" type="button" id="btn-clear-example">Voorbeeld wissen en zelf beginnen</button>
+</div>
+
+<section class="result" aria-labelledby="h-result">
+  <h2 id="h-result">Mijn resultaat</h2>
+  <div class="stats">
+    <div class="stat"><b id="s-total">0</b><span>fouten geteld</span></div>
+    <div class="stat"><b id="s-per100">–</b><span>fouten per 100 woorden</span></div>
+    <div class="stat"><b id="s-cats">0</b><span>categorieën met fouten</span></div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:8px">Mijn aandachtspunten</h3>
+    <div class="focus-list" id="focus-list"></div>
+  </div>
+  <div>
+    <h3 style="margin-bottom:8px">Alle categorieën</h3>
+    <div class="bars" id="bars"></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-cats" style="display:grid;gap:12px">
+  <h2 id="h-cats">Turflijst per foutcategorie</h2>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="plan" aria-labelledby="h-plan">
+  <h2 id="h-plan">Mijn leerplan</h2>
+  <label for="f-plan">Wat ga ik de komende twee weken doen? (bijv. hoofdstuk 4 van het oefenboekje maken, mijn volgende tekst controleren op …)
+    <textarea id="f-plan" placeholder="Ik oefen eerst …, daarna …"></textarea>
+  </label>
+  <div class="row">
+    <button class="primary" type="button" id="btn-copy">Resultaat kopiëren</button>
+    <button type="button" id="btn-reset">Alles wissen</button>
+    <span class="toast" id="toast" role="status" aria-live="polite"></span>
+  </div>
+  <label for="f-out">Tekst om te plakken (bijv. in je e-mail aan je docent of in je digitale map)
+    <textarea id="f-out" readonly style="min-height:140px"></textarea>
+  </label>
+</section>
+
+<!-- ===== GoodNotes-Export v1 (Button + Hinweis) ===== -->
+<div class="gn-bar gn-noexport">
+ <button type="button" id="gn-btn" class="gn-btn">PDF für GoodNotes</button>
+ <button type="button" id="gn-share" class="gn-btn" hidden>Teilen → GoodNotes</button>
+ <span id="gn-msg" class="gn-msg" role="status"></span>
+</div>
+<style>
+.gn-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:28px 0}
+.gn-btn{font:700 15px/1 system-ui,sans-serif;padding:12px 18px;border-radius:999px;border:2px solid currentColor;background:transparent;color:inherit;cursor:pointer}
+.gn-btn[disabled]{opacity:.5;cursor:wait}
+.gn-msg{font-size:.9rem;opacity:.8}
+.gn-mirror{display:none;white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.8em;padding:4px 2px;border-bottom:1px solid #888;font:inherit;color:inherit}
+@media print{
+ .gn-noexport{display:none!important}
+ textarea,select,input:not([type=checkbox]):not([type=radio]){display:none!important}
+ .gn-mirror{display:block!important}
+}
+</style>
+<script>
+/* GoodNotes-Export v1: Eintragungen -> A4-PDF -> Teilen (iPad: GoodNotes) | Download | Drucken */
+(function(){
+ var LIBS=['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+           'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'];
+ var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+ var T=nl?{btn:'PDF voor GoodNotes',busy:'PDF wordt gemaakt …',share:'Delen → GoodNotes',ready:'PDF klaar: tik op „Delen“ en kies GoodNotes.',dl:'PDF gedownload: open het en kies Delen → GoodNotes.',print:'Geen internet: kies in het afdrukvenster Delen → GoodNotes.'}
+          :{btn:'PDF für GoodNotes',busy:'PDF wird erstellt …',share:'Teilen → GoodNotes',ready:'PDF fertig: Auf „Teilen“ tippen und GoodNotes wählen.',dl:'PDF heruntergeladen: öffnen und Teilen → GoodNotes wählen.',print:'Kein Internet: im Druckfenster Teilen → GoodNotes wählen.'};
+ var btn=document.getElementById('gn-btn'),sbtn=document.getElementById('gn-share'),msg=document.getElementById('gn-msg');
+ btn.textContent=T.btn;sbtn.textContent=T.share;
+ function say(t){msg.textContent=t}
+ function load(src){return new Promise(function(ok,no){if(document.querySelector('script[src="'+src+'"]')&&(window.html2canvas&&src.indexOf('html2canvas')>-1||window.jspdf&&src.indexOf('jspdf')>-1))return ok();
+  var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+ // 1) Eingaben ins DOM schreiben (Spiegel-Divs), damit nichts abgeschnitten wird oder verloren geht
+ function sync(){[].forEach.call(document.querySelectorAll('textarea,input,select'),function(el){
+  if(el.closest('.gn-noexport'))return;var t=(el.type||'').toLowerCase();
+  if(t==='checkbox'||t==='radio'){el.checked?el.setAttribute('checked',''):el.removeAttribute('checked');return}
+  if(/^(button|submit|reset|file|hidden|range|color|image)$/.test(t))return;
+  var v=el.tagName==='SELECT'?((el.options[el.selectedIndex]||{}).text||''):el.value;
+  if(el.tagName==='TEXTAREA')el.textContent=el.value;else if(el.tagName==='INPUT')el.setAttribute('value',el.value);
+  var m=el.nextElementSibling;if(!m||!m.classList.contains('gn-mirror')){m=document.createElement('div');m.className='gn-mirror';el.parentNode.insertBefore(m,el.nextSibling)}
+  m.textContent=v||'\u00a0'})}
+ window.addEventListener('beforeprint',sync);
+ // 2) CSS einsammeln (Bildschirm + Druckregeln), damit der Export wie die Druckfassung aussieht
+ function css(withScreen){var out='';[].forEach.call(document.styleSheets,function(sh){var r;try{r=sh.cssRules}catch(e){return}
+  [].forEach.call(r,function(x){if(x.media&&x.cssRules){var mt=x.media.mediaText;if(/print/.test(mt))[].forEach.call(x.cssRules,function(y){out+=y.cssText+'\n'});else if(withScreen&&matchMedia(mt).matches)out+=x.cssText+'\n'}
+   else if(withScreen)out+=x.cssText+'\n'})});return out}
+ function svgCss(){var out='';function add(y){if(!y.selectorText)return;var sel=y.selectorText.split(',').map(function(x){x=x.trim();
+   return 'svg:root '+x+(/^[.\[:]/.test(x)?',svg:root'+x:'')}).join(',');out+=sel+'{'+y.style.cssText+'}\n'}
+  [].forEach.call(document.styleSheets,function(sh){var r;try{r=sh.cssRules}catch(e){return}
+   [].forEach.call(r,function(x){if(x.media&&x.cssRules){if(!/print/.test(x.media.mediaText))return}else return add(x)})});
+  [].forEach.call(document.styleSheets,function(sh){var r;try{r=sh.cssRules}catch(e){return}
+   [].forEach.call(r,function(x){if(x.media&&x.cssRules&&/print/.test(x.media.mediaText))[].forEach.call(x.cssRules,add)})});
+  return out+'svg:root *{animation:none!important;transition:none!important}'}
+ var LOOK='\n.gn-mirror{display:block!important}textarea,select,input:not([type=checkbox]):not([type=radio]){display:none!important}.gn-noexport{display:none!important}*,*:before,*:after{animation:none!important;transition:none!important}';
+ function look(on){var st=document.getElementById('gn-look');if(on&&!st){st=document.createElement('style');st.id='gn-look';st.textContent=css(false)+LOOK;document.head.appendChild(st)}
+  if(!on&&st)st.remove()}
+ function prep(doc){
+  // Kästchen ersetzen (html2canvas scheitert an gestylten :checked-Pseudoelementen)
+  [].forEach.call(doc.querySelectorAll('input[type=checkbox],input[type=radio]'),function(i){var cs=doc.defaultView.getComputedStyle(i),
+   w=Math.max(16,parseFloat(cs.width)||16),h=Math.max(16,parseFloat(cs.height)||16),b=doc.createElement('span');
+   b.textContent=i.checked?(i.type==='radio'?'\u25CF':'\u2713'):'';
+   b.style.cssText='display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:'+w+'px;height:'+h+'px;border:2px solid #333;background:#fff;color:#111;font:700 '+Math.round(h*0.62)+'px/1 system-ui,sans-serif;position:relative;z-index:1;border-radius:'+(i.type==='radio'?'50%':cs.borderRadius)+';margin:'+cs.margin+';vertical-align:middle';
+   i.parentNode.replaceChild(b,i)});
+  var defs=[].map.call(doc.querySelectorAll('svg defs'),function(d){return d.outerHTML}).join(''),sc=svgCss(),win=doc.defaultView;
+  [].forEach.call(doc.querySelectorAll('svg'),function(s){if(s.querySelector('use')&&!s.querySelector('defs'))s.insertAdjacentHTML('afterbegin',defs);
+   s.style.color=win.getComputedStyle(s).color;
+   var c=doc.createElementNS('http://www.w3.org/2000/svg','style');c.textContent=sc;s.insertBefore(c,s.firstChild)})}
+ // 3) Seitenumbruch an einer leeren Bildzeile suchen (nicht mitten durch Text)
+ function cut(ctx,w,y0,minY){for(var tol=0;tol<2;tol++)for(var y=y0;y>minY;y--){var d=ctx.getImageData(0,y,w,1).data,n=0;
+  for(var i=0;i<d.length;i+=12){if(Math.abs(d[i]-d[0])+Math.abs(d[i+1]-d[1])+Math.abs(d[i+2]-d[2])>30&&++n>tol*12)break}
+  if(n<=tol*12)return y}return y0}
+ function fname(){var n=document.querySelector('[data-gn-name],[data-k=naam],[name=naam],[name=name],#naam,#name');
+  var s=(document.title||'werkblad')+(n&&n.value?' - '+n.value:'');return s.replace(/[\u2013\u2014]/g,'-').replace(/[\\\/:*?"<>|]+/g,'').trim()+'.pdf'}
+ var file=null;
+ function deliver(){if(navigator.canShare&&navigator.canShare({files:[file]})){
+   navigator.share({files:[file],title:file.name}).then(function(){say('')}).catch(function(e){if(e&&e.name==='AbortError')return;sbtn.hidden=false;say(T.ready)});return}
+  var a=document.createElement('a'),u=URL.createObjectURL(file);a.href=u;a.download=file.name;a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(u)},4000);say(T.dl)}
+ sbtn.onclick=deliver;
+ var sy=0;btn.onclick=function(){btn.disabled=true;sbtn.hidden=true;say(T.busy);sync();
+  Promise.all([load(LIBS[0]),load(LIBS[1])]).then(function(){
+   sy=window.scrollY;look(true);window.scrollTo(0,0);
+   var W=document.body.scrollWidth,est=document.body.scrollHeight,sc=Math.min(2,Math.sqrt(14e6/(W*est)));
+   return html2canvas(document.body,{scale:sc,scrollX:0,scrollY:0,backgroundColor:'#ffffff',onclone:prep,
+    ignoreElements:function(e){return e.classList&&e.classList.contains('gn-noexport')}})
+  }).then(function(cv){look(false);window.scrollTo(0,sy);
+   var J=window.jspdf.jsPDF,pdf=new J({unit:'mm',format:'a4'}),M=10,cw=190,ph=277,k=cv.width/cw,pp=Math.floor(ph*k),
+       ctx=cv.getContext('2d',{willReadFrequently:true}),y=0,first=true;
+   while(y<cv.height-4){var end=Math.min(y+pp,cv.height);if(end<cv.height)end=cut(ctx,cv.width,end,y+pp*0.7);
+    var h=end-y,c=document.createElement('canvas');c.width=cv.width;c.height=h;c.getContext('2d').drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);
+    if(!first)pdf.addPage();pdf.addImage(c.toDataURL('image/jpeg',0.9),'JPEG',M,M,cw,h/k);first=false;y=end}
+   file=new File([pdf.output('blob')],fname(),{type:'application/pdf'});deliver();
+  }).catch(function(e){look(false);console.warn('GoodNotes-Export:',e);say(T.print);setTimeout(function(){window.print()},300)})
+  .then(function(){btn.disabled=false})};
+})();
+</script>
+
+<footer>Je invoer blijft alleen in deze browser bewaard. Hoofdstuknummers verwijzen naar het oefenboekje ‘Grammatica in de sociale-mediawereld’.</footer>
+</div>
+
+<script>
+const CATS = [
+  { id: "v2", t: "Woordvolgorde in de hoofdzin", h: "h. 3",
+    u: "Het vervoegde werkwoord staat altijd op plaats 2. Begint de zin met een ander zinsdeel (tijd, plaats …), dan komt het onderwerp na het werkwoord (inversie).",
+    bad: "Gisteren ik heb een filmpje gepost.", ok: "Gisteren heb ik een filmpje gepost.",
+    tip: "Onderstreep in elke zin het vervoegde werkwoord en tel: staat het op plaats 2?" },
+  { id: "eind", t: "Bijzin en werkwoordelijke eindgroep", h: "h. 13",
+    u: "In een bijzin (omdat, dat, als, of …) staan alle werkwoorden aan het eind. Met zou of een modaal werkwoord: eerst het vervoegde werkwoord, dan de infinitieven.",
+    bad: "…, omdat ik ben moe. / … dat ik zou minder moeten scrollen.", ok: "…, omdat ik moe ben. / … dat ik minder zou moeten scrollen.",
+    tip: "Zoek elk voegwoord. Schuif daarna alle werkwoorden naar het einde van de bijzin." },
+  { id: "modaal", t: "Modale werkwoorden: zullen, moeten, hoeven, mogen …", h: "h. 1–3",
+    u: "Zullen (voorstel, belofte, toekomst), moeten (plicht), niet hoeven te (geen plicht), niet mogen (verbod). In het perfectum: twee infinitieven.",
+    bad: "Je moet niet reageren. / Ik heb het gewild posten.", ok: "Je hoeft niet te reageren. / Ik heb het willen posten.",
+    tip: "Vraag je af: is het een plicht, geen plicht of een verbod?" },
+  { id: "te", t: "Te + infinitief (na te kijken)", h: "h. 4",
+    u: "Bij een scheidbaar werkwoord staat te tussen voorvoegsel en werkwoord: drie losse woorden. Na een modaal werkwoord staat geen te.",
+    bad: "Vergeet niet je tekst natekijken.", ok: "Vergeet niet je tekst na te kijken.",
+    tip: "Maak het voltooid deelwoord: na-ge-keken? Dan is het scheidbaar: na te kijken." },
+  { id: "wwspel", t: "Werkwoordspelling (d/t, -te/-de)", h: "extra",
+    u: "Stam + t bij jij/hij (ik word, hij wordt). Verleden tijd en voltooid deelwoord met ’t kofschip: eindigt de stam op t, k, f, s, ch, p → -te/-t, anders -de/-d.",
+    bad: "Hij vind het leuk. / Ik postde een foto. / Ik heb het gedeelt.", ok: "Hij vindt het leuk. / Ik postte een foto. / Ik heb het gedeeld.",
+    tip: "Vervang het werkwoord door ‘lopen’: hij loopt → hij vindt." },
+  { id: "perf", t: "Perfectum: hebben of zijn", h: "extra",
+    u: "Bewegingswerkwoorden met een richting en veranderingen (worden, blijven, gaan, komen) krijgen zijn. De meeste andere werkwoorden krijgen hebben.",
+    bad: "Ik heb naar Amsterdam gegaan.", ok: "Ik ben naar Amsterdam gegaan.",
+    tip: "Gaat het om een verandering of een beweging naar een doel? Dan meestal zijn." },
+  { id: "klank", t: "Spelling: open en gesloten lettergrepen", h: "h. 5",
+    u: "Lange klinker in een open lettergreep: één letter (ma-ken). In een gesloten lettergreep: twee letters (maak). Korte klinker: medeklinker verdubbelen (chat-ten).",
+    bad: "maaken · uuren · chaten · grapig", ok: "maken · uren · chatten · grappig",
+    tip: "Verdeel het woord in lettergrepen en kijk waar elke lettergreep eindigt." },
+  { id: "dehet", t: "De/het en het bijvoeglijk naamwoord (-e)", h: "h. 6",
+    u: "Bijvoeglijk naamwoord vóór het zelfstandig naamwoord krijgt meestal -e. Geen -e bij een het-woord in het enkelvoud na een, geen, elk, veel, zo’n.",
+    bad: "het tafel · een nieuwe account · het nieuw profiel", ok: "de tafel · een nieuw account · het nieuwe profiel",
+    tip: "Leer zelfstandige naamwoorden altijd met lidwoord: het account, de app." },
+  { id: "vz", t: "Voorzetsels", h: "h. 7",
+    u: "Veel werkwoorden en bijvoeglijke naamwoorden hebben een vast voorzetsel, vaak anders dan in het Duits.",
+    bad: "Ik denk op je. / Hij is trots over zijn video.", ok: "Ik denk aan je. / Hij is trots op zijn video.",
+    tip: "Maak een lijstje met jouw vaste combinaties en leer ze als één woord." },
+  { id: "zich", t: "Zich en elkaar", h: "h. 8",
+    u: "Wederkerend werkwoord: me, je, zich, ons. Doen twee personen iets met of voor elkaar, dan gebruik je elkaar.",
+    bad: "Wij vervelen zich. / Ze volgen zich op Instagram.", ok: "Wij vervelen ons. / Ze volgen elkaar op Instagram.",
+    tip: "Vraag: doet iemand iets met zichzelf (zich) of met de ander (elkaar)?" },
+  { id: "als", t: "Als, zoals en dan", h: "h. 9",
+    u: "Na een vergrotende trap gebruik je dan. Even … als bij gelijkheid, zoals bij een voorbeeld, als bij een functie of voorwaarde.",
+    bad: "TikTok is populairder als Facebook.", ok: "TikTok is populairder dan Facebook.",
+    tip: "Zie je -er (groter, meer, populairder)? Dan volgt dan." },
+  { id: "die", t: "Die, dat of welke", h: "h. 10",
+    u: "Betrekkelijk voornaamwoord: die na een de-woord en meervoud, dat na een het-woord. Welke alleen in vragen; als betrekkelijk voornaamwoord klinkt het ouderwets.",
+    bad: "De app welke ik gebruik … / Het filmpje die ik post …", ok: "De app die ik gebruik … / Het filmpje dat ik post …",
+    tip: "Kijk naar het woord vóór de bijzin: de-woord → die, het-woord → dat." },
+  { id: "germ", t: "Germanismen en woordkeuze", h: "h. 11",
+    u: "Woorden of uitdrukkingen uit het Duits die in het Nederlands fout of vreemd zijn, of een woord dat niet past.",
+    bad: "Ik heb geen lust. / Hij bekomt veel likes. / Ik hoor muziek.", ok: "Ik heb geen zin. / Hij krijgt veel likes. / Ik luister naar muziek.",
+    tip: "Klinkt een woord ‘te Duits’? Zoek het op in een Nederlands woordenboek." },
+  { id: "er", t: "Het woordje er", h: "h. 12",
+    u: "Er als plaats, als voorlopig onderwerp (er zijn …), bij een hoeveelheid (ik heb er drie) en met een voorzetsel (erover, eraan).",
+    bad: "Zijn veel apps. / Ik heb drie. / Ik praat vaak over het.", ok: "Er zijn veel apps. / Ik heb er drie. / Ik praat er vaak over.",
+    tip: "Ontbreekt een onderwerp of verwijs je naar een ding met een voorzetsel? Denk aan er." },
+  { id: "rest", t: "Overig: hoofdletters, leestekens, ontbrekende woorden", h: "extra",
+    u: "Alles wat niet in een andere categorie past, bijvoorbeeld hoofdletters, leestekens, een vergeten woord of een tikfout.",
+    bad: "ik woon in duitsland en ik vind het leuk", ok: "Ik woon in Duitsland en ik vind het leuk.",
+    tip: "Lees je tekst aan het einde één keer alleen op hoofdletters en punten." },
+];
+const EXAMPLE = { v2: 3, eind: 4, modaal: 1, te: 2, wwspel: 2, klank: 1, dehet: 3, vz: 2, germ: 1, die: 1 };
+const EXAMPLE_META = { naam: "Voorbeeld", tekst: "e-mail aan Sanne (voorbeeld)", woorden: 220 };
+const KEY = "foutenanalyse-nl-q1";
+
+let state = { counts: {}, own: {}, naam: "", tekst: "", woorden: "", plan: "", example: true };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.counts) state = s; } catch (e) {}
+  if (state.example) { state.counts = { ...EXAMPLE }; state.naam = EXAMPLE_META.naam; state.tekst = EXAMPLE_META.tekst; state.woorden = String(EXAMPLE_META.woorden); }
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+function tallySVG(n) {
+  if (!n) return '<span class="muted" style="font-size:.85rem">nog geen streepjes</span>';
+  const groups = Math.ceil(n / 5); let x = 4, parts = [];
+  for (let g = 0; g < groups; g++) {
+    const k = Math.min(5, n - g * 5);
+    for (let i = 0; i < Math.min(k, 4); i++) parts.push(`<line x1="${x + i * 6}" y1="4" x2="${x + i * 6 + 1}" y2="26"/>`);
+    if (k === 5) parts.push(`<line x1="${x - 3}" y1="22" x2="${x + 22}" y2="8" stroke="var(--redpen)"/>`);
+    x += 34;
+  }
+  return `<svg width="${x}" height="30" viewBox="0 0 ${x} 30" aria-hidden="true" style="stroke:var(--ink);stroke-width:2.4;stroke-linecap:round">${parts.join("")}</svg>`;
+}
+
+function focusCats() {
+  const list = CATS.map(c => ({ ...c, n: state.counts[c.id] || 0 })).filter(c => c.n > 0).sort((a, b) => b.n - a.n);
+  if (!list.length) return [];
+  const max = list[0].n;
+  const thr = Math.max(2, Math.ceil(max * 0.6));
+  let f = list.filter(c => c.n >= thr);
+  if (!f.length) f = [list[0]];
+  return f.slice(0, 3);
+}
+
+function renderGrid() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = CATS.map((c, i) => `
+    <article class="card" id="card-${c.id}">
+      <div class="card-head"><h3>${c.t}</h3><span class="num">${String(i + 1).padStart(2, "0")}</span></div>
+      <p style="font-size:.95rem">${c.u}</p>
+      <div class="ex"><span class="bad">${c.bad}</span><span class="ok">${c.ok}</span></div>
+      <div class="counter">
+        <button type="button" data-id="${c.id}" data-d="-1" aria-label="Eén fout minder bij ${c.t}">−</button>
+        <span class="count" id="n-${c.id}" aria-live="polite">0</span>
+        <button type="button" data-id="${c.id}" data-d="1" aria-label="Eén fout meer bij ${c.t}">+</button>
+        <div class="tally" id="t-${c.id}"></div>
+      </div>
+      <details>
+        <summary>Mijn eigen voorbeeld (fout → goed)</summary>
+        <label for="own-${c.id}" class="muted" style="font-weight:400">Schrijf een fout uit je tekst en de verbetering.
+          <textarea id="own-${c.id}" data-own="${c.id}" placeholder="fout → goed"></textarea>
+        </label>
+      </details>
+      <span class="chip">Oefenboekje ${c.h}</span>
+    </article>`).join("");
+  grid.addEventListener("click", e => {
+    const b = e.target.closest("button[data-id]"); if (!b) return;
+    state.example = false; const id = b.dataset.id; state.counts[id] = Math.max(0, (state.counts[id] || 0) + Number(b.dataset.d));
+    update();
+  });
+  grid.addEventListener("input", e => {
+    const t = e.target.closest("textarea[data-own]"); if (!t) return;
+    state.own[t.dataset.own] = t.value; save(); renderOut();
+  });
+}
+
+function update() {
+  const focus = focusCats(); const fids = new Set(focus.map(f => f.id));
+  let total = 0, cats = 0;
+  CATS.forEach(c => {
+    const n = state.counts[c.id] || 0; total += n; if (n) cats++;
+    document.getElementById("n-" + c.id).textContent = n;
+    document.getElementById("t-" + c.id).innerHTML = tallySVG(n);
+    const card = document.getElementById("card-" + c.id);
+    card.classList.toggle("has", n > 0); card.classList.toggle("is-focus", fids.has(c.id));
+    const ta = document.getElementById("own-" + c.id); if (ta && ta.value !== (state.own[c.id] || "")) ta.value = state.own[c.id] || "";
+  });
+  const w = parseInt(state.woorden, 10);
+  document.getElementById("s-total").textContent = total;
+  document.getElementById("s-per100").textContent = w > 0 ? (total / w * 100).toFixed(1).replace(".", ",") : "–";
+  document.getElementById("s-cats").textContent = cats;
+
+  const fl = document.getElementById("focus-list");
+  fl.innerHTML = focus.length ? focus.map((c, i) => `
+    <div class="focus">
+      <span class="rank">Aandachtspunt ${i + 1} · ${c.n} ${c.n === 1 ? "fout" : "fouten"}${total ? " · " + Math.round(c.n / total * 100) + " %" : ""}</span>
+      <h3>${c.t}</h3>
+      <p style="font-size:.93rem">${c.u}</p>
+      <p style="font-size:.93rem"><strong>Tip:</strong> ${c.tip}</p>
+      <span><span class="chip">Oefen in het oefenboekje: ${c.h}</span></span>
+    </div>`).join("") : '<p class="empty">Nog geen fouten geteld. Klik in de turflijst op + bij elke fout uit je tekst.</p>';
+
+  const used = CATS.map(c => ({ ...c, n: state.counts[c.id] || 0 })).filter(c => c.n > 0).sort((a, b) => b.n - a.n);
+  const max = used.length ? used[0].n : 1;
+  document.getElementById("bars").innerHTML = used.length ? used.map(c => `
+    <div class="bar ${fids.has(c.id) ? "is-focus" : ""}"><span>${c.t}</span>
+      <div class="track"><div class="fill" style="width:${c.n / max * 100}%"></div></div><span class="n">${c.n}</span></div>`).join("")
+    : '<p class="empty">Hier verschijnt een overzicht zodra je fouten telt.</p>';
+
+  document.getElementById("example-banner").style.display = state.example ? "" : "none";
+  renderOut(); save();
+}
+
+function renderOut() {
+  const focus = focusCats();
+  const lines = [];
+  lines.push(`Foutenanalyse Nederlands – ${state.naam || "(naam)"}`);
+  if (state.tekst) lines.push(`Tekst: ${state.tekst}${state.woorden ? " (" + state.woorden + " woorden)" : ""}`);
+  const total = CATS.reduce((s, c) => s + (state.counts[c.id] || 0), 0);
+  lines.push(`Aantal fouten: ${total}`);
+  lines.push("");
+  lines.push("Aandachtspunten:");
+  if (!focus.length) lines.push("– nog geen");
+  focus.forEach((c, i) => lines.push(`${i + 1}. ${c.t} (${c.n}×) – oefenboekje ${c.h}`));
+  lines.push("");
+  lines.push("Alle categorieën:");
+  CATS.forEach(c => { const n = state.counts[c.id] || 0; if (n) lines.push(`– ${c.t}: ${n}`); });
+  const own = CATS.filter(c => (state.own[c.id] || "").trim());
+  if (own.length) { lines.push(""); lines.push("Mijn voorbeelden:"); own.forEach(c => lines.push(`– ${c.t}: ${state.own[c.id].trim()}`)); }
+  if ((state.plan || "").trim()) { lines.push(""); lines.push("Mijn leerplan:"); lines.push(state.plan.trim()); }
+  document.getElementById("f-out").value = lines.join("\n");
+}
+
+function bindMeta() {
+  const map = { "f-naam": "naam", "f-tekst": "tekst", "f-woorden": "woorden", "f-plan": "plan" };
+  Object.entries(map).forEach(([id, k]) => {
+    const el = document.getElementById(id); el.value = state[k] || "";
+    el.addEventListener("input", () => { state[k] = el.value; update(); });
+  });
+  document.getElementById("meta").addEventListener("submit", e => e.preventDefault());
+}
+
+function clearAll(keepMeta) {
+  state = { counts: {}, own: {}, naam: keepMeta ? state.naam : "", tekst: "", woorden: "", plan: "", example: false };
+  ["f-naam", "f-tekst", "f-woorden", "f-plan"].forEach(id => { const el = document.getElementById(id); el.value = id === "f-naam" && keepMeta ? state.naam : ""; });
+  update();
+}
+
+document.getElementById("btn-clear-example").addEventListener("click", () => { state.naam = ""; clearAll(false); document.getElementById("f-naam").focus(); });
+let resetArmed = false;
+document.getElementById("btn-reset").addEventListener("click", e => {
+  const toast = document.getElementById("toast");
+  if (!resetArmed) { resetArmed = true; e.target.textContent = "Echt alles wissen?"; toast.textContent = ""; setTimeout(() => { resetArmed = false; e.target.textContent = "Alles wissen"; }, 4000); return; }
+  resetArmed = false; e.target.textContent = "Alles wissen"; clearAll(false); toast.textContent = "Alles gewist.";
+});
+document.getElementById("btn-copy").addEventListener("click", async () => {
+  const toast = document.getElementById("toast"); const out = document.getElementById("f-out");
+  try { await navigator.clipboard.writeText(out.value); toast.textContent = "Gekopieerd!"; }
+  catch (e) { out.focus(); out.select(); toast.textContent = "Kopiëren lukt hier niet automatisch: de tekst is geselecteerd, druk op Ctrl+C (Mac: Cmd+C)."; }
+});
+
+load(); renderGrid(); bindMeta(); update();
+</script>
+</body>
+</html>
