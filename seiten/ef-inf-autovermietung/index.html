@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="ablauf" content="2026-12-24">
+<meta name="kurs" content="EF Informatik">
+<meta name="robots" content="noindex, nofollow">
+<title>Palm Bay Rentals – Autovermietung in Java</title>
+<!-- ===== Ablauf-Prüfung v1: Seite nach dem Ablaufdatum nicht mehr anzeigen ===== -->
+<script>
+(function(){
+ var m=document.querySelector('meta[name="ablauf"]');if(!m||!/^\d{4}-\d{2}-\d{2}$/.test(m.content))return;
+ var d=new Date(),p=function(n){return(n<10?'0':'')+n},heute=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+ var a=m.content.split('-'),txt=a[2]+'.'+a[1]+'.'+a[0];
+ if(heute>m.content){document.documentElement.className+=' ka-abgelaufen';
+  document.addEventListener('DOMContentLoaded',function(){var nl=(document.documentElement.lang||'').slice(0,2)==='nl';
+   document.body.innerHTML='<main class="ka-weg"><h1>'+(nl?'Deze pagina is verlopen':'Diese Seite ist abgelaufen')+'</h1><p>'+
+    (nl?'Ze was beschikbaar tot '+txt+'. Vraag je docent als je haar nog nodig hebt.':'Sie war bis zum '+txt+' verfügbar. Frag deine Lehrkraft, wenn du sie noch brauchst.')+'</p></main>';});}
+ else document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('[data-ablauf-text]'),function(e){e.textContent=txt})});
+})();
+</script>
+<style>
+html.ka-abgelaufen body>*:not(.ka-weg){display:none}
+.ka-weg{max-width:640px;margin:15vh auto;padding:0 20px;font-family:Assistant,Arial,Helvetica,sans-serif;color:#605f5f}
+.ka-weg h1{color:#193b8f;font-weight:400;font-size:30px}
+</style>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="../../assets/favicon-16.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+:root{--bg:#0A0A0F;--karte:#101018;--ink:#F5F5F7;--text:#C9C9D3;--grau:#6B6B78;--linie:#23232e;--a:#FF5E3A;--b:#FF2E93;--c:#FFD166;--t:#2CFFB3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 Assistant,Arial,Helvetica,sans-serif}
+.kapu-kopf{border-bottom:1px solid var(--linie)}.kapu-kopf .in{max-width:960px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.kapu-kopf img{height:40px;background:#fff;padding:4px;border-radius:6px}.kapu-kopf .schule{font-size:13px;line-height:1.3}.kapu-kopf .schule b{display:block;color:var(--ink)}.kapu-kopf .bis{margin-left:auto;font-size:13px;color:var(--grau)}
+main{max-width:960px;margin:0 auto;padding:0 20px 40px}
+nav.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--linie)}
+nav.tabs button{font:800 13px ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--linie);background:var(--karte);color:var(--text);padding:9px 14px;cursor:pointer;border-radius:8px}
+nav.tabs button[aria-selected=true]{background:var(--b);border-color:var(--b);color:#0A0A0F}
+section.les{display:none}section.les.on{display:block}
+h1,h2{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);font-weight:800}
+h1{font-size:46px;line-height:1.05;margin:0 0 14px;text-shadow:-2px 0 var(--b),2px 0 var(--a)}
+h2{font-size:24px;margin:0 0 12px}h2.gross{font-size:34px;margin:0;text-shadow:-1.5px 0 var(--b),1.5px 0 var(--a)}
+a{color:var(--c)}
+.kick{font:800 12px ui-monospace,Menlo,monospace;color:var(--a);text-transform:uppercase;letter-spacing:.16em;margin:0 0 8px}
+.lead{font-size:19px;margin:0}.klein{font-size:15px;color:var(--grau)}
+.frage{font:600 21px/1.3 Assistant,Arial,sans-serif;color:var(--c);margin:8px 0 0}
+.held,.kopf{display:grid;grid-template-columns:1fr 1.1fr;gap:24px;align-items:center}.kopf{grid-template-columns:1.2fr 1fr}
+.kopf-bild{max-width:340px;justify-self:end;width:100%}
+@media(max-width:640px){.held,.kopf,.zwei{grid-template-columns:1fr!important}.kopf-bild{justify-self:start;max-width:280px}h1{font-size:34px}}
+.merke{background:var(--karte);border:1px solid var(--linie);border-left:4px solid var(--b);border-radius:10px;padding:14px 18px;margin:18px 0 0}.merke b:first-child{color:var(--b);margin-right:6px;font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.1em;font-size:13px}
+.merke b{color:var(--ink)}
+code{font:500 .88em 'JetBrains Mono',ui-monospace,Consolas,monospace;background:#1b1b26;color:var(--c);padding:1px 5px;border-radius:4px}
+pre.code{background:#05050a;border:1px solid var(--linie);border-radius:10px;color:#E6EDFA;padding:14px 16px;font:13.5px/1.6 'JetBrains Mono',ui-monospace,Consolas,monospace;overflow-x:auto;margin:0 0 8px}
+pre.code.term{color:var(--t);font-size:12.5px}
+.c-kw{color:#FF7AB6;font-weight:600}.c-str{color:#2CFFB3}.c-num{color:#FFD166}.c-com{color:#6B6B78;font-style:italic}.c-fn{color:#FF9E7A}
+.zwei{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:start}
+.uml{border:1px solid var(--a);border-radius:10px;overflow:hidden;font:13px/1.5 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--ink);background:var(--karte)}
+.uml-n{background:var(--a);color:#0A0A0F;text-align:center;font-weight:700;padding:6px}
+.uml ul{list-style:none;margin:0;padding:8px 10px;border-top:1px solid var(--a)}
+.tw-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px}th{background:var(--karte);color:var(--a);text-align:left;padding:8px 10px;font:800 12px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--a)}
+td{border-bottom:1px solid var(--linie);padding:9px 10px;vertical-align:top}
+td.nr{font-weight:700;color:var(--b);white-space:nowrap;font-family:ui-monospace,Menlo,monospace}td.hilfe{font-size:15px;color:var(--grau)}
+table.vgl td:first-child{font-weight:700;color:var(--ink)}
+ol.schritte{padding-left:22px}ol.schritte li{margin:6px 0}
+.knopf{display:inline-block;background:var(--b);color:#0A0A0F;text-decoration:none;font:800 14px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;padding:13px 20px;border-radius:10px;box-shadow:0 0 18px rgba(255,46,147,.45)}.knopf:hover{background:var(--a)}
+ol.fahrplan{list-style:none;padding:0;display:grid;gap:8px}
+ol.fahrplan li{display:grid;grid-template-columns:44px 1fr;column-gap:12px;background:var(--karte);border:1px solid var(--linie);border-radius:10px;padding:10px 14px;align-items:center}
+ol.fahrplan .nr{grid-row:span 2;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid var(--a);color:var(--a);border-radius:8px;font:800 18px ui-monospace,Menlo,monospace}
+ol.fahrplan b{color:var(--ink)}ol.fahrplan li span:last-child{font-size:15px}
+.plateau{display:flex;gap:14px;align-items:center;border:1px solid var(--t);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:18px;color:var(--ink);box-shadow:0 0 16px rgba(44,255,179,.18)}
+.plateau .fl{border:1px solid var(--t);color:var(--t);font:800 12px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.12em;padding:4px 10px;border-radius:6px;flex:none}
+.expert{background:var(--karte);border:1px solid var(--linie);border-radius:10px;padding:12px 16px;margin-bottom:22px}.expert b{color:var(--c);margin-right:6px;font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;font-size:13px;letter-spacing:.1em}
+details.check{border:1px solid var(--linie);border-radius:10px;margin:8px 0;background:var(--karte)}details.check summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--ink)}details.check p{margin:0;padding:0 14px 12px;color:var(--t)}
+.kapu-fuss{max-width:960px;margin:0 auto;padding:16px 20px 32px;border-top:1px solid var(--linie);font-size:13px;color:var(--grau)}
+/* One-page v3 im Neon-Look */
+.op-bar{background:var(--b)!important;box-shadow:0 0 10px var(--b)}
+.op-hint{color:var(--a)!important}
+.op-end .op-klaar{color:var(--ink)!important;font-family:ui-monospace,Menlo,monospace;text-transform:uppercase}
+.op-next{background:var(--b)!important;color:#0A0A0F!important;border-radius:10px;font-family:ui-monospace,Menlo,monospace!important}
+.op-next:hover{background:var(--a)!important}
+.op-tabs{border-top-color:var(--linie)!important}.op-tabs button{background:var(--karte)!important;color:var(--text)!important;border-radius:8px}
+.op-tabs button[aria-current=true]{background:var(--b)!important;color:#0A0A0F!important}
+.op-up{color:var(--grau)!important}
+
+.bd{--bd-bg:#0A0A0F;--bd-ink:#F5F5F7;--bd-a:#FF5E3A;--bd-b:#FF2E93;--bd-c:#FFD166;--bd-loop:4s;color:var(--bd-ink);display:block;width:100%;height:auto}
+.bd[data-pal=mint]{--bd-a:#2CFFB3;--bd-b:#00B3FF;--bd-c:#B8FF5C}
+.ink{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ink-thin{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.solid{fill:currentColor;stroke:none}
+.bd .c-w{color:var(--bd-ink)}.bd .c-a{color:var(--bd-a)}.bd .c-b{color:var(--bd-b)}.bd .c-c{color:var(--bd-c)}.bd .c-g{color:#6B6B78}
+.lbl{font:800 13px ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.14em;fill:currentColor}
+.big{font:800 34px ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.04em;fill:currentColor}
+.bd .ch{mix-blend-mode:screen}
+.bd .ch-a{color:var(--bd-a)}.bd .ch-b{color:var(--bd-b)}.bd .ch-w{color:var(--bd-ink)}
+.bd .neon{filter:drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 7px currentColor)}
+.bd .punch,.bd .shake,.bd .spin,.bd .pulse,.bd .bob{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){
+.bd .ch-a{animation:bdSplitA var(--bd-loop) steps(1,end) infinite}
+.bd .ch-b{animation:bdSplitB var(--bd-loop) steps(1,end) infinite}
+@keyframes bdSplitA{0%{transform:translate(-1.5px,0)}62%{transform:translate(-9px,1px)}64%{transform:translate(6px,-2px)}66%{transform:translate(-4px,0)}68%{transform:translate(-1.5px,0)}90%{transform:translate(-5px,1px)}92%,100%{transform:translate(-1.5px,0)}}
+@keyframes bdSplitB{0%{transform:translate(1.5px,0)}62%{transform:translate(9px,-1px)}64%{transform:translate(-6px,2px)}66%{transform:translate(4px,0)}68%{transform:translate(1.5px,0)}90%{transform:translate(5px,-1px)}92%,100%{transform:translate(1.5px,0)}}
+.bd .flick{animation:bdFlick var(--bd-loop) steps(1,end) infinite}
+@keyframes bdFlick{0%{opacity:1}18%{opacity:.3}19%{opacity:1}21%{opacity:.55}22%{opacity:1}61%{opacity:.2}62%{opacity:1}63%{opacity:.4}64%{opacity:1}}
+.bd .draw{stroke-dasharray:1 2;animation:bdDraw var(--bd-loop) cubic-bezier(.65,0,.25,1) infinite}
+@keyframes bdDraw{0%{stroke-dashoffset:1}38%,76%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+.bd .punch{animation:bdPunch var(--bd-loop) cubic-bezier(.2,.9,.2,1) infinite}
+@keyframes bdPunch{0%{transform:scale(1.7);opacity:0}5%{transform:scale(.92);opacity:1}9%{transform:scale(1.04)}13%,100%{transform:scale(1);opacity:1}}
+.bd .march{stroke-dasharray:2 10;animation:bdMarch 1s linear infinite}
+@keyframes bdMarch{to{stroke-dashoffset:-12}}
+.bd .pulse{animation:bdPulse 2s ease-out infinite}
+@keyframes bdPulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+.bd .bob{animation:bdBob 2s ease-in-out infinite}
+@keyframes bdBob{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
+.bd .sweep,.bd .echo{animation:bdSweep calc(var(--bd-loop)/2) cubic-bezier(.7,0,.3,1) infinite alternate}
+.bd .echo{opacity:calc(.9 - var(--n,1)*.2)}
+@keyframes bdSweep{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+.bd .fill{animation:bdFill var(--bd-loop) steps(1,end) infinite}
+@keyframes bdFill{0%{opacity:.12}20%,100%{opacity:1}}
+.bd .ch-a,.bd .ch-b,.bd .flick,.bd .draw,.bd .punch,.bd .march,.bd .pulse,.bd .sweep,.bd .echo,.bd .bob,.bd .fill{animation-delay:var(--dl,0s)}
+}
+.bd.still *{animation-play-state:paused!important}
+
+@media print{body{background:#fff;color:#222}nav.tabs,.knopf{display:none!important}section.les{display:block!important;break-before:page}section.les:first-of-type{break-before:auto}details.check p{display:block}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<g id="d-car" class="ink"><path pathLength="1" d="M-82,10 L-82,-2 Q-80,-11 -62,-13 L-34,-15 L-12,-31 L26,-31 L50,-15 L74,-11 Q84,-8 84,2 L84,10"/>
+ <path pathLength="1" d="M-30,-15 L-8,-27 L22,-27 L42,-15 Z"/><path pathLength="1" d="M-64,10 L-36,10 M-12,10 L32,10 M68,10 L84,10"/>
+ <circle pathLength="1" cx="-50" cy="11" r="13"/><circle pathLength="1" cx="56" cy="11" r="13"/><circle class="solid" cx="-50" cy="11" r="3"/><circle class="solid" cx="56" cy="11" r="3"/></g>
+<g id="d-van" class="ink"><path pathLength="1" d="M-74,12 L-74,-34 Q-74,-40 -68,-40 L30,-40 L60,-12 L74,-6 L74,12"/>
+ <path pathLength="1" d="M-62,-30 L-34,-30 L-34,-14 L-62,-14 Z M-24,-30 L4,-30 L4,-14 L-24,-14 Z M14,-30 L30,-30 L48,-14 L14,-14 Z"/>
+ <path pathLength="1" d="M-58,12 L-34,12 M-6,12 L34,12 M62,12 L74,12"/><circle pathLength="1" cx="-46" cy="13" r="12"/><circle pathLength="1" cx="48" cy="13" r="12"/></g>
+<g id="d-boat" class="ink"><path pathLength="1" d="M-84,-2 L84,-2 L64,22 L-70,22 Z"/><path pathLength="1" d="M-30,-2 L-18,-24 L28,-24 L46,-2"/>
+ <path pathLength="1" d="M-12,-20 L22,-20"/><path pathLength="1" d="M-96,34 Q-84,26 -72,34 T-48,34 T-24,34 T0,34 T24,34 T48,34 T72,34 T96,34"/></g>
+<g id="d-palm" class="ink"><path pathLength="1" d="M6,90 Q-10,30 4,-30"/><path pathLength="1" d="M4,-30 Q-30,-50 -64,-30 M4,-30 Q-20,-70 -44,-74 M4,-30 Q30,-64 62,-56 M4,-30 Q40,-36 66,-10 M4,-30 Q-26,-26 -50,4"/>
+ <path class="ink-thin" pathLength="1" d="M-2,60 h12 M-4,30 h12 M-4,0 h12"/></g>
+<g id="d-sun"><circle class="ink" pathLength="1" r="64"/>
+ <path class="ink-thin" d="M-60,16 H60 M-54,30 H54 M-44,44 H44 M-28,56 H28"/></g>
+<g id="d-batt" class="ink"><rect pathLength="1" x="-56" y="-26" width="104" height="52" rx="8"/><rect pathLength="1" x="48" y="-10" width="10" height="20" rx="3"/></g>
+<g id="d-plug" class="ink"><path pathLength="1" d="M-16,-30 L-16,-50 M16,-30 L16,-50 M-26,-30 L26,-30 L26,-6 Q26,14 0,14 Q-26,14 -26,-6 Z M0,14 L0,40 Q0,56 -24,56"/></g>
+<g id="d-key" class="ink"><circle pathLength="1" cx="-36" cy="0" r="22"/><circle pathLength="1" cx="-36" cy="0" r="7"/><path pathLength="1" d="M-14,0 L54,0 L54,16 M36,0 L36,12"/></g>
+<g id="d-box" class="ink"><rect pathLength="1" x="-70" y="-22" width="140" height="44" rx="10"/></g>
+<text id="t-title" class="big" text-anchor="middle" x="0" y="12">PALM BAY RENTALS</text>
+</defs></svg>
+<header class="kapu-kopf"><div class="in"><img src="../../assets/kapu-bildmarke.png" alt="Kapu" onerror="this.remove()">
+<div class="schule"><b>Bischöfliches St.-Josef-Gymnasium Bocholt</b><span>Informatik EF · Projekt Autovermietung</span></div>
+<div class="bis">online bis <span data-ablauf-text></span></div></div></header>
+<main data-op-schluss="Flotte läuft – Schlüssel gehört dir!">
+<nav class="tabs" role="tablist"><button type="button" data-go="s0" aria-selected="true">Start</button><button type="button" data-go="s1" aria-selected="false">Stufe 1</button><button type="button" data-go="s2" aria-selected="false">Stufe 2</button><button type="button" data-go="s3" aria-selected="false">Stufe 3</button><button type="button" data-go="s4" aria-selected="false">Stufe 4</button></nav>
+<section class="les on" id="s0">
+<div class="op-samen"><div class="held"><div><p class="kick">Informatik EF · Projekt Autovermietung</p>
+<h1>Palm Bay Rentals</h1>
+<p class="lead">Sonne, Palmen, Neon – und eine Flotte Mietwagen, die du programmierst. Mit dem Rover hast du Aufträge, Anfragen, Parameter und Rückgaben kennengelernt. Jetzt baust du das alles selbst in Java.</p></div>
+<div class="held-bild"><svg class="bd" viewBox="0 0 760 360" role="img" aria-label="Sportwagen vor Neon-Sonne und Palme">
+<rect width="760" height="360" rx="14" fill="#0A0A0F"/>
+<g transform="translate(470,130) scale(1.25)"><g class="neon c-a flick"><use href="#d-sun"/></g></g>
+<g transform="translate(640,170) scale(1)"><g class="c-b neon"><use href="#d-palm" class="draw"/></g></g>
+<g transform="translate(120,190) scale(0.8)"><g class="c-g"><use href="#d-palm"/></g></g>
+<path class="ink c-w" d="M20,262 H740" /><path class="ink march c-c" d="M40,300 H720" style="stroke-width:4"/>
+<g class="c-c"><rect class="solid echo" x="160" y="226" width="40" height="3" style="--n:3;--dl:.24s"/></g>
+<g class="c-b"><rect class="solid echo" x="150" y="236" width="56" height="3" style="--n:2;--dl:.12s"/></g>
+<g transform="translate(330,236) scale(1.35)"><g class="rgb"><use href="#d-car" class="ch ch-a"/><use href="#d-car" class="ch ch-b"/><use href="#d-car" class="ch ch-w"/></g></g>
+<g transform="translate(380,340) scale(1)"><g class="rgb"><use href="#t-title" class="ch ch-a"/><use href="#t-title" class="ch ch-b"/><use href="#t-title" class="ch ch-w"/></g></g>
+</svg></div></div></div>
+<div class="op-samen"><h2>Das kennst du schon</h2>
+<div class="tw-wrap"><table class="vgl"><thead><tr><th></th><th>Marsrover (Greenfoot)</th><th>Autovermietung (BlueJ)</th></tr></thead><tbody><tr><td>Auftrag</td><td><code>fahre();</code></td><td><code>fahre();</code></td></tr><tr><td>Anfrage</td><td><code>gesteinVorhanden()</code></td><td><code>istVoll()</code></td></tr><tr><td>while-Schleife</td><td><code>while (!huegelVorhanden(&quot;vorne&quot;))</code></td><td><code>while (!istVoll())</code></td></tr><tr><td>Parameter</td><td><code>fahreSchritte(int pAnzahl)</code></td><td><code>fahreBloecke(int pAnzahl)</code></td></tr><tr><td>Rückgabe</td><td><code>int fahreHoechstens(int pMax)</code></td><td><code>int ladeBalken(int pAnzahl)</code></td></tr><tr><td>Vererbung</td><td><code>Rover extends Actor</code></td><td><code>Sportwagen extends Fahrzeug</code></td></tr><tr><td>Viele Objekte</td><td><code>ein Rover</code></td><td><code>Fahrzeug[] flotte</code></td></tr></tbody></table></div>
+<p class="klein">Neu sind die beiden letzten Zeilen: Vererbung schreibst du selbst, und statt einem Objekt verwaltest du viele.</p></div>
+<div class="op-samen"><h2>So arbeitest du</h2>
+<ol class="schritte"><li>Lade das BlueJ-Projekt herunter und entpacke es. Es enthält vier Ordner – einen pro Stufe.</li>
+<li>Öffne in BlueJ den Ordner der aktuellen Stufe (<i>Projekt → Projekt öffnen</i>) und klicke auf <i>Übersetzen</i>.</li>
+<li>Rechtsklick auf <b>Pruefstand</b> → <code>allesPruefen()</code>. Im Terminal erscheint eine Testtabelle wie im Rover-Labor.</li>
+<li>Bearbeite die Stellen <code>// TODO Aufgabe x.y</code> der Reihe nach und prüfe nach jeder Aufgabe neu.</li></ol>
+<p><a class="knopf" href="Autovermietung_Prototyp_BlueJ.zip" download>BlueJ-Projekt herunterladen (.zip)</a></p>
+<pre class="code term">=== Stufe 1: Auftraege und Anfragen ===
+Testfall                       erwartet   erhalten   ok
+2x fahre(): gibPosition()      2          0          NEIN
+--> 4 von 12 Tests bestanden</pre></div>
+<div class="op-samen"><h2>Dein Kurs in vier Stufen</h2><ol class="fahrplan"><li><span class="nr">1</span><b>Aufträge und Anfragen</b><span>Ich schreibe Aufträge und Anfragen, die Attribute verändern oder abfragen.</span></li><li><span class="nr">2</span><b>Werte rein, Ergebnis raus</b><span>Ich schreibe Methoden mit Parametern und Rückgabe und prüfe sie mit Testfällen, auch Grenzfällen.</span></li><li><span class="nr">3</span><b>Sportwagen, Van, Speedboot</b><span>Ich ergänze eine Unterklasse mit super-Aufruf und überschreibe Methoden mit und ohne super.</span></li><li><span class="nr">4</span><b>Die ganze Flotte</b><span>Ich durchlaufe ein Array von Objekten, um zu summieren, zu zählen, zu suchen und das Maximum zu finden.</span></li></ol>
+<p class="klein">Jede Stufe endet mit einem <b>Plateau</b>: Das erreichen alle, bevor es gemeinsam weitergeht. Expert-Aufgaben sind freiwillig.</p></div>
+</section>
+<section class="les" id="s1">
+<div class="op-samen"><div class="kopf"><div><p class="kick">Stufe 1 · Methoden</p><h2 class="gross">Aufträge und Anfragen</h2><p class="frage">Was merkt sich ein Mietwagen, und wie fragt man ihn?</p></div><div class="kopf-bild"><svg class="bd" viewBox="0 0 400 320" role="img" aria-label="Auto mit Akkuanzeige, Frage istVoll">
+<rect width="400" height="320" rx="14" fill="#0A0A0F"/>
+<g transform="translate(200,96) scale(1.3)"><g class="c-w"><use href="#d-batt"/></g></g>
+<g transform="translate(200,96) scale(1.3)"><rect class="solid c-c fill" x="-50" y="-18" width="20" height="36" rx="3" style="--dl:0.00s"/><rect class="solid c-c fill" x="-26" y="-18" width="20" height="36" rx="3" style="--dl:0.25s"/><rect class="solid c-c fill" x="-2" y="-18" width="20" height="36" rx="3" style="--dl:0.50s"/><rect class="ink-thin c-g" x="22" y="-18" width="20" height="36" rx="3" style="--dl:0.75s"/></g>
+<text class="lbl c-b neon flick" x="200" y="40" text-anchor="middle">ISTVOLL() ?</text>
+<g transform="translate(200,236) scale(1.1)"><g class="c-w bob"><use href="#d-car"/></g></g>
+<text class="lbl c-a" x="200" y="300" text-anchor="middle">FALSE</text>
+</svg></div></div>
+<div class="merke"><b>Merke</b> Ein Objekt hat <b>Attribute</b> (was es sich merkt) und <b>Methoden</b>. <b>Aufträge</b> (<code>void</code>) verändern Attribute, <b>Anfragen</b> geben mit <code>return</code> eine Antwort. Beim Rover waren die Attribute versteckt – jetzt schreibst du sie selbst.</div></div>
+<div class="op-samen"><h2>Klassenkarte und Beispiel</h2><div class="zwei"><div class="uml"><div class="uml-n">Auto</div><ul><li>- name : String</li><li>- position : int</li><li>- akku : int</li><li>- akkuGroesse : int</li></ul><ul><li>+ Auto(pName : String, pAkkuGroesse : int)</li><li>+ fahre()</li><li>+ ladeBalken()</li><li>+ verbraucheBalken()</li><li>+ ladeKomplett()</li><li>+ istInGarage() : boolean</li><li>+ istVoll() : boolean</li><li>+ istLeer() : boolean</li><li>+ anzeigen()</li></ul></div><div><pre class="code"><span class="c-kw">public</span> <span class="c-kw">boolean</span> <span class="c-fn">istInGarage</span>()
+{
+    <span class="c-kw">return</span> position == <span class="c-num">0</span>;
+}</pre><p class="klein">So sieht eine fertige Anfrage aus. Baue istVoll() und istLeer() genauso.</p></div></div></div>
+<div class="op-samen"><h2>Deine Aufgaben</h2><div class="tw-wrap"><table class="aufg"><thead><tr><th>Nr.</th><th>Aufgabe</th><th>Das hilft</th></tr></thead><tbody><tr><td class="nr">1.1</td><td><code>fahre()</code>: Position um 1 erhöhen.</td><td class="hilfe">Rover: <code>fahre()</code></td></tr><tr><td class="nr">1.2</td><td><code>istVoll()</code> und <code>istLeer()</code> mit <code>return</code> schreiben.</td><td class="hilfe">Rover: <code>gesteinVorhanden()</code></td></tr><tr><td class="nr">1.3</td><td><code>ladeBalken()</code>: nur laden, wenn der Akku nicht voll ist.</td><td class="hilfe">if mit Anfrage</td></tr><tr><td class="nr">1.4</td><td><code>verbraucheBalken()</code>: nur, wenn der Akku nicht leer ist.</td><td class="hilfe">wie 1.3</td></tr><tr><td class="nr">1.5</td><td><code>ladeKomplett()</code>: Balken laden, bis der Akku voll ist.</td><td class="hilfe">Rover: <code>while (!huegelVorhanden("vorne"))</code></td></tr></tbody></table></div>
+<p class="klein">Ziel im Prüfstand: <b>12 von 12 Tests</b></p></div>
+<div class="op-samen"><div class="plateau"><span class="fl">Plateau</span><span>Ich schreibe Aufträge und Anfragen, die Attribute verändern oder abfragen.</span></div>
+<div class="expert"><b>Expert</b> Schreibe <code>fahreBisLeer()</code>: Bei jedem Block wird ein Balken verbraucht, bis der Akku leer ist.</div>
+<h2>Check dich selbst</h2><details class="check"><summary>Was gibt <code>istInGarage()</code> nach zweimal <code>fahre()</code> zurück?</summary><p>false – die Position ist 2, nicht 0.</p></details><details class="check"><summary>Warum hat <code>istVoll()</code> den Rückgabetyp <code>boolean</code>?</summary><p>Die Antwort ist wahr oder falsch, also boolean.</p></details></div>
+</section><section class="les" id="s2">
+<div class="op-samen"><div class="kopf"><div><p class="kick">Stufe 2 · Parameter</p><h2 class="gross">Werte rein, Ergebnis raus</h2><p class="frage">Wie sage ich dem Auto, wie viel es laden soll – und was wurde wirklich geladen?</p></div><div class="kopf-bild"><svg class="bd" viewBox="0 0 400 320" role="img" aria-label="Stecker laedt fuenf Balken, nur drei passen">
+<rect width="400" height="320" rx="14" fill="#0A0A0F"/>
+<g transform="translate(80,120) scale(1.1)"><g class="c-b neon"><use href="#d-plug" class="draw"/></g></g>
+<text class="big c-c" x="44" y="276">+5</text>
+<g transform="translate(250,150) scale(1.3)"><g class="c-w"><use href="#d-batt"/></g></g>
+<g transform="translate(250,150) scale(1.3)"><rect class="solid c-w" x="-50" y="-18" width="20" height="36" rx="3"/><rect class="solid c-c fill" x="-26" y="-18" width="20" height="36" rx="3" style="--dl:0.00s"/><rect class="solid c-c fill" x="-2" y="-18" width="20" height="36" rx="3" style="--dl:0.25s"/><rect class="solid c-c fill" x="22" y="-18" width="20" height="36" rx="3" style="--dl:0.50s"/></g>
+<path class="ink march c-a" d="M120,150 H170"/>
+<g class="punch" style="--dl:1.6s"><rect class="ink c-a neon" x="206" y="232" width="128" height="40" rx="8"/><text class="lbl c-a" x="270" y="257" text-anchor="middle">RETURN 3</text></g>
+<text class="lbl c-g" x="250" y="70" text-anchor="middle">NUR 3 FREI</text>
+</svg></div></div>
+<div class="merke"><b>Merke</b> Ein <b>Parameter</b> bringt einen Wert in die Methode (<code>int pAnzahl</code>). Mit einem <b>Rückgabetyp</b> wie <code>int</code> liefert sie ein Ergebnis zurück. Zwei Methoden dürfen gleich heißen, wenn ihre Parameter verschieden sind (<b>Überladen</b>).</div></div>
+<div class="op-samen"><h2>Klassenkarte und Beispiel</h2><div class="zwei"><div class="uml"><div class="uml-n">Auto</div><ul><li>…</li><li>- geschwindigkeit : int</li></ul><ul><li>+ fahreBloecke(pAnzahl : int)</li><li>+ gibFreieBalken() : int</li><li>+ ladeBalken(pAnzahl : int) : int</li><li>+ verbraucheBalken(pAnzahl : int) : int</li><li>+ berechneFahrzeit(pKilometer : int) : int</li><li>+ schafftStrecke(pKilometer : int, pStunden : int) : boolean</li></ul></div><div><pre class="code">Auto a = <span class="c-kw">new</span> <span class="c-fn">Auto</span>(<span class="c-str">&quot;Flamingo GT&quot;</span>, <span class="c-num">10</span>, <span class="c-num">60</span>);
+a.<span class="c-fn">ladeBalken</span>(<span class="c-num">4</span>);             <span class="c-com">// liefert 4</span>
+a.<span class="c-fn">ladeBalken</span>(<span class="c-num">9</span>);             <span class="c-com">// nur 6 frei: liefert 6</span>
+<span class="c-kw">int</span> h = a.<span class="c-fn">berechneFahrzeit</span>(<span class="c-num">121</span>);  <span class="c-com">// 3 Stunden</span></pre><p class="klein">So wird getestet. Leite die Werte erst selbst her, dann starte den Prüfstand.</p></div></div></div>
+<div class="op-samen"><h2>Deine Aufgaben</h2><div class="tw-wrap"><table class="aufg"><thead><tr><th>Nr.</th><th>Aufgabe</th><th>Das hilft</th></tr></thead><tbody><tr><td class="nr">2.1</td><td><code>fahreBloecke(int pAnzahl)</code> mit einer for-Schleife.</td><td class="hilfe">Rover: <code>fahreSchritte(int pAnzahl)</code></td></tr><tr><td class="nr">2.2</td><td><code>gibFreieBalken()</code>: freie Balken zurückgeben.</td><td class="hilfe">Größe minus Ladung</td></tr><tr><td class="nr">2.3</td><td><code>ladeBalken(int pAnzahl)</code>: höchstens so viele laden, wie frei sind; Anzahl zurückgeben.</td><td class="hilfe">Rover: <code>fahreHoechstens(int pMax)</code></td></tr><tr><td class="nr">2.4</td><td><code>verbraucheBalken(int pAnzahl)</code>: wie 2.3 zum Verbrauchen.</td><td class="hilfe">wie 2.3</td></tr><tr><td class="nr">2.5</td><td><code>berechneFahrzeit(int pKilometer)</code>: angefangene Stunden zählen voll.</td><td class="hilfe">Zählschleife wie <code>schritteBisHuegel()</code></td></tr></tbody></table></div>
+<p class="klein">Ziel im Prüfstand: <b>15 von 17 Tests (ohne Expert)</b></p></div>
+<div class="op-samen"><div class="plateau"><span class="fl">Plateau</span><span>Ich schreibe Methoden mit Parametern und Rückgabe und prüfe sie mit Testfällen, auch Grenzfällen.</span></div>
+<div class="expert"><b>Expert</b> 2.6 <code>schafftStrecke(int pKilometer, int pStunden)</code> mit <code>berechneFahrzeit</code>.</div>
+<h2>Check dich selbst</h2><details class="check"><summary>Was liefert <code>ladeBalken(9)</code>, wenn nur 6 Balken frei sind?</summary><p>6 – es wird nur geladen, solange Platz ist.</p></details><details class="check"><summary>Wie lange braucht ein Auto mit 60 km/h für 121 km?</summary><p>3 Stunden – die angefangene dritte Stunde zählt voll.</p></details></div>
+</section><section class="les" id="s3">
+<div class="op-samen"><div class="kopf"><div><p class="kick">Stufe 3 · Vererbung</p><h2 class="gross">Sportwagen, Van, Speedboot</h2><p class="frage">Was haben alle Mietfahrzeuge gemeinsam – und was kann nur ein Sportwagen?</p></div><div class="kopf-bild"><svg class="bd" viewBox="0 0 400 320" role="img" aria-label="Fahrzeug als Oberklasse: Sportwagen, Van, Speedboot">
+<rect width="400" height="320" rx="14" fill="#0A0A0F"/>
+<g transform="translate(200,50) scale(1)"><g class="c-c neon"><use href="#d-box"/></g></g>
+<text class="lbl c-c" x="200" y="55" text-anchor="middle">FAHRZEUG</text>
+<g class="c-w"><path class="ink-thin draw" pathLength="1" d="M200,72 V100 M70,100 H330 M70,100 V130 M200,100 V130 M330,100 V130"/></g>
+<g transform="translate(70,180) scale(0.62)"><g class="rgb"><use href="#d-car" class="ch ch-a"/><use href="#d-car" class="ch ch-b"/><use href="#d-car" class="ch ch-w"/></g></g>
+<g transform="translate(200,186) scale(0.62)"><g class="c-w"><use href="#d-van"/></g></g>
+<g transform="translate(330,180) scale(0.58)"><g class="c-w bob"><use href="#d-boat"/></g></g>
+<text class="lbl c-g" x="70" y="236" text-anchor="middle">SPORTWAGEN</text><text class="lbl c-g" x="200" y="236" text-anchor="middle">VAN</text><text class="lbl c-g" x="330" y="236" text-anchor="middle">SPEEDBOOT</text>
+<text class="lbl c-b neon flick" x="200" y="290" text-anchor="middle">EXTENDS FAHRZEUG</text>
+</svg></div></div>
+<div class="merke"><b>Merke</b> Die <b>Oberklasse</b> <code>Fahrzeug</code> enthält, was alle Fahrzeuge gemeinsam haben. Unterklassen <b>erben</b> alles (<code>extends</code>) und ergänzen Eigenes. <code>super(…)</code> ruft den Konstruktor der Oberklasse auf, <code>@Override</code> überschreibt eine Methode – mit <code>super.methode()</code> wird sie erweitert, ohne wird sie ersetzt. <code>abstract</code>: Es gibt kein Objekt, das <i>nur</i> ein Fahrzeug ist.</div></div>
+<div class="op-samen"><h2>Klassenkarte und Beispiel</h2><div class="zwei"><div class="uml"><div class="uml-n">Fahrzeug {abstract}</div><ul><li>- name : String</li><li>- position : int</li><li>- geschwindigkeit : int</li></ul><ul><li>+ fahreBloecke(pAnzahl : int)</li><li>+ berechneFahrzeit(pKilometer : int) : int</li><li>+ gibTyp() : String {abstract}</li><li>+ berechneMiete() : int</li><li>+ anzeigen()</li></ul></div><div><pre class="code"><span class="c-kw">public</span> <span class="c-kw">class</span> Sportwagen <span class="c-kw">extends</span> Fahrzeug
+{
+    @Override
+    <span class="c-kw">public</span> <span class="c-kw">int</span> <span class="c-fn">berechneMiete</span>()
+    {
+        <span class="c-kw">return</span> <span class="c-kw">super</span>.<span class="c-fn">berechneMiete</span>() + ps / <span class="c-num">2</span>;
+    }
+}</pre><p class="klein">Sportwagen ist die fertige Musterklasse. Lies sie zuerst, dann ergänze Van.</p></div></div></div>
+<div class="op-samen"><h2>Deine Aufgaben</h2><div class="tw-wrap"><table class="aufg"><thead><tr><th>Nr.</th><th>Aufgabe</th><th>Das hilft</th></tr></thead><tbody><tr><td class="nr">3.1</td><td><code>Van</code>: Konstruktor ergänzen (<code>super(…)</code> steht schon da).</td><td class="hilfe">wie Sportwagen</td></tr><tr><td class="nr">3.2</td><td><code>gibTyp()</code> überschreiben.</td><td class="hilfe">Pflicht-Override</td></tr><tr><td class="nr">3.3</td><td><code>einsteigen(int pAnzahl)</code>: höchstens so viele, wie Sitze frei sind.</td><td class="hilfe">wie <code>ladeBalken(int)</code></td></tr><tr><td class="nr">3.4</td><td><code>alleAussteigen()</code>: Anzahl merken, auf 0 setzen, zurückgeben.</td><td class="hilfe">Hilfsvariable</td></tr><tr><td class="nr">3.5</td><td><code>berechneMiete()</code> MIT super: + 5 € je Mitfahrer.</td><td class="hilfe">wie Sportwagen</td></tr><tr><td class="nr">3.6</td><td><code>anzeigen()</code> MIT super.</td><td class="hilfe">erst super, dann Mitfahrer</td></tr><tr><td class="nr">3.7</td><td><code>Speedboot</code>: <code>berechneMiete()</code> OHNE super: 200 € + 2 € je Liter im Tank.</td><td class="hilfe">komplett neu</td></tr></tbody></table></div>
+<p class="klein">Ziel im Prüfstand: <b>15 von 15 Tests</b></p></div>
+<div class="op-samen"><div class="plateau"><span class="fl">Plateau</span><span>Ich ergänze eine Unterklasse mit super-Aufruf und überschreibe Methoden mit und ohne super.</span></div>
+<div class="expert"><b>Expert</b> Schreibe eine vierte Unterklasse <code>Motorrad</code> (Miete nur 30 €, ohne super).</div>
+<h2>Check dich selbst</h2><details class="check"><summary>Warum darf man nicht <code>new Fahrzeug(…)</code> schreiben?</summary><p>Fahrzeug ist abstrakt – es gibt nur Sportwagen, Vans und Speedboote.</p></details><details class="check"><summary>Was liefert <code>f.gibTyp()</code> bei <code>Fahrzeug f = new Van(…)</code>?</summary><p>"Van" – entscheidend ist das Objekt, nicht der Variablentyp (Polymorphie).</p></details></div>
+</section><section class="les" id="s4">
+<div class="op-samen"><div class="kopf"><div><p class="kick">Stufe 4 · Arrays</p><h2 class="gross">Die ganze Flotte</h2><p class="frage">Wie verwaltet Palm Bay Rentals viele Fahrzeuge auf einmal?</p></div><div class="kopf-bild"><svg class="bd" viewBox="0 0 400 320" role="img" aria-label="Stellplaetze 0 bis 4 als Array">
+<rect width="400" height="320" rx="14" fill="#0A0A0F"/>
+<text class="lbl c-b neon" x="200" y="48" text-anchor="middle">FAHRZEUG[] FLOTTE</text>
+<path class="ink march c-a" d="M40,90 H350"/><path class="ink c-a" d="M342,82 L352,90 L342,98"/>
+<text class="lbl c-a" x="40" y="80">FOR (INT I ...)</text>
+<rect class="ink-thin c-g" x="10" y="120" width="64" height="110" rx="6"/><text class="lbl c-c" x="42" y="256" text-anchor="middle">[0]</text><g transform="translate(42,178) scale(0.34)"><g class="c-w"><use href="#d-car"/></g></g>
+<rect class="ink-thin c-g" x="86" y="120" width="64" height="110" rx="6"/><text class="lbl c-c" x="118" y="256" text-anchor="middle">[1]</text><g transform="translate(118,178) scale(0.34)"><g class="c-w"><use href="#d-van"/></g></g>
+<rect class="ink-thin c-g" x="162" y="120" width="64" height="110" rx="6"/><text class="lbl c-c" x="194" y="256" text-anchor="middle">[2]</text><g transform="translate(194,176) scale(0.32)"><g class="c-w"><use href="#d-boat"/></g></g>
+<rect class="ink-thin c-g" x="238" y="120" width="64" height="110" rx="6"/><text class="lbl c-c" x="270" y="256" text-anchor="middle">[3]</text><text class="lbl c-g" x="270" y="180" text-anchor="middle">NULL</text>
+<rect class="ink-thin c-g" x="314" y="120" width="64" height="110" rx="6"/><text class="lbl c-c" x="346" y="256" text-anchor="middle">[4]</text><text class="lbl c-g" x="346" y="180" text-anchor="middle">NULL</text>
+<g class="punch" style="--dl:1s"><rect class="ink c-c neon" x="236" y="118" width="68" height="114" rx="8"/></g>
+<text class="lbl c-w" x="200" y="296" text-anchor="middle">ANZAHL = 3</text>
+</svg></div></div>
+<div class="merke"><b>Merke</b> Ein <b>Array</b> ist eine Reihe nummerierter Stellplätze: <code>Fahrzeug[] flotte = new Fahrzeug[10];</code>. Die Zählung beginnt bei <b>0</b>. <code>anzahl</code> zeigt auf den nächsten freien Platz. Weil Sportwagen, Vans und Speedboote alle <i>Fahrzeuge</i> sind, passen sie in dasselbe Array.</div></div>
+<div class="op-samen"><h2>Klassenkarte und Beispiel</h2><div class="zwei"><div class="uml"><div class="uml-n">Autovermietung</div><ul><li>- name : String</li><li>- flotte : Fahrzeug[]</li><li>- anzahl : int</li></ul><ul><li>+ hinzufuegen(pFahrzeug : Fahrzeug) : boolean</li><li>+ alleAnzeigen()</li><li>+ alleFahren(pBloecke : int)</li><li>+ berechneGesamtmiete() : int</li><li>+ zaehleTyp(pTyp : String) : int</li><li>+ sucheFahrzeug(pName : String) : Fahrzeug</li><li>+ gibSchnellstesFahrzeug() : Fahrzeug</li><li>+ sortiereNachGeschwindigkeit()</li></ul></div><div><pre class="code"><span class="c-kw">public</span> <span class="c-kw">void</span> <span class="c-fn">alleAnzeigen</span>()
+{
+    <span class="c-kw">for</span> (<span class="c-kw">int</span> i = <span class="c-num">0</span>; i &lt; anzahl; i++)
+    {
+        flotte[i].<span class="c-fn">anzeigen</span>();
+    }
+}</pre><p class="klein">Das Muster für fast alle Aufgaben: das Array mit einer for-Schleife durchlaufen.</p></div></div></div>
+<div class="op-samen"><h2>Deine Aufgaben</h2><div class="tw-wrap"><table class="aufg"><thead><tr><th>Nr.</th><th>Aufgabe</th><th>Das hilft</th></tr></thead><tbody><tr><td class="nr">4.1</td><td><code>hinzufuegen(Fahrzeug pFahrzeug)</code>: an Stelle <code>anzahl</code> einfügen, wenn Platz ist.</td><td class="hilfe"><code>flotte.length</code></td></tr><tr><td class="nr">4.2</td><td><code>alleFahren(int pBloecke)</code>: Array durchlaufen.</td><td class="hilfe">wie <code>alleAnzeigen()</code></td></tr><tr><td class="nr">4.3</td><td><code>berechneGesamtmiete()</code>: Summe bilden.</td><td class="hilfe">Akkumulator</td></tr><tr><td class="nr">4.4</td><td><code>zaehleTyp(String pTyp)</code>: zählen mit Bedingung.</td><td class="hilfe">Strings mit <code>equals</code></td></tr><tr><td class="nr">4.5</td><td><code>sucheFahrzeug(String pName)</code>: lineare Suche.</td><td class="hilfe">Treffer sofort zurückgeben</td></tr><tr><td class="nr">4.6</td><td><code>gibSchnellstesFahrzeug()</code>: Maximumsuche.</td><td class="hilfe">erstes Fahrzeug merken, vergleichen</td></tr></tbody></table></div>
+<p class="klein">Ziel im Prüfstand: <b>12 von 13 Tests (ohne Expert)</b></p></div>
+<div class="op-samen"><div class="plateau"><span class="fl">Plateau</span><span>Ich durchlaufe ein Array von Objekten, um zu summieren, zu zählen, zu suchen und das Maximum zu finden.</span></div>
+<div class="expert"><b>Expert</b> 4.7 <code>sortiereNachGeschwindigkeit()</code> mit Bubblesort.</div>
+<h2>Check dich selbst</h2><details class="check"><summary>Die Flotte hat 3 Fahrzeuge. An welcher Stelle landet das nächste?</summary><p>flotte[3] – gezählt wird ab 0.</p></details><details class="check"><summary>Was passiert bei <code>flotte[anzahl].anzeigen()</code>?</summary><p>NullPointerException – dort steht noch kein Fahrzeug (null).</p></details></div>
+</section>
+</main>
+<footer class="kapu-fuss">Bischöfliches St.-Josef-Gymnasium · Hemdener Weg 19 · 46399 Bocholt · Alle Grafiken: eigene Doodles. Palm Bay ist eine erfundene Stadt.</footer>
+<script>
+(function(){
+ var tabs=[].slice.call(document.querySelectorAll('nav.tabs button'));
+ function go(id){tabs.forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.go===id))});
+  [].forEach.call(document.querySelectorAll('section.les'),function(s){s.classList.toggle('on',s.id===id)});
+  var nav=document.querySelector('nav.tabs'),sec=document.getElementById(id);
+  window.scrollTo(0,Math.max(0,sec.getBoundingClientRect().top+pageYOffset-nav.offsetHeight-8));
+  try{history.replaceState(null,'','#'+id)}catch(e){}}
+ tabs.forEach(function(b){b.addEventListener('click',function(){go(b.dataset.go)})});
+ var h=location.hash.slice(1);if(h&&document.getElementById(h))go(h);
+ if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('still',!e.isIntersecting)})});
+  [].forEach.call(document.querySelectorAll('svg.bd'),function(d){io.observe(d)})}
+})();
+</script>
+<!-- ===== One-page v3: jede Aufgabe einzeln, Einblenden beim Scrollen, Navigation am Lektionsende ===== -->
+<style>
+.op-step{position:relative;min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding:32px 0 64px;box-sizing:border-box;scroll-snap-align:start}
+.op-step>:first-child{margin-top:0}.op-step>:last-child{margin-bottom:0}
+html.op-snap{scroll-snap-type:y proximity}
+/* Einblenden (wie auszeitamrhein.de: 24px aufsteigen, threshold .15; Dauer .4s) */
+.op-rv{opacity:0;transform:translateY(24px);transition:opacity .4s ease,transform .4s ease}
+.op-rv.op-in{opacity:1;transform:none}
+html.still .op-rv{opacity:1!important;transform:none!important;transition:none!important}
+.op-kopie{margin:6px 0 14px;border:1px solid #b1b2b3}.op-kopie>summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#193b8f;background:#e6e9ea}
+.op-kopie>div{padding:4px 14px 10px}
+.op-bar{position:fixed;left:0;top:0;height:4px;width:100%;background:#193b8f;transform-origin:0 50%;transform:scaleX(0);z-index:50;pointer-events:none}
+.op-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);border:0;background:none;color:#193b8f;font:700 14px Assistant,Arial,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;opacity:.7}
+.op-hint:hover{opacity:1}.op-hint i{font-style:normal;font-size:24px;line-height:1;animation:opHop 1.8s ease-in-out infinite}
+@keyframes opHop{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+html.still .op-hint i{animation:none}
+.op-end{min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:22px;padding:40px 0;scroll-snap-align:start}
+.op-end .op-klaar{font-size:28px;color:#193b8f;margin:0}
+.op-next{font:700 22px Assistant,Arial,sans-serif;background:#193b8f;color:#fff;border:0;padding:18px 34px;cursor:pointer;display:inline-flex;align-items:center;gap:14px}
+.op-next span{display:inline-block;transition:transform .25s}.op-next:hover{background:#0f2a6e}.op-next:hover span{transform:translateX(6px)}
+.op-tabs{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;border-top:2px solid #b1b2b3;padding-top:14px}
+.op-tabs button{font:700 15px Assistant,Arial,sans-serif;border:0;background:#e6e9ea;color:#193b8f;padding:9px 14px;cursor:pointer}
+.op-tabs button[aria-current=true]{background:#193b8f;color:#fff}
+.op-up{border:0;background:none;color:#193b8f;font:700 14px Assistant,Arial,sans-serif;cursor:pointer;opacity:.75}
+@media print{.op-step,.op-end{min-height:0!important;display:block!important;padding:0!important}
+ .op-rv{opacity:1!important;transform:none!important;transition:none!important}
+ .op-hint,.op-end,.op-bar,.op-kopie{display:none!important}}
+</style>
+<script>
+(function(){
+ var NL=(document.documentElement.lang||'').slice(0,2)==='nl';
+ var T=NL?{weiter:'verder',zu:'Verder naar ',klaar:'Klaar met ',start:'Klaar? Dan beginnen we!',ende:'Goed gedaan!',hoch:'↑ naar boven'}
+         :{weiter:'weiter',zu:'Weiter zu ',klaar:'Fertig mit ',start:'Bereit? Dann geht’s los!',ende:'Geschafft!',hoch:'↑ nach oben'};
+ function go(){
+  var R=document.documentElement,nav=document.querySelector('nav.tabs'),tabs=nav?[].slice.call(nav.querySelectorAll('[data-go]')):[];
+  var main=document.querySelector('main')||document.body,ENDE=main.getAttribute('data-op-schluss')||T.ende;
+  function still(){return R.classList.contains('still')}
+  function pad(){R.style.scrollPaddingTop=((nav?nav.offsetHeight:0)+6)+'px'}pad();addEventListener('resize',pad);
+  R.classList.add('op-snap');
+  var bar=document.createElement('div');bar.className='op-bar noprint gn-noexport';document.body.appendChild(bar);
+  function prog(){var h=R.scrollHeight-innerHeight;bar.style.transform='scaleX('+(h>0?Math.min(1,pageYOffset/h):0)+')'}
+  addEventListener('scroll',prog,{passive:true});addEventListener('resize',prog);
+  var IO='IntersectionObserver' in window,slot=0;
+  var io=IO?new IntersectionObserver(function(es){var now=performance.now();es.sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top});
+    es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,d=Math.min(Math.max(0,slot-now),900);
+     el.style.transitionDelay=(d/1000)+'s';slot=now+d+(el.hasAttribute('data-op-zeile')?60:120);el.classList.add('op-in');io.unobserve(el);
+     setTimeout(function(){el.style.transitionDelay=''},d+700)})},{threshold:0.15}):null;
+  var io2=IO?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('op-in');io2.unobserve(e.target)}})},{rootMargin:'0px 0px -15% 0px',threshold:0}):null;
+  function rv(el,zeile){if(!el||el.classList.contains('op-rv')||el.matches('script,style,template,[hidden]'))return;el.classList.add('op-rv');if(zeile)el.setAttribute('data-op-zeile','');if(io)io.observe(el);else el.classList.add('op-in')}
+  function inner(box){[].forEach.call(box.children,function(c){
+    if(c.matches('table,.op-tabelle')||c.querySelector(':scope>table')){rv(c);[].forEach.call(c.querySelectorAll('tbody tr'),function(r){rv(r,1)})}
+    else if(c.matches('ul,ol')){rv(c);[].forEach.call(c.children,function(li){rv(li,1)})}
+    else rv(c)})}
+  // Nachschlage-Kopien: <details class="op-kopie" data-kopie="#id"><summary>…</summary></details>
+  [].forEach.call(document.querySelectorAll('details.op-kopie[data-kopie]'),function(d){var src=document.querySelector(d.getAttribute('data-kopie'));if(!src)return;
+   var w=document.createElement('div'),c=src.cloneNode(true);[].forEach.call(c.querySelectorAll('[id]'),function(x){x.removeAttribute('id')});c.removeAttribute('id');
+   w.appendChild(c);d.appendChild(w);d.classList.add('noprint','gn-noexport')});
+  var secs=[].slice.call(document.querySelectorAll('section.les'));if(!secs.length)secs=[main];
+  secs.forEach(function(sec,si){
+   var kids=[].slice.call(sec.children).filter(function(k){return !k.matches('script,style,nav,header,footer,.gn-bar,.op-skip')});
+   kids.forEach(function(k,i){
+    var st=document.createElement('div');st.className='op-step';sec.insertBefore(st,k);st.appendChild(k);
+    if(k.classList.contains('op-samen')){st.classList.add('op-rv');if(io2)io2.observe(st);else st.classList.add('op-in')}
+    else{rv(k);inner(k)}
+    if(i<kids.length-1){var h=document.createElement('button');h.type='button';h.className='op-hint noprint gn-noexport';h.innerHTML=T.weiter+'<i>&#8964;</i>';
+     h.onclick=function(){var n=st.nextElementSibling;if(n)n.scrollIntoView({behavior:still()?'auto':'smooth'})};st.appendChild(h)}
+   });
+   var me=tabs[si],nx=tabs[si+1],end=document.createElement('div');end.className='op-end noprint gn-noexport',html='';
+   if(nx)html+='<p class="op-klaar">'+(si===0&&me&&/start/i.test(me.textContent)?T.start:T.klaar+(me?me.textContent:'')+'?')+'</p><button type="button" class="op-next" data-to="'+nx.dataset.go+'">'+T.zu+nx.textContent+' <span>&rarr;</span></button>';
+   else html+='<p class="op-klaar">'+ENDE+'</p>';
+   if(tabs.length)html+='<div class="op-tabs">'+tabs.map(function(t){return '<button type="button" data-to="'+t.dataset.go+'"'+(t===me?' aria-current="true"':'')+'>'+t.textContent+'</button>'}).join('')+'</div>';
+   html+='<button type="button" class="op-up">'+T.hoch+'</button>';
+   end.innerHTML=html;sec.appendChild(end);[].forEach.call(end.children,function(c){rv(c)});
+   end.addEventListener('click',function(e){var b=e.target.closest('[data-to]');
+    if(b){var t=tabs.filter(function(x){return x.dataset.go===b.dataset.to})[0];if(t)t.click();return}
+    if(e.target.closest('.op-up')){(secs.length>1?sec.firstElementChild:document.body).scrollIntoView({behavior:still()?'auto':'smooth'})}});
+  });
+  addEventListener('beforeprint',function(){[].forEach.call(document.querySelectorAll('.op-rv'),function(x){x.classList.add('op-in')})});
+  prog();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
+</script>
+
+</body></html>
