@@ -431,7 +431,7 @@ cnt();
 // Kontrolle
 function norm(s){return (s||'').toLowerCase().replace(/[.,!?;:]/g,'').replace(/\s+/g,' ').trim()}
 document.querySelectorAll('[data-check]').forEach(function(b){b.onclick=function(){var p=b.dataset.check.split(':'),kind=p[0],pre=p[1],ok=0,n=0;
- if(kind==='sel'||kind==='txt'){document.querySelectorAll('[id^="'+pre+'"]').forEach(function(el){if(el.tagName==='LABEL')return;n++;var good;
+ if(kind==='sel'||kind==='txt'){document.querySelectorAll('[id^="'+pre+'"]').forEach(function(el){if(el.tagName==='LABEL'||!new RegExp('^'+pre+'\\d+$').test(el.id))return;n++;var good;
    if(kind==='sel')good=el.value===el.dataset.sol;else{var sols=JSON.parse(el.dataset.sols);good=sols.some(function(s){return norm(s)===norm(el.value)})}
    el.classList.toggle('is-ok',good);el.classList.toggle('is-err',!good);if(good)ok++})}
  if(kind==='radio'){var names={};document.querySelectorAll('input[type=radio][name^="'+pre+'"]').forEach(function(r){names[r.name]=r.dataset.sol});
@@ -552,4 +552,54 @@ html.still .step-hint i{animation:none}
 </script>
 <script>(function(){var b=document.getElementById('fbcopy'),m=document.getElementById('fbmsg'),t=document.getElementById('fbprompt').textContent;
 b.onclick=function(){function ok(){m.textContent='Gekopieerd!'}function fall(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){m.textContent='Selecteer de tekst en kopieer hem zelf.'}a.remove()}
-if(navigator.clipboard)navigator.clipboard.writeText(t).then(ok,fall);else fall()}})();</script></body></html>
+if(navigator.clipboard)navigator.clipboard.writeText(t).then(ok,fall);else fall()}})();</script><!-- ===== Oplossing-knop v1: „Toon oplossing“ erscheint 60 s nach dem ersten Sichtbarwerden einer Übung ===== -->
+<style>
+.opl-knop{margin-left:8px;opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease}
+.opl-knop.opl-in{opacity:1;transform:none}
+.opl-knop[hidden]{display:none}
+.opl-paneel{margin:10px 0 0;padding:10px 14px;border-left:4px solid #E05A00;background:#fff4ea;font-size:.95em}
+.opl-paneel h4{margin:0 0 6px;color:#193b8f;font-size:1em}
+.opl-paneel ol{margin:0;padding-left:1.4em}.opl-paneel li{margin:3px 0}
+.opl-paneel .opl-v{color:#605f5f}.opl-paneel b{color:#1b2a4a}.opl-paneel .opl-ook{font-size:.9em;color:#605f5f}
+@media (prefers-color-scheme:dark){.opl-paneel{background:#2a2418}.opl-paneel b{color:#f1e6d6}.opl-paneel .opl-v,.opl-paneel .opl-ook{color:#c9ccd3}.opl-paneel h4{color:#9db5ff}}
+@media print{.opl-knop{display:none!important}}
+html.still .opl-knop{transition:none}
+</style>
+<script>
+(function(){
+ var WACHT=60000, KEY='opl-v1:'+location.pathname, open={};
+ try{open=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+ function bewaar(){try{localStorage.setItem(KEY,JSON.stringify(open))}catch(e){}}
+ function clean(t){return (t||'').replace(/\s+/g,' ').trim()}
+ function q(s){return clean(s).replace(/^[„“”"']+|[„“”"']+$/g,'')}
+ function vraag(el,i){var tr=el.closest('tr'),lb=el.closest('label');
+  if(tr&&tr.cells&&tr.cells[0]&&!tr.cells[0].contains(el))return clean(tr.cells[0].textContent);
+  if(lb){var c=lb.cloneNode(true);[].forEach.call(c.querySelectorAll('input,select,textarea'),function(x){x.remove()});return clean(c.textContent)}
+  return String(i+1)}
+ function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+ function inhoud(kind,pre){var li=[];
+  if(kind==='sel'||kind==='txt'){[].forEach.call(document.querySelectorAll('[id^="'+pre+'"]'),function(el,i){
+    if(el.tagName==='LABEL'||!/^(SELECT|INPUT|TEXTAREA)$/.test(el.tagName)||!new RegExp('^'+pre+'\\d+$').test(el.id))return;
+    var a=[];if(kind==='sel')a=[el.dataset.sol];else{try{JSON.parse(el.dataset.sols).forEach(function(s){s=q(s);if(a.map(function(x){return x.toLowerCase()}).indexOf(s.toLowerCase())<0)a.push(s)})}catch(e){}}
+    li.push('<li><span class="opl-v">'+esc(vraag(el,i))+'</span> → <b>'+esc(a[0]||'')+'</b>'+(a.length>1?' <span class="opl-ook">(ook goed: '+esc(a.slice(1).join(' / '))+')</span>':'')+'</li>')})}
+  if(kind==='radio'){var seen={};[].forEach.call(document.querySelectorAll('input[type=radio][name^="'+pre+'"]'),function(r){
+    if(seen[r.name])return;seen[r.name]=1;var goed=document.querySelector('input[name="'+r.name+'"][value="'+r.dataset.sol+'"]'),
+    t=goed&&goed.closest('label')?clean(goed.closest('label').textContent):r.dataset.sol;
+    li.push('<li><span class="opl-v">'+esc(vraag(r,li.length))+'</span> → <b>'+esc(t)+'</b></li>')})}
+  return '<h4>Oplossing</h4><ol>'+li.join('')+'</ol>'}
+ function maak(b){var p=b.dataset.check.split(':'),kind=p[0],pre=p[1];if(!pre||b.dataset.opl)return;b.dataset.opl='1';
+  var k=document.createElement('button');k.type='button';k.className=(b.className||'btn')+' opl-knop gn-noexport';k.textContent='Toon oplossing';k.hidden=true;k.setAttribute('aria-expanded','false');
+  b.insertAdjacentElement('afterend',k);
+  var paneel=document.createElement('div');paneel.className='opl-paneel';paneel.hidden=true;paneel.id='opl-'+pre;k.setAttribute('aria-controls',paneel.id);
+  (b.closest('.row')||b.parentNode).insertAdjacentElement('afterend',paneel);
+  function toon(){k.hidden=false;requestAnimationFrame(function(){k.classList.add('opl-in')})}
+  k.onclick=function(){var aan=paneel.hidden;if(aan)paneel.innerHTML=inhoud(kind,pre);paneel.hidden=!aan;k.setAttribute('aria-expanded',String(aan));k.textContent=aan?'Verberg oplossing':'Toon oplossing'};
+  if(open[pre]){toon();return}
+  var kaart=b.closest('.card')||b.parentNode,t=null;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!t){t=setTimeout(function(){open[pre]=1;bewaar();toon()},WACHT);io.disconnect()}})},{threshold:.25});
+  io.observe(kaart)}
+ function go(){[].forEach.call(document.querySelectorAll('[data-check]'),maak)}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
+</script>
+</body></html>
